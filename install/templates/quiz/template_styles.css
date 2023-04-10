@@ -1,32 +1,30 @@
 @import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
-@import "./awesome-font/css/font-awesome.min.css";
 
 html,
 body {
   height: 100%;
 }
-.wrapper {
-  position: relative;
-  min-height: 100%;
+
+.wrapper{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
+
+
+
 .main-content {
-  padding-bottom: 200px!important;
+	flex: 1 0 auto;
 }
 .footer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100px;
+  	width: 100%;
+	flex: 0 0 50px;
+	padding: 1rem 0 2rem;
 }
 
 .navbar {
     box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
 }
-
-
-
-
 
 .navbar-brand__logo{
 	display: flex;
