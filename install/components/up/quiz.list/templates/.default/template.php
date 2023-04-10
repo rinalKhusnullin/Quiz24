@@ -1,5 +1,6 @@
 <?php
 	if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+	\Bitrix\Main\UI\Extension::load('up.quiz-list');
 ?>
 <!-- Main container -->
 <nav class="level">
