@@ -52,7 +52,7 @@
 			</div>
 		</div>
 			<div class="quiz-card__hidden-btns">
-				<a href="##" class="button">
+				<a href="/quiz/0/edit" class="button">
 					<i class="fa-solid fa-pen"></i>
 				</a>
 				<a href="##" class="button">
@@ -80,7 +80,7 @@
 			</div>
 		</div>
 		<div class="quiz-card__hidden-btns">
-			<a href="##" class="button">
+			<a href="/quiz/12/edit" class="button">
 				<i class="fa-solid fa-pen"></i>
 			</a>
 			<a href="##" class="button">
