@@ -13,6 +13,6 @@ return function (RoutingConfigurator $routes)
 	$routes->get('/quiz/{quizId}/show', new PublicPageController('/local/modules/up.quiz/views/quiz-show.php')); //демонстрация результатов
 	$routes->get('/quiz/{quizId}/show/', new PublicPageController('/local/modules/up.quiz/views/quiz-show.php'));
 
-	$routes->get('/quiz/{quizId}/take', new PublicPageController('/local/modules/up.quiz/views/quiz-show.php')); //для прохождения опроса
-	$routes->get('/quiz/{quizId}/take/', new PublicPageController('/local/modules/up.quiz/views/quiz-show.php'));
+	$routes->get('/quiz/{quizId}/take', new PublicPageController('/local/modules/up.quiz/views/quiz-take.php')); //для прохождения опроса
+	$routes->get('/quiz/{quizId}/take/', new PublicPageController('/local/modules/up.quiz/views/quiz-take.php'));
 };
