@@ -1,4 +1,5 @@
 .quiz-card{
+	position: relative;
 	width: 250px;
 	height: 150px;
 	-webkit-border-radius: 8px;
@@ -53,4 +54,30 @@
 .quiz-card__subtitle{
 	display: block;
 	margin-bottom: -8px;
+}
+
+.quiz-card__hidden-btns{
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	color: black;
+
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+
+.quiz-card__hidden-btns .button{
+	border-radius: 40px;
+}
+
+.quiz-card:hover .quiz-card__hidden-btns{
+	display: flex;
+}
+
+.quiz-card:hover .quiz-card__content{
+	display: none;
 }
