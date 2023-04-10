@@ -7,7 +7,9 @@ return function (RoutingConfigurator $routes)
 {
 	$routes->get('/', new PublicPageController('/local/modules/up.quiz/views/quiz-list.php'));
 
-	$routes->get('/quiz/{quizId}/', new PublicPageController('/local/modules/up.quiz/views/quiz-details.php'));
+	$routes->get('/quiz/{quizId}/edit', new PublicPageController('/local/modules/up.quiz/views/quiz-edit.php'));
+	$routes->get('/quiz/{quizId}/edit/', new PublicPageController('/local/modules/up.quiz/views/quiz-edit.php'));
 
-	$routes->get('/quiz/{quizId}', new PublicPageController('/local/modules/up.quiz/views/quiz-details.php'));
+	$routes->get('/quiz/{quizId}/show', new PublicPageController('/local/modules/up.quiz/views/quiz-show.php'));
+	$routes->get('/quiz/{quizId}/show/', new PublicPageController('/local/modules/up.quiz/views/quiz-show.php'));
 };

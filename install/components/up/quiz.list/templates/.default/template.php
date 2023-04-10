@@ -1,3 +1,6 @@
+<?php
+	if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+?>
 <!-- Main container -->
 <nav class="level">
 	<!-- Left side -->
