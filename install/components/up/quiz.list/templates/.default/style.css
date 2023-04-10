@@ -81,7 +81,7 @@
 
 .quiz-card:hover .quiz-card__hidden-btns{
 	top: 0;
-	transition: top .4s ease-in;
+	transition: top .4s;
 }
 
 .quiz-card__title{
