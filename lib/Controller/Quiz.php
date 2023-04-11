@@ -22,11 +22,11 @@ class Quiz extends Engine\Controller
 		);
 	}
 
-	public function createQuizAction(string $title): ?array
+	public function createQuizAction(string $title, int $id): ?array
 	{
 		if (!empty(trim($title)))
 		{
-			return Repository::createQuiz($title);
+			return QuizRepository::createQuiz($title, $id);
 		}
 		return null;
 	}
@@ -41,7 +41,7 @@ class Quiz extends Engine\Controller
 
 	public function deleteTaskAction(int $id): ?array
 	{
-		return Repository::deleteQuiz($id);
+		return QuizRepository::deleteQuiz($id);
 	}
 
 

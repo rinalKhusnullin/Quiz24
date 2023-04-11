@@ -11,15 +11,18 @@ class QuizRepository
 		$quizList = QuizzesTable::getList([
 			'select' => [
 				'ID',
-				'TITLE'
+				'TITLE',
+				'CODE',
 			]
 		])->fetchAll();
 		return $quizList;
 	}
 
-	public static function createQuiz(string $title): ?array
+	public static function createQuiz(string $title, int $id): ?array
 	{
-		$result = QuizzesTable::add(['TITLE' => $title]);
+		$permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$code = substr(str_shuffle($permitted_chars), 0, 4);
+		$result = QuizzesTable::add(['TITLE' => $title, 'CODE'=>$code, 'USER_ID'=>$id]);
 
 		if ($result->isSuccess())
 		{
