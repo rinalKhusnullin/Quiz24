@@ -78,6 +78,31 @@ export class QuizList
 		;
 	}
 
+	deleteQuiz(id){
+		BX.ajax.runAction(
+				'up:quiz.quiz.deleteQuiz',
+				{
+					data: {
+						id: id,
+					},
+				})
+			.then((response) => {
+				if (response.data != null)
+				{
+					console.error('errors:', response.data);
+				}
+				else
+				{
+					this.reload();
+				}
+
+			})
+			.catch((error) => {
+				console.error(error);
+			})
+		;
+	}
+
 	render()
 	{
 		this.rootNode.innerHTML = ``;
@@ -94,7 +119,7 @@ export class QuizList
 
 		this.quizList.forEach(QuizData => {
 			const QuizCard = Tag.render`
-				<div class="quiz-card">
+				<div class="quiz-card" data-quiz-id="${QuizData.ID}">
 					<div class="quiz-card__header"></div>
 						<div class="quiz-card__content">
 							<div class="quiz-card__title">
@@ -117,7 +142,7 @@ export class QuizList
 						<a href="##" class="button">
 							<i class="fa-sharp fa-solid fa-chart-column"></i>
 						</a>
-						<a href="##" class="button">
+						<a href="##" class="button delete-quiz-button" >
 							<i class="fa-sharp fa-solid fa-trash"></i>
 						</a>
 					</div>
@@ -130,6 +155,21 @@ export class QuizList
 		const addButton = document.getElementById('quiz-card__new-quiz-btn');
 		addButton.addEventListener('click', () => {
 				this.createQuiz("New Quiz");
+		});
+
+		const deleteButtons = document.querySelectorAll('.delete-quiz-button');
+		deleteButtons.forEach(button => {
+			button.addEventListener('click', () => {
+				let quizId = parseInt(button.closest('.quiz-card').getAttribute('data-quiz-id'));
+				if (!isNaN(quizId))
+				{
+					this.deleteQuiz(quizId);
+				}
+				else
+				{
+					console.error('Attribute data-quiz-id of this element is not a number ');
+				}
+			});
 		});
 	}
 }

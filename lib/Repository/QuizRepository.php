@@ -33,4 +33,14 @@ class QuizRepository
 			return $result->getErrors();
 		}
 	}
+
+	public static function deleteQuiz(int $id): ?array
+	{
+		$result = QuizzesTable::delete($id);
+		if ($result->isSuccess())
+		{
+			return null;
+		}
+		return $result->getErrors();
+	}
 }

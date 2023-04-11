@@ -39,7 +39,7 @@ class Quiz extends Engine\Controller
 		];
 	}
 
-	public function deleteTaskAction(int $id): ?array
+	public function deleteQuizAction(int $id): ?array
 	{
 		return QuizRepository::deleteQuiz($id);
 	}
