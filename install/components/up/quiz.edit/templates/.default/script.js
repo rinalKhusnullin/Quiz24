@@ -13,4 +13,11 @@ window.addEventListener('load', function() {
 	});
 
 	let addOptionButton = document.getElementById('addOptionButton');
+	addOptionButton.addEventListener('click', function() {
+		let option = document.createElement('input');
+		option.type = 'text';
+		option.classList.add('question-settings__selectable-inputs');
+		let optionList =  document.getElementById('selectableOptionsContainer');
+		optionList.appendChild(option);
+	});
 })

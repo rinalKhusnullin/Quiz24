@@ -41,7 +41,9 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 			</select>
 			<div class="question-settings__selectable-options hidden" id="selectableOptions">
 				<div class="question-settings__selectable-title">Вариаты ответа:</div>
-				<input type="text" class="question-settings__selectable-inputs">
+				<div class="question-settings__selectable-container" id="selectableOptionsContainer">
+					<input type="text" class="question-settings__selectable-inputs">
+				</div>
 				<a href="##" class="button" id="addOptionButton">
 					<i class="fa-solid fa-plus "></i>
 				</a>
