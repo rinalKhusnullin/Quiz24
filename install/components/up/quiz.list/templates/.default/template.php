@@ -31,36 +31,7 @@
 </nav>
 
 <div id="quiz-container-root">
-	<div class="quiz-container">
-		<div class="quiz-card">
-			<div class="quiz-card__header"></div>
-			<div class="quiz-card__content">
-				<div class="quiz-card__title">
-					<strong class="quiz-card__subtitle is-family-monospace">Название:</strong>
-					<div class="quiz-card__title-text has-text-weight-light">
-						Кто же пойдет на вечеринку?
-					</div>
-				</div>
-				<div class="quiz-card__title">
-					<strong class="quiz-card__subtitle is-family-monospace">linkcode:</strong>
-					<div class="quiz-card__title-text has-text-weight-light">
-						Оj1s2
-					</div>
-				</div>
-			</div>
-			<div class="quiz-card__hidden-btns">
-				<a href="/quiz/12/edit" class="button">
-					<i class="fa-solid fa-pen"></i>
-				</a>
-				<a href="##" class="button">
-					<i class="fa-sharp fa-solid fa-chart-column"></i>
-				</a>
-				<a href="##" class="button">
-					<i class="fa-sharp fa-solid fa-trash"></i>
-				</a>
-			</div>
-		</div>
-	</div>
+
 </div>
 
 <script>
