@@ -16,51 +16,69 @@ export class QuizEdit
 
 	constructor(options = {})
 	{
-		if (Type.isStringFilled(options.questionsNodeId))
+
+		if (Type.isStringFilled(options.rootNodeId))
 		{
-			this.questionsNodeId = options.questionsNodeId;
+			this.rootNodeId = options.rootNodeId;
 		}
 		else
 		{
-			throw new Error('QuizEdit: options.questionsNodeId required');
+			throw new Error('QuizEdit: options.rootNodeId required');
 		}
 
-		if (Type.isStringFilled(options.previewNodeId))
+		this.rootNode = document.getElementById(this.rootNodeId);
+		if (!this.rootNode)
 		{
-			this.previewNodeId = options.previewNodeId;
-		}
-		else
-		{
-			throw new Error('QuizEdit: options.previewNodeId required');
-		}
-
-		if (Type.isStringFilled(options.settingsNodeId))
-		{
-			this.settingsNodeId = options.settingsNodeId;
-		}
-		else
-		{
-			throw new Error('QuizEdit: options.settingsNodeId required');
-		}
-
-		this.questionsNode = document.getElementById(this.questionsNodeId);
-		this.previewNode = document.getElementById(this.previewNodeId);
-		this.settingsNode = document.getElementById(this.settingsNodeId);
-
-		if (!this.questionsNode)
-		{
-			throw new Error(`QuizList: element with id "${this.questionsNodeId}" not found`);
-		}
-		if (!this.previewNode)
-		{
-			throw new Error(`QuizList: element with id "${this.previewNodeId}" not found`);
-		}
-		if (!this.settingsNode)
-		{
-			throw new Error(`QuizList: element with id "${this.settingsNodeId}" not found`);
+			throw new Error(`QuizEdit: element with id "${this.rootNodeId}" not found`);
 		}
 
 		this.reload();
+
+
+		// if (Type.isStringFilled(options.questionsNodeId))
+		// {
+		// 	this.questionsNodeId = options.questionsNodeId;
+		// }
+		// else
+		// {
+		// 	throw new Error('QuizEdit: options.questionsNodeId required');
+		// }
+		//
+		// if (Type.isStringFilled(options.previewNodeId))
+		// {
+		// 	this.previewNodeId = options.previewNodeId;
+		// }
+		// else
+		// {
+		// 	throw new Error('QuizEdit: options.previewNodeId required');
+		// }
+		//
+		// if (Type.isStringFilled(options.settingsNodeId))
+		// {
+		// 	this.settingsNodeId = options.settingsNodeId;
+		// }
+		// else
+		// {
+		// 	throw new Error('QuizEdit: options.settingsNodeId required');
+		// }
+		//
+		// this.questionsNode = document.getElementById(this.questionsNodeId);
+		// this.previewNode = document.getElementById(this.previewNodeId);
+		// this.settingsNode = document.getElementById(this.settingsNodeId);
+		//
+		// if (!this.questionsNode)
+		// {
+		// 	throw new Error(`QuizList: element with id "${this.questionsNodeId}" not found`);
+		// }
+		// if (!this.previewNode)
+		// {
+		// 	throw new Error(`QuizList: element with id "${this.previewNodeId}" not found`);
+		// }
+		// if (!this.settingsNode)
+		// {
+		// 	throw new Error(`QuizList: element with id "${this.settingsNodeId}" not found`);
+		// }
+		//this.reload();
 	}
 
 	reload()
@@ -72,31 +90,42 @@ export class QuizEdit
 			});
 	}
 
-	loadQuestions()
-	{
-		return new Promise((resolve, reject) => {
-			BX.ajax.runAction(
-					'up:quiz.quiz.getQuestions',
-					{
-						data:{
-							quizId:1,
-						}
-					}
-				)
-				.then((response) => {
-					const question = response.data.question;
-					resolve(question);
-				})
-				.catch((error) => {
-					console.error(error);
-					reject(error);
-				})
-			;
-		});
-	}
+	// loadQuestions()
+	// {
+	// 	return new Promise((resolve, reject) => {
+	// 		BX.ajax.runAction(
+	// 				'up:quiz.quiz.getQuestions',
+	// 				{
+	// 					data:{
+	// 						quizId:1,
+	// 					}
+	// 				}
+	// 			)
+	// 			.then((response) => {
+	// 				const question = response.data.question;
+	// 				resolve(question);
+	// 			})
+	// 			.catch((error) => {
+	// 				console.error(error);
+	// 				reject(error);
+	// 			})
+	// 		;
+	// 	});
+	// }
 
 	loadQuestion()
 	{
+		// [
+		// 	'question' => [
+		// 		'title' => 'Кто же нальет кофе?',
+		// 		'questionType' => 'selectable',
+		// 		'questionTypes' => ['free', 'selectable'],
+		// 		'displayType' => 'pieChart',
+		// 		'displayTypes' => ['pieChart', 'barChart', 'tagCloud', 'rawOutput'],
+		// 		'selectableAnswers' => ['Андрей', 'Кошка', 'Собака', 'Затрудняюсь ответить']
+		// 	]
+		// ];
+
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 					'up:quiz.quiz.getQuestion',
@@ -121,10 +150,51 @@ export class QuizEdit
 
 	render()
 	{
-		this.renderPreview();
-		this.renderSettings();
+		this.rootNode.innerHTML = ``;
+		const EditContainerNode = Tag.render`
+			<div class="columns box"></div>
+		`;
 
+		//рендер вопросов
+		const QuestionsContainerNode = Tag.render`
+			<div className="column is-one-fifth question-list">
+				<div className="question-list__title">Вопросы</div>
+				<div className="question-list__questions" id="questions">
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+					<div className="question-list__question">
+					</div>
+				</div>
+			</div>
+		`;
+		EditContainerNode.appendChild(QuestionsContainerNode);
+
+		//рендер превью
+		const PreviewContainerNode =  Tag.render``;
+		EditContainerNode.appendChild(PreviewContainerNode);
+
+		//рендер настроек
+		const SettingsContainerNode =  Tag.render``;
+		EditContainerNode.appendChild(SettingsContainerNode);
+
+		this.rootNode.appendChild(EditContainerNode);
 	}
+
+
 
 	getQuestionTypePreview()
 	{
