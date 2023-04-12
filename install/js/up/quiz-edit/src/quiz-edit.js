@@ -27,58 +27,13 @@ export class QuizEdit
 		}
 
 		this.rootNode = document.getElementById(this.rootNodeId);
+
 		if (!this.rootNode)
 		{
 			throw new Error(`QuizEdit: element with id "${this.rootNodeId}" not found`);
 		}
 
 		this.reload();
-
-
-		// if (Type.isStringFilled(options.questionsNodeId))
-		// {
-		// 	this.questionsNodeId = options.questionsNodeId;
-		// }
-		// else
-		// {
-		// 	throw new Error('QuizEdit: options.questionsNodeId required');
-		// }
-		//
-		// if (Type.isStringFilled(options.previewNodeId))
-		// {
-		// 	this.previewNodeId = options.previewNodeId;
-		// }
-		// else
-		// {
-		// 	throw new Error('QuizEdit: options.previewNodeId required');
-		// }
-		//
-		// if (Type.isStringFilled(options.settingsNodeId))
-		// {
-		// 	this.settingsNodeId = options.settingsNodeId;
-		// }
-		// else
-		// {
-		// 	throw new Error('QuizEdit: options.settingsNodeId required');
-		// }
-		//
-		// this.questionsNode = document.getElementById(this.questionsNodeId);
-		// this.previewNode = document.getElementById(this.previewNodeId);
-		// this.settingsNode = document.getElementById(this.settingsNodeId);
-		//
-		// if (!this.questionsNode)
-		// {
-		// 	throw new Error(`QuizList: element with id "${this.questionsNodeId}" not found`);
-		// }
-		// if (!this.previewNode)
-		// {
-		// 	throw new Error(`QuizList: element with id "${this.previewNodeId}" not found`);
-		// }
-		// if (!this.settingsNode)
-		// {
-		// 	throw new Error(`QuizList: element with id "${this.settingsNodeId}" not found`);
-		// }
-		//this.reload();
 	}
 
 	reload()
@@ -151,169 +106,118 @@ export class QuizEdit
 	render()
 	{
 		this.rootNode.innerHTML = ``;
-		const EditContainerNode = Tag.render`
-			<div class="columns box"></div>
-		`;
 
 		//рендер вопросов
 		const QuestionsContainerNode = Tag.render`
-			<div className="column is-one-fifth question-list">
-				<div className="question-list__title">Вопросы</div>
-				<div className="question-list__questions" id="questions">
-					<div className="question-list__question">
+			<div class="column is-one-fifth question-list">
+				<div class="question-list__title">Вопросы</div>
+				<div class="question-list__questions" id="questions">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
-					<div className="question-list__question">
+					<div class="question-list__question">
 					</div>
 				</div>
 			</div>
 		`;
-		EditContainerNode.appendChild(QuestionsContainerNode);
+		this.rootNode.appendChild(QuestionsContainerNode);
 
 		//рендер превью
-		const PreviewContainerNode =  Tag.render``;
-		EditContainerNode.appendChild(PreviewContainerNode);
+		//Название вопроса, тип ответа (выбираемый -> варианты ответа),
+		const PreviewContainerNode =  Tag.render`
+			<div class="column is-three-fifths question-preview">
+				<div class="question-preview__title">Превью</div>
+				<div class="box">
+					<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.title}</h3>
+						<div class="control" id="selectablePreview">
+							<label class="radio">
+								<input type="radio">
+								Тут захардкожено пока что
+							</label>
+							<label class="radio">
+								<input type="radio">
+								Тут захардкожено пока что
+							</label>
+						</div>
+						<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
+					<a class="button is-success" disabled>Отправить</a>
+				</div>
+				<div class="box" id="displayTypePreview">
+					<h3 class="title">Результаты опроса:</h3>
+					<div id="pieChartPreview">
+						Тут типо превью круговой
+					</div>
+					<div id="barChartPreview" class="hidden">
+						Тут типо превью Столбчатой
+					</div>
+					<div id="tagCloudPreview" class="hidden">
+						Тут типо превью Облако тэгов
+					</div>
+					<div id="rawOutputPreview" class="hidden">
+						Тут типо превью Сырового вывода
+					</div>
+				</div>
+			</div>
+		`;
+		this.rootNode.appendChild(PreviewContainerNode);
 
 		//рендер настроек
-		const SettingsContainerNode =  Tag.render``;
-		EditContainerNode.appendChild(SettingsContainerNode);
-
-		this.rootNode.appendChild(EditContainerNode);
-	}
-
-
-
-	getQuestionTypePreview()
-	{
-		let result;
-		let selectableAnswers = this.question.selectableAnswers;
-
-		if (this.question.questionType === 'selectable')
-		{
-			result = Tag.render`<div class="control" id="selectablePreview"></div>`;
-			selectableAnswers.forEach(answer => {
-				const answerOption = Tag.render`
-					<label class="radio" id="selectableAnswer__1">
-						<input type="radio">
-						${answer}
-					</label>`;
-				result.appendChild(answerOption);
-			});
-		}
-		else
-		{
-			result = Tag.render`<input type="text" class="input" placeholder="Введите ответ" id="freePreview">`;
-		}
-		return result;
-	}
-
-	renderPreview()
-	{
-		this.previewNode.innerHTML = '';
-
-		const QuestionTypeNode = this.getQuestionTypePreview();
-
-		const QuestionPreview = Tag.render`
-			<div class="box">
-				<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.title}</h3>
-				${QuestionTypeNode}
-				<a class="button is-success" disabled>Отправить</a>
-			</div>
-		`;
-
-		const ResultPreview = Tag.render`
-			<div class="box" id="displayTypePreview">
-				<h3 class="title">Результаты опроса:</h3>
-				<div id="pieChartPreview">
-					Тут типо превью круговой
-				</div>
-				<div id="barChartPreview" class="hidden">
-					Тут типо превью Столбчатой
-				</div>
-				<div id="tagCloudPreview" class="hidden">
-					Тут типо превью Облако тэгов
-				</div>
-				<div id="rawOutputPreview" class="hidden">
-					Тут типо превью Сырового вывода
-				</div>
-			</div>
-		`;
-
-		this.previewNode.appendChild(QuestionPreview);
-		this.previewNode.appendChild(ResultPreview);
-
-
-	}
-
-	renderSettings()
-	{
-		this.settingsNode.innerHTML = '';
-
-		const QuestionTextInput = this.getQuestionTextInput();
-		const QuestionTypeSelect = this.getQuestionTypeSettings();
-		const DisplayTypeSelect = this.getDisplayTypeSelect();
-
-		const SettingsNode = Tag.render``;
-	}
-
-	getQuestionTextInput()
-	{
-		let result = Tag.render`
-			<div class="question-settings__input-title">Текст вопроса:</div>
-			<input value="${this.question.title}" class="input" type="text" placeholder="Введите вопрос" name="questionText" id="questionText">
-		`;
-		return result;
-	}
-
-	getQuestionTypeSettings()
-	{
-		let result = Tag.render`<div></div>`;
-
-		let QuestionTypeTitle = Tag.render`<div class="question-settings__input-title">Тип ответа:</div>`;
-
-		let QuestionTypeSelect = Tag.render`<select class="select" name="questionType" id="questionType"></select>`;
-
-		for (let questionType in this.QUESTION_TYPES)
-		{
-			let isSelected = (this.question.questionType === questionType) ? 'selected' : '';
-			let questionTypeOption = Tag.render`
-				<option value="${questionType}" ${isSelected}>${this.QUESTION_TYPES.questionType}</option>
-			`;
-			QuestionTypeSelect.appendChild(questionTypeOption);
-		}
-
-		let SelectableAnswers = Tag.render`
-			<div class="question-settings__selectable-answers hidden" id="selectableAnswers">
+		const SettingsContainerNode =  Tag.render`
+			<div class="column question-settings">
+				<div class="question-settings__title">Настройки</div>
+				
+				<div class="question-settings__input-title">Текст вопроса:</div>
+				<input value="${this.question.title}" class="input" type="text" placeholder="Введите вопрос" name="questionText" id="questionText">
+				
+				<div class="question-settings__input-title">Тип ответа:</div>
+				<select class="select" name="questionType" id="questionType">
+					<option value="free" selected>${this.QUESTION_TYPES.free}</option>
+					<option value="selectable">${this.QUESTION_TYPES.selectable}</option>
+				</select>
+				
+				<div class="question-settings__selectable-answers hidden" id="selectableAnswers">
 				<div class="question-settings__input-title">Вариаты ответа:</div>
 				<div class="question-settings__answers-container" id="answersContainer">
-					<input type="text" class="question-settings__answer input" name="selectableAnswer__1">
+					<input type="text" class="question-settings__answer input" name="selectableAnswer">
 				</div>
 				<a class="button" id="addAnswerButton">
 					<i class="fa-solid fa-plus "></i>
 				</a>
 			</div>
+				
+				<div class="question-settings__input-title">Тип отображения результатов:</div>
+				<select name="displayType" id="displayType">
+					<option value="pieChart" selected>Круговая диаграмма</option>
+					<option value="tagCloud">Облако тэгов</option>
+					<option value="barChart">Столбчатая диаграмма</option>
+					<option value="rawOutput">Текстовый формат</option>
+				</select>
+				<button type="submit" class="button is-success">Сохранить</button>
+			</div>
 		`;
+		SettingsContainerNode.oninput = this.renderPreview;
 
-		result.append(QuestionTypeTitle, QuestionTypeSelect);
-
-		return result;
+		this.rootNode.appendChild(SettingsContainerNode);
 	}
 
-	getDisplayTypeSelect()
+	renderPreview()
 	{
-
+		alert(1);
+		//идея такая!
+		// this.question = getQuestionSettings(); //Получаем информацию о настройках вопроса
+		// this.renderPreview(); //Подгружаем превью
 	}
 }
