@@ -142,7 +142,7 @@ export class QuizList
 						<a href="##" class="button">
 							<i class="fa-sharp fa-solid fa-chart-column"></i>
 						</a>
-						<a href="##" class="button delete-quiz-button" >
+						<a class="button delete-quiz-button" >
 							<i class="fa-sharp fa-solid fa-trash"></i>
 						</a>
 					</div>
