@@ -22,19 +22,6 @@ CREATE TABLE IF NOT EXISTS up_quiz_quizzes
 
 INSERT INTO up_quiz_quizzes (TITLE, CODE, USER_ID) VALUES ('Default', 'zxc', 1);
 
-CREATE TABLE IF NOT EXISTS up_quiz_question_display_types
-(
-    ID INT NOT NULL AUTO_INCREMENT,
-    VALUE VARCHAR(64),
-    PRIMARY KEY(ID)
-);
-
-CREATE TABLE IF NOT EXISTS up_quiz_question_question_types
-(
-	ID INT NOT NULL AUTO_INCREMENT,
-	VALUE VARCHAR(64),
-	PRIMARY KEY(ID)
-);
 
 CREATE TABLE IF NOT EXISTS up_quiz_questions
 (
@@ -42,19 +29,13 @@ CREATE TABLE IF NOT EXISTS up_quiz_questions
     QUIZ_ID INT NOT NULL,
     QUESTION_TEXT varchar(256),
     CODE varchar(4),
-    QUESTION_TYPE_ID INT NOT NULL,
-    QUESTION_DISPLAY_ID INT NOT NULL,
+    QUESTION_TYPE_ID TINYINT,
+    QUESTION_DISPLAY_ID TINYINT,
     OPTIONS varchar(1000),
     PRIMARY KEY(ID),
 	FOREIGN KEY (QUIZ_ID)
 	    REFERENCES up_quiz_quizzes(ID)
 	    ON DELETE CASCADE,
-    FOREIGN KEY (QUESTION_TYPE_ID)
-	    REFERENCES up_quiz_question_question_types(ID)
-	    ON DELETE CASCADE,
-	FOREIGN KEY (QUESTION_DISPLAY_ID)
-	    REFERENCES up_quiz_question_display_types(ID)
-	    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS up_quiz_answers
