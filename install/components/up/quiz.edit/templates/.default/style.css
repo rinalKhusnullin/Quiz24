@@ -46,10 +46,6 @@
 	margin-bottom: 20px;
 }
 
-.question-preview{
-	border-right: 1px solid gray;
-}
-
 .question-list__title,
 .question-preview__title,
 .question-settings__title{
@@ -61,5 +57,9 @@
 }
 
 .hidden{
-	display: none;
+	display: none!important;
+}
+
+.visible{
+	display: block;
 }
