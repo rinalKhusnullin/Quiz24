@@ -31,7 +31,7 @@
 </nav>
 
 <div id="quiz-container-root">
-
+	<div class="loader" style="--b: 20px;--c:#000;width:80px;--n:15;--g:7deg"></div>
 </div>
 
 <script>
