@@ -31,6 +31,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "loadList",
 	    value: function loadList() {
+	      this.renderLoading();
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:quiz.quiz.getList').then(function (response) {
 	          var quizList = response.data.quizList;
@@ -45,6 +46,7 @@ this.Up = this.Up || {};
 	    key: "createQuiz",
 	    value: function createQuiz(title) {
 	      var _this2 = this;
+	      this.renderLoading();
 	      var UserId = 1;
 	      BX.ajax.runAction('up:quiz.quiz.createQuiz', {
 	        data: {
@@ -66,6 +68,7 @@ this.Up = this.Up || {};
 	    key: "deleteQuiz",
 	    value: function deleteQuiz(id) {
 	      var _this3 = this;
+	      this.renderLoading();
 	      BX.ajax.runAction('up:quiz.quiz.deleteQuiz', {
 	        data: {
 	          id: id
@@ -79,6 +82,11 @@ this.Up = this.Up || {};
 	      })["catch"](function (error) {
 	        console.error(error);
 	      });
+	    }
+	  }, {
+	    key: "renderLoading",
+	    value: function renderLoading() {
+	      if (!(this.rootNode.innerHTML === '<div class="donut"></div>')) this.rootNode.innerHTML = "<div class=\"donut\"></div>";
 	    }
 	  }, {
 	    key: "render",

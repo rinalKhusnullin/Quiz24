@@ -34,6 +34,7 @@ export class QuizList
 
 	loadList()
 	{
+		this.renderLoading();
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 					'up:quiz.quiz.getList',
@@ -52,6 +53,7 @@ export class QuizList
 
 	createQuiz(title)
 	{
+		this.renderLoading();
 		let UserId = 1;
 		BX.ajax.runAction(
 				'up:quiz.quiz.createQuiz',
@@ -79,6 +81,7 @@ export class QuizList
 	}
 
 	deleteQuiz(id){
+		this.renderLoading();
 		BX.ajax.runAction(
 				'up:quiz.quiz.deleteQuiz',
 				{
@@ -101,6 +104,12 @@ export class QuizList
 				console.error(error);
 			})
 		;
+	}
+
+	renderLoading()
+	{
+		if (!(this.rootNode.innerHTML === '<div class="donut"></div>'))
+			this.rootNode.innerHTML = `<div class="donut"></div>`;
 	}
 
 	render()
