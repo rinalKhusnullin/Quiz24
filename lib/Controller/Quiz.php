@@ -33,7 +33,7 @@ class Quiz extends Engine\Controller
 
 	public function getListAction(): ?array
 	{
-		$quizList = QuizRepository::getPage();
+		$quizList = QuizRepository::getList();
 		return [
 			'quizList' => $quizList
 		];
@@ -44,46 +44,5 @@ class Quiz extends Engine\Controller
 		return QuizRepository::deleteQuiz($id);
 	}
 
-	public function getQuestionAction(int $id) : ?array
-	{
-		return [
-			'question' => [
-				'title' => 'Кто же нальет кофе?',
-				'questionType' => 'selectable',
-				'questionTypes' => ['free', 'selectable'],
-				'displayType' => 'pieChart',
-				'displayTypes' => ['pieChart', 'barChart', 'tagCloud', 'rawOutput'],
-				'selectableAnswers' => ['Андрей', 'Кошка', 'Собака', 'Затрудняюсь ответить']
-			]
-		];
-	}
 
-	public function getQuestionsAction(int $quizId) : ?array
-	{
-		return [
-			'questions' => [
-				[
-					'title' => 'Кто же нальет кофе?',
-					'questionType' => 'free',
-					'questionTypes' => ['free', 'selectable'],
-					'displayType' => 'pieChart',
-					'displayTypes' => ['pieChart', 'barChart', 'tagCloud', 'rawOutput'],
-				],
-				[
-					'title' => 'Кто же нальет кофе?',
-					'questionType' => 'free',
-					'questionTypes' => ['free', 'selectable'],
-					'displayType' => 'pieChart',
-					'displayTypes' => ['pieChart', 'barChart', 'tagCloud', 'rawOutput'],
-				],
-				[
-					'title' => 'Кто же нальет кофе?',
-					'questionType' => 'free',
-					'questionTypes' => ['free', 'selectable'],
-					'displayType' => 'pieChart',
-					'displayTypes' => ['pieChart', 'barChart', 'tagCloud', 'rawOutput'],
-				],
-			]
-		];
-	}
 }

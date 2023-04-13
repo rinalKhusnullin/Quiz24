@@ -25,7 +25,7 @@ INSERT INTO up_quiz_quizzes (TITLE, CODE, USER_ID) VALUES ('Default', 'zxc', 1);
 
 CREATE TABLE IF NOT EXISTS up_quiz_questions
 (
-    ID INT NOT NULL,
+    ID INT NOT NULL AUTO_INCREMENT,
     QUIZ_ID INT NOT NULL,
     QUESTION_TEXT varchar(256),
     CODE varchar(4),
@@ -35,8 +35,11 @@ CREATE TABLE IF NOT EXISTS up_quiz_questions
     PRIMARY KEY(ID),
 	FOREIGN KEY (QUIZ_ID)
 	    REFERENCES up_quiz_quizzes(ID)
-	    ON DELETE CASCADE,
+	    ON DELETE CASCADE
 );
+
+
+
 
 CREATE TABLE IF NOT EXISTS up_quiz_answers
 (
