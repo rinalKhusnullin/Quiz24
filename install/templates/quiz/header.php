@@ -14,7 +14,6 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> <?php $APPLICATION->ShowTitle(); ?></title>
     <?php $APPLICATION->ShowHead(); ?>
-	<script src="https://kit.fontawesome.com/b8f34d9b8b.js" crossorigin="anonymous"></script>
 </head>
 
 <body>

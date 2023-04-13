@@ -84,30 +84,31 @@
 	transition: top .4s;
 }
 
-.loader {
-	--b: 10px;  /* border thickness */
-	--n: 10;    /* number of dashes*/
-	--g: 10deg; /* gap  between dashes*/
-	--c: red;   /* the color */
-
-	width:100px; /* size */
-	aspect-ratio: 1;
-	border-radius: 50%;
-	padding: 1px; /* get rid of bad outlines */
-	background: conic-gradient(#0000,var(--c)) content-box;
-	--_m: /* we use +/-1deg between colors to avoid jagged edges */
-		repeating-conic-gradient(#0000 0deg,
-		#000 1deg calc(360deg/var(--n) - var(--g) - 1deg),
-		#0000     calc(360deg/var(--n) - var(--g)) calc(360deg/var(--n))),
-		radial-gradient(farthest-side,#0000 calc(98% - var(--b)),#000 calc(100% - var(--b)));
-	-webkit-mask: var(--_m);
-	mask: var(--_m);
-	-webkit-mask-composite: destination-in;
-	mask-composite: intersect;
-	animation: load 1s infinite steps(var(--n));
-}
-@keyframes load {to{transform: rotate(1turn)}}
-
 #quiz-container-root{
-	min-width: 100%;
+	min-height: 100%;
+}
+
+.container{
+	min-height: 100%;
+}
+
+@keyframes donut-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+.donut {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: inline-block;
+	border: 4px solid rgba(0, 0, 0, 0.1);
+	border-left-color: #7983ff;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	animation: donut-spin 1.2s linear infinite;
 }
