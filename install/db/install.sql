@@ -39,8 +39,6 @@ CREATE TABLE IF NOT EXISTS up_quiz_questions
 );
 
 
-
-
 CREATE TABLE IF NOT EXISTS up_quiz_answers
 (
 	ID INT NOT NULL,
