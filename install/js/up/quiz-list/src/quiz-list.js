@@ -110,9 +110,30 @@ export class QuizList
 		const QuizContainerNode = Tag.render`
 			<div class="quiz-container">
 				<div class="quiz-card quiz-card__add-new">
-					<a class="is-success is-button quiz-card__new-quiz-btn" id="quiz-card__new-quiz-btn">
+					<a class="is-success is-button quiz-card__new-quiz-btn" id="open_creating_modal_btn">
 						<i class="fa-solid fa-plus"></i>
 					</a>
+					<div class="modal" id="new_quiz_modal">
+						<div class="modal-background close-modal"></div>
+						<div class="modal-card">
+							<header class="modal-card-head">
+								<p class="modal-card-title">Создание опроса</p>
+								<button class="delete close-modal" aria-label="close"></button>
+							</header>
+							<section class="modal-card-body is-dark">
+								<div class="field">
+									<label class="label">Название опроса</label>
+									<div class="control">
+										<input id="quizTitle" class="input" type="text" placeholder="Введите название опроса">
+									</div>
+								</div>
+							</section>
+							<footer class="modal-card-foot">
+								<button class="button is-success" id="creating_quiz_btn">Создать</button>
+								<button class="button close-modal">Cancel</button>
+							</footer>
+						</div>
+					</div>
 				</div>
 			</div>
 		`;
@@ -139,7 +160,7 @@ export class QuizList
 						<a href="/quiz/${QuizData.ID}/edit" class="button">
 							<i class="fa-solid fa-pen"></i>
 						</a>
-						<a href="##" class="button">
+						<a href="/quiz/${QuizData.ID}/show" class="button">
 							<i class="fa-sharp fa-solid fa-chart-column"></i>
 						</a>
 						<a class="button delete-quiz-button" >
@@ -152,9 +173,22 @@ export class QuizList
 		});
 		this.rootNode.appendChild(QuizContainerNode);
 
-		const addButton = document.getElementById('quiz-card__new-quiz-btn');
+		const openModalButton = document.getElementById('open_creating_modal_btn');
+		openModalButton.addEventListener('click', () =>{
+			this.openCreatingQuizModal();
+		});
+
+		const closeModalElems = document.querySelectorAll('.close-modal');
+		closeModalElems.forEach((closeModalElem)=>{
+				closeModalElem.addEventListener('click', () => {
+					this.closeCreatingQuizModal();
+			});
+		});
+
+		const addButton = document.getElementById('creating_quiz_btn');
 		addButton.addEventListener('click', () => {
-				this.createQuiz("New Quiz");
+			let quizTitle = document.getElementById('quizTitle').value;
+			this.createQuiz(quizTitle);
 		});
 
 		const deleteButtons = document.querySelectorAll('.delete-quiz-button');
@@ -171,5 +205,17 @@ export class QuizList
 				}
 			});
 		});
+	}
+
+	openCreatingQuizModal()
+	{
+		const modal = document.getElementById('new_quiz_modal');
+		modal.classList.add("is-active");
+	}
+
+	closeCreatingQuizModal()
+	{
+		const modal = document.getElementById('new_quiz_modal');
+		modal.classList.remove("is-active");
 	}
 }
