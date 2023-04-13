@@ -38,45 +38,50 @@ export class QuizEdit
 
 	reload()
 	{
-		this.loadQuestion()
-			.then(question => {
-				this.question = question;
-				this.render();
+		this.loadQuestions(1)
+			.then(questions => {
+				this.questions = questions;
+				console.log(questions);
+				this.loadQuestion(1)
+					.then(question => {
+						this.question = question;
+						this.render();
+					});
 			});
+
 	}
 
-	// loadQuestions()
-	// {
-	// 	return new Promise((resolve, reject) => {
-	// 		BX.ajax.runAction(
-	// 				'up:quiz.quiz.getQuestions',
-	// 				{
-	// 					data:{
-	// 						quizId:1,
-	// 					}
-	// 				}
-	// 			)
-	// 			.then((response) => {
-	// 				const question = response.data.question;
-	// 				resolve(question);
-	// 			})
-	// 			.catch((error) => {
-	// 				console.error(error);
-	// 				reject(error);
-	// 			})
-	// 		;
-	// 	});
-	// }
-
-	loadQuestion()
+	loadQuestions(quizId)
 	{
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.question.getQuestions',
+					{
+						data:{
+							quizId: quizId,
+						}
+					}
+				)
+				.then((response) => {
+					const questions = response.data.questions;
+					resolve(questions);
+				})
+				.catch((error) => {
+					console.error(error);
+					reject(error);
+				})
+			;
+		});
+	}
 
+	loadQuestion(id)
+	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 					'up:quiz.question.getQuestion',
 					{
 						data:{
-							id:1,
+							id: id,
 						}
 					}
 				)
@@ -93,39 +98,43 @@ export class QuizEdit
 		});
 	}
 
-
 	render()
 	{
 		this.rootNode.innerHTML = ``;
 
-		//рендер вопросов
 		const QuestionsContainerNode = Tag.render`
 			<div class="column is-one-fifth question-list">
 				<div class="question-list__title">Вопросы</div>
 				<div class="question-list__questions" id="questions">
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
+					
+				</div>
+				<div class="question-list__append-button mt-2">
+					+
 				</div>
 			</div>
 		`;
+
 		this.rootNode.appendChild(QuestionsContainerNode);
 
+		this.renderQuestionsList();
+		this.renderQuestion();
+	}
+	renderQuestionsList(){
+		const QuestionsNode = Tag.render`<div></div>`;
+		this.questions.forEach(questionData => {
+			const questionCard = Tag.render`
+				<div class="question-list__question" data-id="${questionData.ID}">
+					${questionData.QUESTION_TEXT}
+				</div>
+			`;
+			QuestionsNode.appendChild(questionCard);
+		});
+		let questionsContainer = document.getElementById('questions');
+		questionsContainer.innerHTML = ``;
+		questionsContainer.appendChild(QuestionsNode);
+	}
+	renderQuestion()
+	{
 		//рендер превью
 		//Название вопроса, тип ответа (выбираемый -> варианты ответа),
 		const PreviewContainerNode =  Tag.render`

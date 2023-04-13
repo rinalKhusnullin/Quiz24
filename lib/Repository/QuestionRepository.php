@@ -7,7 +7,7 @@ use Up\Quiz\Model\QuizzesTable;
 
 class QuestionRepository
 {
-	public static function getList(int $quizId): ?array
+	public static function getQuestions(int $quizId): ?array
 	{
 		$questionList = QuestionsTable::getList([
 			  'select' => [
