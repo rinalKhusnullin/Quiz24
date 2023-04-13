@@ -142,32 +142,18 @@ export class QuizEdit
 				<div class="question-preview__title">Превью</div>
 				<div class="box">
 					<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.title}</h3>
-						<div class="control" id="selectablePreview">
-							<label class="radio">
-								<input type="radio">
-								Тут захардкожено пока что
-							</label>
-							<label class="radio">
-								<input type="radio">
-								Тут захардкожено пока что
-							</label>
-						</div>
+					<div id="questionPreviewContainer">
 						<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
-					<a class="button is-success" disabled>Отправить</a>
+					</div>
+					<a class="button is-success">Отправить</a>
+					
 				</div>
 				<div class="box" id="displayTypePreview">
 					<h3 class="title">Результаты опроса:</h3>
-					<div id="pieChartPreview">
-						Тут типо превью круговой
-					</div>
-					<div id="barChartPreview" class="hidden">
-						Тут типо превью Столбчатой
-					</div>
-					<div id="tagCloudPreview" class="hidden">
-						Тут типо превью Облако тэгов
-					</div>
-					<div id="rawOutputPreview" class="hidden">
-						Тут типо превью Сырового вывода
+					<div id="chartPreviewContainer">
+						<div id="pieChartPreview">
+							Круговая диаграмма
+						</div>
 					</div>
 				</div>
 			</div>
@@ -198,7 +184,7 @@ export class QuizEdit
 				</a>
 			</div>
 				
-				<div class="question-settings__input-title">Тип отображения результатов:</div>
+			<div class="question-settings__input-title">Тип отображения результатов:</div>
 				<select name="displayType" id="displayType">
 					<option value="pieChart" selected>Круговая диаграмма</option>
 					<option value="tagCloud">Облако тэгов</option>
@@ -209,15 +195,83 @@ export class QuizEdit
 			</div>
 		`;
 		SettingsContainerNode.oninput = this.renderPreview;
-
 		this.rootNode.appendChild(SettingsContainerNode);
 	}
 
 	renderPreview()
 	{
-		alert(1);
-		//идея такая!
-		// this.question = getQuestionSettings(); //Получаем информацию о настройках вопроса
-		// this.renderPreview(); //Подгружаем превью
+		//получаем настройки
+		let QuestionSettings = {};
+		const questionTextInput = document.getElementById('questionText');
+		QuestionSettings.questionText = questionTextInput.value;
+
+		const questionTypeInput = document.getElementById('questionType');
+		QuestionSettings.questionType = questionTypeInput.value;
+
+		const displayTypeInput = document.getElementById('displayType');
+		QuestionSettings.displayType = displayTypeInput.value;
+
+		//рендерим текст
+		const questionTextPreview = document.getElementById('questionTextPreview');
+		questionTextPreview.innerHTML = QuestionSettings.questionText;
+
+		//рендерим ввод ответов
+		const questionPreviewContainer = document.getElementById('questionPreviewContainer');
+		let questionPreview;
+		if (QuestionSettings.questionType === 'free'){
+			questionPreview = Tag.render`
+				<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
+			`;
+		}
+		if (QuestionSettings.questionType === 'selectable'){
+			questionPreview = Tag.render`
+				<div class="control" id="selectablePreview">
+					<label class="radio">
+						<input type="radio">
+						Тут захардкожено пока что
+					</label>
+					<label class="radio">
+						<input type="radio">
+						Тут захардкожено пока что
+					</label>
+				</div>
+			`;
+		}
+		questionPreviewContainer.innerHTML = '';
+		questionPreviewContainer.appendChild(questionPreview);
+
+		//рендерим превью диаграммы
+		const chartPreviewContainer = document.getElementById('chartPreviewContainer');
+		let ChartPreview;
+		if (QuestionSettings.displayType === 'pieChart'){
+			ChartPreview = Tag.render`
+				<div id="pieChartPreview">
+					Тут типо превью круговой
+				</div>
+			`;
+		}
+		if (QuestionSettings.displayType === 'tagCloud'){
+			ChartPreview = Tag.render`
+				<div id="tagCloudPreview">
+					Облако тегов
+				</div>
+			`;
+		}
+		if (QuestionSettings.displayType === 'barChart'){
+			ChartPreview = Tag.render`
+				<div id="barChartPreview">
+					Столбчатая диаграмма
+				</div>
+			`;
+		}
+		if (QuestionSettings.displayType === 'rawOutput'){
+			ChartPreview = Tag.render`
+				<div id="rawOutputPreview">
+					Сырой вывод
+				</div>
+			`;
+		}
+		chartPreviewContainer.innerHTML = '';
+		chartPreviewContainer.appendChild(ChartPreview);
 	}
 }
