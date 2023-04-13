@@ -1,11 +1,16 @@
 <?php
 namespace Up\Quiz\Model;
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Data\DataManager,
 	Bitrix\Main\ORM\Fields\IntegerField,
 	Bitrix\Main\ORM\Fields\StringField,
 	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\SystemException;
 
 Loc::loadMessages(__FILE__);
 
@@ -42,6 +47,8 @@ class QuestionsTable extends DataManager
 	 * Returns entity map definition.
 	 *
 	 * @return array
+	 * @throws ArgumentException
+	 * @throws SystemException
 	 */
 	public static function getMap()
 	{
@@ -75,6 +82,14 @@ class QuestionsTable extends DataManager
 								 'validation' => [__CLASS__, 'validateOptions']
 							 ]
 			))->configureTitle(Loc::getMessage('QUESTIONS_ENTITY_OPTIONS_FIELD')),
+
+			(new Reference(
+				'QUIZZES',
+				QuizzesTable::class,
+				Join::on('this.QUIZ_ID', 'ref.ID')
+			))->configureJoinType('inner'),
+
+			(new OneToMany('ANSWERS', AnswersTable::class, 'QUESTIONS'))->configureJoinType('inner'),
 		];
 	}
 

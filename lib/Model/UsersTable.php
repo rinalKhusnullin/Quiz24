@@ -6,6 +6,8 @@ use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Fields\IntegerField,
 	Bitrix\Main\ORM\Fields\StringField,
 	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Join;
 
 Loc::loadMessages(__FILE__);
 
@@ -59,6 +61,12 @@ class UsersTable extends DataManager
 							 ]
 			))->configureTitle(Loc::getMessage('USERS_ENTITY_PASSWORD_HASH_FIELD'))
 			  ->configureRequired(true),
+
+			(new Reference(
+				'QUIZZES',
+				QuizzesTable::class,
+				Join::on('this.ID', 'ref.USER_ID')
+			))->configureJoinType('inner'),
 		];
 	}
 
