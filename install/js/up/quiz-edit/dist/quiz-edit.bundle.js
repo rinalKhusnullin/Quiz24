@@ -61,24 +61,14 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "loadQuestion",
 	    value: function loadQuestion() {
-	      // [
-	      // 	'question' => [
-	      // 		'title' => 'Кто же нальет кофе?',
-	      // 		'questionType' => 'selectable',
-	      // 		'questionTypes' => ['free', 'selectable'],
-	      // 		'displayType' => 'pieChart',
-	      // 		'displayTypes' => ['pieChart', 'barChart', 'tagCloud', 'rawOutput'],
-	      // 		'selectableAnswers' => ['Андрей', 'Кошка', 'Собака', 'Затрудняюсь ответить']
-	      // 	]
-	      // ];
-
 	      return new Promise(function (resolve, reject) {
-	        BX.ajax.runAction('up:quiz.quiz.getQuestion', {
+	        BX.ajax.runAction('up:quiz.question.getQuestion', {
 	          data: {
 	            id: 1
 	          }
 	        }).then(function (response) {
 	          var question = response.data.question;
+	          console.log(question);
 	          resolve(question);
 	        })["catch"](function (error) {
 	          console.error(error);

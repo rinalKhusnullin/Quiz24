@@ -6,7 +6,7 @@ use Up\Quiz\Model\QuizzesTable;
 
 class QuizRepository
 {
-	public static function getPage(): array
+	public static function getList(): array
 	{
 		$quizList = QuizzesTable::getList([
 			'select' => [
@@ -28,10 +28,7 @@ class QuizRepository
 		{
 			return null;
 		}
-		else
-		{
-			return $result->getErrors();
-		}
+		return $result->getErrors();
 	}
 
 	public static function deleteQuiz(int $id): ?array

@@ -70,20 +70,10 @@ export class QuizEdit
 
 	loadQuestion()
 	{
-		// [
-		// 	'question' => [
-		// 		'title' => 'Кто же нальет кофе?',
-		// 		'questionType' => 'selectable',
-		// 		'questionTypes' => ['free', 'selectable'],
-		// 		'displayType' => 'pieChart',
-		// 		'displayTypes' => ['pieChart', 'barChart', 'tagCloud', 'rawOutput'],
-		// 		'selectableAnswers' => ['Андрей', 'Кошка', 'Собака', 'Затрудняюсь ответить']
-		// 	]
-		// ];
 
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
-					'up:quiz.quiz.getQuestion',
+					'up:quiz.question.getQuestion',
 					{
 						data:{
 							id:1,
@@ -92,6 +82,7 @@ export class QuizEdit
 				)
 				.then((response) => {
 					const question = response.data.question;
+					console.log(question);
 					resolve(question);
 				})
 				.catch((error) => {
