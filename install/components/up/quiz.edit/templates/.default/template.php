@@ -11,6 +11,7 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 	BX.ready(function() {
 		window.QuizEditQuiz = new Up.Quiz.QuizEdit({
 			rootNodeId: 'edit-container-root',
+			quizId : 1,
 			questionsNodeId: 'questions',
 			previewNodeId: 'preview',
 			settingsNodeId: 'settings'
