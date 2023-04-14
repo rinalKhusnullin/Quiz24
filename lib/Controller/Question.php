@@ -30,8 +30,11 @@ class Question extends Engine\Controller
 		];
 	}
 
-	// public function getQuestionsAction(int $Id) : ?array
-	// {
-	//
-	// }
+	public function getQuestionsAction(int $quizId) : ?array
+	{
+		$questions = QuestionRepository::getQuestions($quizId);
+		return [
+			'questions' => $questions
+		];
+	}
 }

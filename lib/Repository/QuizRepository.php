@@ -9,12 +9,12 @@ class QuizRepository
 	public static function getList(): array
 	{
 		$quizList = QuizzesTable::getList([
-			'select' => [
-				'ID',
-				'TITLE',
-				'CODE',
-			]
-		])->fetchAll();
+			  'select' => [
+				  'ID',
+				  'TITLE',
+				  'CODE',
+			  ]
+	    ])->fetchAll();
 		return $quizList;
 	}
 
@@ -39,5 +39,15 @@ class QuizRepository
 			return null;
 		}
 		return $result->getErrors();
+	}
+
+	public static function getQuiz(int $id) : ?array
+	{
+		$result = QuizzesTable::getList([
+			'select' => ['ID', 'TITLE', 'CODE'],
+			'filter' => ['=ID' => $id],
+		])->fetch();
+
+		return $result;
 	}
 }

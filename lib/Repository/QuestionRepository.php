@@ -7,15 +7,15 @@ use Up\Quiz\Model\QuizzesTable;
 
 class QuestionRepository
 {
-	public static function getList(int $quizId): ?array
+	public static function getQuestions(int $quizId): ?array
 	{
 		$questionList = QuestionsTable::getList([
-			  'select' => [
-				  'ID',
-				  'QUESTION_TEXT',
-				  'CODE',
-			  ]
-		  ])->fetchAll();
+			'select' => [
+				'ID',
+				'QUESTION_TEXT',
+				'CODE',
+			]
+		])->fetchAll();
 		return $questionList;
 	}
 
@@ -33,7 +33,7 @@ class QuestionRepository
 
 	public static function getQuestion(int $id): ?array
 	{
-		$question = QuestionsTable::getById($id)->fetchAll();
+		$question = QuestionsTable::getById($id)->fetch();
 		return $question;
 	}
 }

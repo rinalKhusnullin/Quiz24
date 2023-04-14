@@ -44,5 +44,14 @@ class Quiz extends Engine\Controller
 		return QuizRepository::deleteQuiz($id);
 	}
 
-
+	public function getQuizAction(int $id) : ?array
+	{
+		if ($id <= 0)
+		{
+			return null;
+		}
+		return [
+			'quiz' => QuizRepository::getQuiz($id),
+		];
+	}
 }
