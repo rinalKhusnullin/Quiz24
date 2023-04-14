@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS up_quiz_questions
 	    ON DELETE CASCADE
 );
 
+INSERT INTO up_quiz_questions VALUES (1, 1, 'Кто же нальет кофейку', '1234', 0, 0, NULL), (2, 1, 'Кто же сделает чай?', '2212', 0, 0, NULL);
+
 
 
 
