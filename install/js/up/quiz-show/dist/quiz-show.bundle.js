@@ -16678,8 +16678,12 @@ this.Up = this.Up || {};
 
   Chart.register.apply(Chart, babelHelpers.toConsumableArray(registerables));
 
-  var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5;
+  var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6;
   var QuizShow = /*#__PURE__*/function () {
+    // Текущий quiz
+    // Текущий question
+    // Диаграмма
+
     function QuizShow() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       babelHelpers.classCallCheck(this, QuizShow);
@@ -16755,7 +16759,7 @@ this.Up = this.Up || {};
       value: function reload() {
         var _this3 = this;
         this.loadQuiz().then(function (quiz) {
-          _this3.Quiz = quiz;
+          _this3.quiz = quiz;
           _this3.loadQuestions().then(function (questions) {
             _this3.questions = questions;
             _this3.loadQuestion(_this3.currentQuestionId).then(function (question) {
@@ -16769,7 +16773,7 @@ this.Up = this.Up || {};
       key: "render",
       value: function render() {
         this.rootNode.innerHTML = "";
-        var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<button class=\"button\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t\t\t</button>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), this.Quiz.TITLE, this.Quiz.CODE);
+        var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<button class=\"button\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t\t\t</button>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), this.quiz.TITLE, this.quiz.CODE);
         this.rootNode.appendChild(QuizHeroSection);
         var QuizResultContent = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box\">\n\t\t\t\t<div class=\"columns\">\n\t\t\t\t\t<div class=\"column is-one-quarter question-list\">\n\t\t\t\t\t\t<div class=\"question-list__title has-text-weight-semibold has-text-centered is-uppercase\">\u0412\u043E\u043F\u0440\u043E\u0441</div>\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.getQuestionsListNode(), this.getQuestionResultNode());
         this.rootNode.appendChild(QuizResultContent);
@@ -16787,23 +16791,26 @@ this.Up = this.Up || {};
           };
           QuestionListNode.appendChild(QuestionNode);
         });
+        var testButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["<button id=\"testButton\">\u0422\u0415\u0421\u0422\u041E\u0412\u0410\u042F \u041A\u041D\u041E\u041F\u041A\u0410 \u041F\u041E\u041A\u0410 \u0427\u0422\u041E!</button>>"])));
+        QuestionListNode.appendChild(testButton);
         return QuestionListNode;
       }
     }, {
       key: "getQuestionResultNode",
       value: function getQuestionResultNode() {
-        return main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>\u0412\u043E\u043F\u0440\u043E\u0441 : </strong>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<canvas id=\"chart\"></canvas>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
+        return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>\u0412\u043E\u043F\u0440\u043E\u0441 : </strong>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<canvas id=\"chart\"></canvas>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
       }
     }, {
       key: "connectChart",
       value: function connectChart() {
-        var chart = document.getElementById('chart');
-        new Chart(chart, {
+        var _this5 = this;
+        var chartNode = document.getElementById('chart');
+        var chart = new Chart(chartNode, {
           type: 'bar',
           data: {
             labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
             datasets: [{
-              label: '# of Votes',
+              label: this.question.QUESTION_TEXT,
               data: [12, 19, 3, 5, 2, 3],
               borderWidth: 1
             }]
@@ -16816,15 +16823,25 @@ this.Up = this.Up || {};
             }
           }
         });
-      }
+        document.getElementById('testButton').onclick = function () {
+          _this5.testFunc(chart);
+        };
+      } //update ResultNode
     }, {
       key: "renderQuestionResult",
       value: function renderQuestionResult(questionId) {
-        var _this5 = this;
+        var _this6 = this;
         this.loadQuestion(questionId).then(function (question) {
-          _this5.question = question;
-          document.getElementById('questionResult').replaceWith(_this5.getQuestionResultNode());
+          _this6.question = question;
+          document.getElementById('questionResult').replaceWith(_this6.getQuestionResultNode());
+          _this6.connectChart();
         });
+      }
+    }, {
+      key: "testFunc",
+      value: function testFunc(chart) {
+        chart.data.datasets[0].data[0]++;
+        chart.update();
       }
     }]);
     return QuizShow;

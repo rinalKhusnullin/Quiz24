@@ -3,8 +3,9 @@ import Chart from 'chart.js/auto';
 
 export class QuizShow
 {
-	Quiz;
-	question;
+	quiz; // Текущий quiz
+	question; // Текущий question
+	chart; // Диаграмма
 
 	constructor(options = {})
 	{
@@ -96,7 +97,7 @@ export class QuizShow
 	reload()
 	{
 		this.loadQuiz().then(quiz => {
-			this.Quiz = quiz;
+			this.quiz = quiz;
 			this.loadQuestions()
 				.then(questions => {
 					this.questions = questions;
@@ -116,7 +117,7 @@ export class QuizShow
 			<section class="hero is-small is-primary">
 				<div class="hero-body">
 					<p class="title mb-0">
-						${this.Quiz.TITLE}#${this.Quiz.CODE}
+						${this.quiz.TITLE}#${this.quiz.CODE}
 					</p>
 					<button class="button">
 						<i class="fa-solid fa-qrcode"></i>
@@ -152,6 +153,8 @@ export class QuizShow
 			}
 			QuestionListNode.appendChild(QuestionNode);
 		})
+		const testButton = Tag.render`<button id="testButton">ТЕСТОВАЯ КНОПКА ПОКА ЧТО!</button>>`;
+		QuestionListNode.appendChild(testButton);
 		return QuestionListNode;
 	}
 
@@ -173,14 +176,14 @@ export class QuizShow
 
 	connectChart()
 	{
-		const chart = document.getElementById('chart');
+		const chartNode = document.getElementById('chart');
 
-		new Chart(chart, {
+		let chart = new Chart(chartNode, {
 			type: 'bar',
 			data: {
 				labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
 				datasets: [{
-					label: '# of Votes',
+					label: this.question.QUESTION_TEXT,
 					data: [12, 19, 3, 5, 2, 3],
 					borderWidth: 1
 				}]
@@ -193,13 +196,24 @@ export class QuizShow
 				}
 			}
 		});
+		document.getElementById('testButton').onclick = () => {
+			this.testFunc(chart);
+		};
 	}
 
+	//update ResultNode
 	renderQuestionResult(questionId)
 	{
 		this.loadQuestion(questionId).then(question =>{
 			this.question = question;
 			document.getElementById('questionResult').replaceWith(this.getQuestionResultNode());
+			this.connectChart();
 		});
+	}
+
+	testFunc(chart)
+	{
+		chart.data.datasets[0].data[0]++;
+		chart.update();
 	}
 }
