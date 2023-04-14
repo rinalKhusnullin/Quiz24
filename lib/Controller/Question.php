@@ -40,7 +40,15 @@ class Question extends Engine\Controller
 
 	public function setQuestionAction(array $question): ?array
 	{
-
+		//check valid question
 		return QuestionRepository::setQuestions($question);
+	}
+
+	public function createQuestionAction() : ?array
+	{
+		//check valid question
+		return [
+			'newQuestionId' => QuestionRepository::createQuestion()
+		];
 	}
 }
