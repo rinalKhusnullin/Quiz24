@@ -1,4 +1,5 @@
 import {Type, Tag} from 'main.core';
+import Chart from 'chart.js/auto';
 
 export class QuizShow
 {
@@ -50,7 +51,8 @@ export class QuizShow
 		});
 	}
 
-	loadQuestion(id){
+	loadQuestion(id)
+	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 					'up:quiz.question.getQuestion',{
@@ -100,17 +102,14 @@ export class QuizShow
 					this.questions = questions;
 					this.loadQuestion(this.currentQuestionId).then(question =>{
 						this.question = question;
+						this.render();
 					});
-					this.render();
 				});
-		});
+			});
 	}
-
-
 
 	render()
 	{
-		console.log(this);
 		this.rootNode.innerHTML = ``;
 
 		const QuizHeroSection = Tag.render`
@@ -125,6 +124,8 @@ export class QuizShow
 				</div>
 			</section>
 		`;
+		this.rootNode.appendChild(QuizHeroSection);
+
 		const QuizResultContent = Tag.render`
 			<div class="box">
 				<div class="columns">
@@ -137,7 +138,8 @@ export class QuizShow
 			</div>
 		`;
 
-		this.rootNode.append(QuizHeroSection, QuizResultContent);
+		this.rootNode.appendChild(QuizResultContent);
+		this.connectChart();
 	}
 
 	getQuestionsListNode()
@@ -145,17 +147,17 @@ export class QuizShow
 		const QuestionListNode = Tag.render`<div class="question-list__questions"></div>`;
 		this.questions.forEach(question => {
 			const QuestionNode = Tag.render`<a class="question-list__question button">${question.QUESTION_TEXT}</a>`;
-			// QuestionNode.onclick = this.renderQuestionResult(+question.ID);
+			QuestionNode.onclick = () => {
+				this.renderQuestionResult(+question.ID);
+			}
 			QuestionListNode.appendChild(QuestionNode);
 		})
 		return QuestionListNode;
 	}
 
-	getQuestionResultNode() //Я не знаю что тут не так, я устал : (
+	getQuestionResultNode()
 	{
-		console.log(this);
-		console.log(this.question);
-		const QuestionResultNode = Tag.render`
+		return Tag.render`
 			<div class=" column is-three-quarters statistics" id="questionResult">
 				<div class="statistics__title has-text-weight-semibold has-text-centered is-uppercase">Статистика</div>
 				<div class="statistics__question-title">
@@ -163,22 +165,41 @@ export class QuizShow
 					${this.question.QUESTION_TEXT}
 				</div>
 				<div>
-					<canvas id="myChart"></canvas>
+					<canvas id="chart"></canvas>
 				</div>
 			</div>
 		`;
+	}
 
-		return QuestionResultNode;
+	connectChart()
+	{
+		const chart = document.getElementById('chart');
+
+		new Chart(chart, {
+			type: 'bar',
+			data: {
+				labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+				datasets: [{
+					label: '# of Votes',
+					data: [12, 19, 3, 5, 2, 3],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
 	}
 
 	renderQuestionResult(questionId)
 	{
-		// alert(1);
-		// this.loadQuestion(questionId).then(question =>{
-		// 	this.question = question;
-		// });
-		// document.getElementById('questionResult').innerHTML = this.getQuestionResultNode();
-		//
-		// return false;
+		this.loadQuestion(questionId).then(question =>{
+			this.question = question;
+			document.getElementById('questionResult').replaceWith(this.getQuestionResultNode());
+		});
 	}
 }
