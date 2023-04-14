@@ -2,26 +2,26 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15;
 	var QuizEdit = /*#__PURE__*/function () {
 	  function QuizEdit() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, QuizEdit);
 	    babelHelpers.defineProperty(this, "QUESTION_TYPES", {
-	      free: 'Свободный ответ',
+	      0: 'Свободный ответ',
 	      //0
-	      selectable: 'Выбираемый ответ' //1
+	      1: 'Выбираемый ответ' //1
 	    });
 	    babelHelpers.defineProperty(this, "DISPLAY_TYPES", {
-	      pieChart: 'Круговая диаграмма',
+	      0: 'Круговая диаграмма',
 	      //0
-	      barChart: 'Столбчатая диаграмма',
+	      1: 'Облако тэгов',
 	      //1
-	      tagCloud: 'Облако тэгов',
+	      2: 'Столбчатая диаграмма',
 	      //2
-	      rawOutput: 'Сырой вывод' //3
+	      3: 'Сырой вывод' //3
 	    });
-	    babelHelpers.defineProperty(this, "question", {});
+
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -31,29 +31,39 @@ this.Up = this.Up || {};
 	    if (!this.rootNode) {
 	      throw new Error("QuizEdit: element with id \"".concat(this.rootNodeId, "\" not found"));
 	    }
+	    this.quizId = options.quizId;
+	    this.questions = [];
+	    this.quiz = {};
+	    this.question = {};
+	    this.currentQuestionId = 1;
 	    this.reload();
 	  }
 	  babelHelpers.createClass(QuizEdit, [{
-	    key: "reload",
-	    value: function reload() {
+	    key: "loadQuiz",
+	    value: function loadQuiz() {
 	      var _this = this;
-	      this.loadQuestions(1).then(function (questions) {
-	        _this.questions = questions;
-	        console.log(questions);
-	        _this.loadQuestion(1).then(function (question) {
-	          _this.question = question;
-	          console.log(question);
-	          _this.render();
+	      return new Promise(function (resolve, reject) {
+	        BX.ajax.runAction('up:quiz.quiz.getQuiz', {
+	          data: {
+	            id: _this.quizId
+	          }
+	        }).then(function (response) {
+	          var quiz = response.data.quiz;
+	          resolve(quiz);
+	        })["catch"](function (error) {
+	          console.error(error);
+	          reject(error);
 	        });
 	      });
 	    }
 	  }, {
 	    key: "loadQuestions",
-	    value: function loadQuestions(quizId) {
+	    value: function loadQuestions() {
+	      var _this2 = this;
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:quiz.question.getQuestions', {
 	          data: {
-	            quizId: quizId
+	            quizId: _this2.quizId
 	          }
 	        }).then(function (response) {
 	          var questions = response.data.questions;
@@ -89,66 +99,145 @@ this.Up = this.Up || {};
 	          question: this.question
 	        }
 	      }).then(function (response) {
-	        console.log(response);
+	        alert('Данные о вопросе успешно сохранены!');
 	      })["catch"](function (error) {
 	        console.error(error);
+	      });
+	    }
+	  }, {
+	    key: "createQuestion",
+	    value: function createQuestion() {
+	      var _this3 = this;
+	      BX.ajax.runAction('up:quiz.question.createQuestion').then(function (response) {
+	        _this3.getQuestion(response.data.newQuestionId);
+	        _this3.render();
+	      })["catch"](function (error) {
+	        console.error(error);
+	      });
+	    }
+	  }, {
+	    key: "getQuestion",
+	    value: function getQuestion(id) {
+	      var _this4 = this;
+	      this.loadQuestion(id).then(function (question) {
+	        _this4.question = question;
+	        _this4.renderPreview();
+	        _this4.renderSettings();
+	      });
+	    }
+	  }, {
+	    key: "reload",
+	    value: function reload() {
+	      var _this5 = this;
+	      this.loadQuiz().then(function (quiz) {
+	        _this5.quiz = quiz;
+	        _this5.loadQuestions().then(function (questions) {
+	          _this5.questions = questions;
+	          _this5.loadQuestion(_this5.currentQuestionId).then(function (question) {
+	            _this5.question = question;
+	            _this5.render();
+	          });
+	        });
 	      });
 	    }
 	  }, {
 	    key: "render",
 	    value: function render() {
 	      this.rootNode.innerHTML = "";
-	      var QuestionsContainerNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-one-fifth question-list\">\n\t\t\t\t<div class=\"question-list__title\">\u0412\u043E\u043F\u0440\u043E\u0441\u044B</div>\n\t\t\t\t<div class=\"question-list__questions\" id=\"questions\">\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t\t<div class=\"question-list__append-button mt-2\">\n\t\t\t\t\t+\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])));
-	      this.rootNode.appendChild(QuestionsContainerNode);
-	      this.renderQuestionsList();
-	      this.renderQuestion();
+	      this.rootNode.appendChild(this.getQuestionListNode());
+	      this.rootNode.appendChild(this.getQuestionPreviewNode());
+	      this.rootNode.appendChild(this.getQuestionSettingsNode());
 	    }
 	  }, {
-	    key: "renderQuestionsList",
-	    value: function renderQuestionsList() {
-	      var QuestionsNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["<div></div>"])));
+	    key: "renderPreview",
+	    value: function renderPreview() {
+	      document.getElementById('preview').replaceWith(this.getQuestionPreviewNode());
+	    }
+	  }, {
+	    key: "renderSettings",
+	    value: function renderSettings() {
+	      document.getElementById('settings').replaceWith(this.getQuestionSettingsNode());
+	    }
+	  }, {
+	    key: "getQuestionListNode",
+	    value: function getQuestionListNode() {
+	      var _this6 = this;
+	      var QuestionsContainer = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-list__questions\" id=\"questions\">\n\t\t\t</div>\n\t\t"])));
 	      this.questions.forEach(function (questionData) {
-	        var questionCard = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"question-list__question\" data-id=\"", "\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), questionData.ID, questionData.QUESTION_TEXT);
-	        QuestionsNode.appendChild(questionCard);
+	        var questionCard = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a class=\"question-list__question button\" data-id=\"", "\">\n\t\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), questionData.ID, questionData.QUESTION_TEXT);
+	        questionCard.onclick = function () {
+	          _this6.getQuestion(+questionData.ID);
+	        };
+	        QuestionsContainer.appendChild(questionCard);
 	      });
-	      var questionsContainer = document.getElementById('questions');
-	      questionsContainer.innerHTML = "";
-	      questionsContainer.appendChild(QuestionsNode);
+	      var AddNewQuestionButton = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<a class=\"button question_list__add-btn\">+</a>"])));
+	      AddNewQuestionButton.onclick = function () {
+	        _this6.createQuestion();
+	      };
+	      QuestionsContainer.appendChild(AddNewQuestionButton);
+	      return main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-one-fifth question-list\">\n\t\t\t\t<div class=\"question-list__title\">\u0412\u043E\u043F\u0440\u043E\u0441\u044B</div>\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), QuestionsContainer);
 	    }
 	  }, {
-	    key: "renderQuestion",
-	    value: function renderQuestion() {
-	      var _this2 = this;
-	      console.log(this.question);
-	      //рендер превью
-	      var PreviewContainerNode = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-three-fifths question-preview\">\n\t\t\t\t<div class=\"question-preview__title\">\u041F\u0440\u0435\u0432\u044C\u044E</div>\n\t\t\t\t<div class=\"box\">\n\t\t\t\t\t<h3 class=\"title question-preview__question-text\" id=\"questionTextPreview\">", "</h3>\n\t\t\t\t\t<div id=\"questionPreviewContainer\">\n\t\t\t\t\t\t<input type=\"text\" class=\"input\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043E\u0442\u0432\u0435\u0442\" id=\"freePreview\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<a class=\"button is-success\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C</a>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t\t<div class=\"box\" id=\"displayTypePreview\">\n\t\t\t\t\t<h3 class=\"title\">\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u043E\u043F\u0440\u043E\u0441\u0430:</h3>\n\t\t\t\t\t<div id=\"chartPreviewContainer\">\n\t\t\t\t\t\t<div id=\"pieChartPreview\">\n\t\t\t\t\t\t\t\u041A\u0440\u0443\u0433\u043E\u0432\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
-	      this.rootNode.appendChild(PreviewContainerNode);
-
-	      //рендер настроек
-	      var SettingsContainerNode = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column question-settings\">\n\t\t\t\t<div class=\"question-settings__title\">\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0435\u043A\u0441\u0442 \u0432\u043E\u043F\u0440\u043E\u0441\u0430:</div>\n\t\t\t\t<input value=\"", "\" class=\"input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\" name=\"questionText\" id=\"questionText\">\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t<select class=\"select\" name=\"questionType\" id=\"questionType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u0421\u0432\u043E\u0431\u043E\u0434\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u0412\u044B\u0431\u043E\u0440 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u0430</option>\n\t\t\t\t</select>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__selectable-answers ", "\" id=\"selectableAnswers\">\n\t\t\t\t\t<div class=\"question-settings__input-title\">\u0412\u0430\u0440\u0438\u0430\u0442\u044B \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t\t<div class=\"question-settings__answers-container\" id=\"answersContainer\">\n\t\t\t\t\t\t\n\t\t\t\t\t</div>\n\t\t\t\t\t<a class=\"button\" id=\"addAnswerButton\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-plus \"></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432:</div>\n\t\t\t\t<select name=\"displayType\" id=\"displayType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u041A\u0440\u0443\u0433\u043E\u0432\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u041E\u0431\u043B\u0430\u043A\u043E \u0442\u044D\u0433\u043E\u0432</option>\n\t\t\t\t\t<option value=\"2\" ", ">\u0421\u0442\u043E\u043B\u0431\u0447\u0430\u0442\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"3\" ", ">\u0422\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0439 \u0444\u043E\u0440\u043C\u0430\u0442</option>\n\t\t\t\t</select>\n\t\t\t\t<button type=\"submit\" class=\"button is-success\" id=\"save-question-button\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT, this.question.QUESTION_TYPE_ID == 0 ? 'selected' : '', this.question.QUESTION_TYPE_ID == 1 ? 'selected' : '', this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : '', this.question.QUESTION_TYPE_ID == 0 ? 'selected' : '', this.question.QUESTION_TYPE_ID == 1 ? 'selected' : '', this.question.QUESTION_TYPE_ID == 2 ? 'selected' : '', this.question.QUESTION_TYPE_ID == 3 ? 'selected' : '');
+	    key: "getQuestionPreviewNode",
+	    value: function getQuestionPreviewNode() {
+	      var PreviewContainerNode = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-three-fifths question-preview\" id=\"preview\">\n\t\t\t\t<div class=\"question-preview__title\">\u041F\u0440\u0435\u0432\u044C\u044E</div>\n\t\t\t\t<div class=\"box\">\n\t\t\t\t\t<h3 class=\"title question-preview__question-text\" id=\"questionTextPreview\">", "</h3>\n\t\t\t\t\t\t<div id=\"questionPreviewContainer\"></div>\n\t\t\t\t\t<a class=\"button is-success\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C</a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"box\" id=\"displayTypePreview\">\n\t\t\t\t\t<h3 class=\"title\">\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u043E\u043F\u0440\u043E\u0441\u0430:</h3>\n\t\t\t\t\t<div id=\"chartPreviewContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
+	      var AnswerPreviewContainer = PreviewContainerNode.querySelector('#questionPreviewContainer');
 	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
-	        var options = JSON.parse(this.question.OPTIONS);
-	        for (var i = 0; i < options.length; i++) {
+	        var _options = JSON.parse(this.question.OPTIONS);
+	        for (var _i = 0; _i < _options.length; _i++) {
+	          var AnswerPreview = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\"><input type=\"radio\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), _options[_i]);
+	          AnswerPreviewContainer.appendChild(AnswerPreview);
+	        }
+	      } else {
+	        AnswerPreviewContainer.appendChild(main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"input\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043E\u0442\u0432\u0435\u0442\" id=\"freePreview\">\n\t\t\t"]))));
+	      }
+	      var DisplayPreviewContainer = PreviewContainerNode.querySelector('#chartPreviewContainer');
+	      var question_display_id = this.question.QUESTION_DISPLAY_ID;
+	      var DisplayPreviewNode = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div id=\"tagCloudPreview\">\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), this.DISPLAY_TYPES[question_display_id]);
+	      DisplayPreviewContainer.appendChild(DisplayPreviewNode);
+	      return PreviewContainerNode;
+	    }
+	  }, {
+	    key: "getQuestionSettingsNode",
+	    value: function getQuestionSettingsNode() {
+	      var _this7 = this;
+	      console.log(this.question);
+	      var SettingsContainerNode = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column question-settings\" id=\"settings\">\n\t\t\t\t<div class=\"question-settings__title\">\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0435\u043A\u0441\u0442 \u0432\u043E\u043F\u0440\u043E\u0441\u0430:</div>\n\t\t\t\t<input value=\"", "\" class=\"input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\" name=\"questionText\" id=\"questionText\">\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t<select class=\"select\" name=\"questionType\" id=\"questionType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u0421\u0432\u043E\u0431\u043E\u0434\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u0412\u044B\u0431\u043E\u0440 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u0430</option>\n\t\t\t\t</select>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__selectable-answers ", "\" id=\"selectableAnswers\">\n\t\t\t\t\t<div class=\"question-settings__input-title\">\u0412\u0430\u0440\u0438\u0430\u0442\u044B \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t\t<div class=\"question-settings__answers-container\" id=\"answersContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<a class=\"button\" id=\"addAnswerButton\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-plus \"></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432:</div>\n\t\t\t\t<select name=\"displayType\" id=\"displayType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u041A\u0440\u0443\u0433\u043E\u0432\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u041E\u0431\u043B\u0430\u043A\u043E \u0442\u044D\u0433\u043E\u0432</option>\n\t\t\t\t\t<option value=\"2\" ", ">\u0421\u0442\u043E\u043B\u0431\u0447\u0430\u0442\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"3\" ", ">\u0422\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0439 \u0444\u043E\u0440\u043C\u0430\u0442</option>\n\t\t\t\t</select>\n\t\t\t\t<button type=\"submit\" class=\"button is-success\" id=\"save-question-button\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT, this.question.QUESTION_TYPE_ID == 0 ? 'selected' : '', this.question.QUESTION_TYPE_ID == 1 ? 'selected' : '', this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : '', this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : '');
+	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
+	        var _options2 = JSON.parse(this.question.OPTIONS);
+	        var _loop = function _loop(i) {
 	          var answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
-	          var AnswerInput = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"", "\">\n\t\t\t"])), options[i]);
-	          answerInputsContainer.appendChild(AnswerInput);
+	          var AnswerInput = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"", "\">"])), _options2[i]);
+	          var AnswerDelete = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["<a class=\"button is-danger\"><i class=\"fa-solid fa-trash\"></i></a>"])));
+	          AnswerDelete.onclick = function () {
+	            _this7.deleteAnswer(_options2[i]);
+	          };
+	          var AnswerInputNode = main_core.Tag.render(_templateObject12 || (_templateObject12 = babelHelpers.taggedTemplateLiteral(["<div class=\"question-settings__answer-inputs\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>"])), AnswerInput, AnswerDelete);
+	          answerInputsContainer.appendChild(AnswerInputNode);
+	        };
+	        for (var _i2 = 0; _i2 < _options2.length; _i2++) {
+	          _loop(_i2);
 	        }
 	      }
 	      SettingsContainerNode.querySelector('#addAnswerButton').onclick = function () {
 	        var answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
 	        var currentAnswerCount = answerInputsContainer.childElementCount;
-	        var newAnswerInput = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"\u0412\u0430\u0440\u0438\u0430\u043D\u0442 ", "\">\n\t\t\t"])), currentAnswerCount + 1);
+	        var AnswerInput = main_core.Tag.render(_templateObject13 || (_templateObject13 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"\u0412\u0430\u0440\u0438\u0430\u043D\u0442 ", "\">\n\t\t\t"])), currentAnswerCount + 1);
+	        var AnswerDelete = main_core.Tag.render(_templateObject14 || (_templateObject14 = babelHelpers.taggedTemplateLiteral(["<a class=\"button is-danger\"><i class=\"fa-solid fa-trash\"></i></a>"])));
+	        AnswerDelete.onclick = function () {
+	          _this7.deleteAnswer(options[i]);
+	        };
+	        var newAnswerInput = main_core.Tag.render(_templateObject15 || (_templateObject15 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"question-settings__answer-inputs\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), AnswerInput, AnswerDelete);
 	        answerInputsContainer.appendChild(newAnswerInput);
-	        _this2.changeQuestion();
+	        _this7.changeQuestion();
 	      };
 	      SettingsContainerNode.oninput = function () {
-	        _this2.changeQuestion();
+	        _this7.changeQuestion();
 	      };
 	      SettingsContainerNode.querySelector('#save-question-button').onclick = function () {
-	        _this2.saveQuestion();
+	        _this7.saveQuestion();
 	      };
-	      this.rootNode.appendChild(SettingsContainerNode);
-	      this.renderPreview();
+	      return SettingsContainerNode;
 	    }
 	  }, {
 	    key: "changeQuestion",
@@ -165,7 +254,6 @@ this.Up = this.Up || {};
 	          return input.value;
 	        });
 	        this.question.OPTIONS = JSON.stringify(answerValues);
-	        console.log(this.question.OPTIONS);
 	      } else {
 	        selectableAnswers.classList.add("hidden");
 	        this.question.OPTIONS = null;
@@ -175,41 +263,9 @@ this.Up = this.Up || {};
 	      this.renderPreview();
 	    }
 	  }, {
-	    key: "renderPreview",
-	    value: function renderPreview() {
-	      //рендерим текст
-	      var questionTextPreview = document.getElementById('questionTextPreview');
-	      questionTextPreview.innerHTML = this.question.QUESTION_TEXT;
-
-	      //рендерим ввод ответов
-	      var questionPreviewContainer = document.getElementById('questionPreviewContainer');
-	      var questionPreview;
-	      if (this.question.QUESTION_TYPE_ID == 0) {
-	        questionPreview = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"input\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043E\u0442\u0432\u0435\u0442\" id=\"freePreview\">\n\t\t\t"])));
-	      }
-	      if (this.question.QUESTION_TYPE_ID == 1) {
-	        questionPreview = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"control\" id=\"selectablePreview\">\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input type=\"radio\">\n\t\t\t\t\t\t\u0422\u0443\u0442 \u0437\u0430\u0445\u0430\u0440\u0434\u043A\u043E\u0436\u0435\u043D\u043E \u043F\u043E\u043A\u0430 \u0447\u0442\u043E\n\t\t\t\t\t</label>\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input type=\"radio\">\n\t\t\t\t\t\t\u0422\u0443\u0442 \u0437\u0430\u0445\u0430\u0440\u0434\u043A\u043E\u0436\u0435\u043D\u043E \u043F\u043E\u043A\u0430 \u0447\u0442\u043E\n\t\t\t\t\t</label>\n\t\t\t\t</div>\n\t\t\t"])));
-	      }
-	      questionPreviewContainer.innerHTML = '';
-	      questionPreviewContainer.appendChild(questionPreview);
-
-	      //рендерим превью диаграммы
-	      var chartPreviewContainer = document.getElementById('chartPreviewContainer');
-	      var ChartPreview;
-	      if (this.question.QUESTION_DISPLAY_ID === '0') {
-	        ChartPreview = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div id=\"pieChartPreview\">\n\t\t\t\t\t\u0422\u0443\u0442 \u0442\u0438\u043F\u043E \u043F\u0440\u0435\u0432\u044C\u044E \u043A\u0440\u0443\u0433\u043E\u0432\u043E\u0439\n\t\t\t\t</div>\n\t\t\t"])));
-	      }
-	      if (this.question.QUESTION_DISPLAY_ID === '1') {
-	        ChartPreview = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div id=\"tagCloudPreview\">\n\t\t\t\t\t\u041E\u0431\u043B\u0430\u043A\u043E \u0442\u0435\u0433\u043E\u0432\n\t\t\t\t</div>\n\t\t\t"])));
-	      }
-	      if (this.question.QUESTION_DISPLAY_ID === '2') {
-	        ChartPreview = main_core.Tag.render(_templateObject12 || (_templateObject12 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div id=\"barChartPreview\">\n\t\t\t\t\t\u0421\u0442\u043E\u043B\u0431\u0447\u0430\u0442\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430\n\t\t\t\t</div>\n\t\t\t"])));
-	      }
-	      if (this.question.QUESTION_DISPLAY_ID === '3') {
-	        ChartPreview = main_core.Tag.render(_templateObject13 || (_templateObject13 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div id=\"rawOutputPreview\">\n\t\t\t\t\t\u0421\u044B\u0440\u043E\u0439 \u0432\u044B\u0432\u043E\u0434\n\t\t\t\t</div>\n\t\t\t"])));
-	      }
-	      chartPreviewContainer.innerHTML = '';
-	      chartPreviewContainer.appendChild(ChartPreview);
+	    key: "deleteAnswer",
+	    value: function deleteAnswer(AnswerValue) {
+	      alert('TODO : Удаление варианта ответа');
 	    }
 	  }]);
 	  return QuizEdit;

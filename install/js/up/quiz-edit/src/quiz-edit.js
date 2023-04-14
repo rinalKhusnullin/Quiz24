@@ -3,18 +3,16 @@ import {Type, Tag} from 'main.core';
 export class QuizEdit
 {
 	QUESTION_TYPES = {
-		free : 'Свободный ответ',//0
-		selectable : 'Выбираемый ответ'//1
+		0 : 'Свободный ответ',//0
+		1 : 'Выбираемый ответ'//1
 	};
 
 	DISPLAY_TYPES = {
-		pieChart : 'Круговая диаграмма',//0
-		barChart : 'Столбчатая диаграмма',//1
-		tagCloud : 'Облако тэгов',//2
-		rawOutput : 'Сырой вывод'//3
+		0 : 'Круговая диаграмма',//0
+		1 : 'Облако тэгов',//1
+		2 : 'Столбчатая диаграмма',//2
+		3 : 'Сырой вывод'//3
 	};
-
-	question = {};
 
 	constructor(options = {})
 	{
@@ -35,38 +33,46 @@ export class QuizEdit
 			throw new Error(`QuizEdit: element with id "${this.rootNodeId}" not found`);
 		}
 
+		this.quizId = options.quizId;
+		this.questions = [];
+		this.quiz = {};
+		this.question = {};
+		this.currentQuestionId = 1;
 		this.reload();
 	}
 
-	reload()
-	{
-		this.loadQuestions(1)
-			.then(questions => {
-				this.questions = questions;
-				console.log(questions);
-				this.loadQuestion(1)
-					.then(question => {
-						this.question = question;
-						console.log(question)
-						this.render();
-					});
-			});
-
-	}
-
-	loadQuestions(quizId)
+	loadQuiz()
 	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
-					'up:quiz.question.getQuestions',
-					{
-						data:{
-							quizId: quizId,
+					'up:quiz.quiz.getQuiz',{
+						data : {
+							id : this.quizId,
 						}
-					}
-				)
+					})
 				.then((response) => {
-					const questions = response.data.questions;
+					const quiz = response.data.quiz;
+					resolve(quiz);
+				})
+				.catch((error) => {
+					console.error(error);
+					reject(error);
+				})
+			;
+		});
+	}
+
+	loadQuestions()
+	{
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.question.getQuestions',{
+						data : {
+							quizId : this.quizId,
+						}
+					})
+				.then((response) => {
+					const questions = response.data.questions
 					resolve(questions);
 				})
 				.catch((error) => {
@@ -81,13 +87,11 @@ export class QuizEdit
 	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
-					'up:quiz.question.getQuestion',
-					{
-						data:{
-							id: id,
+					'up:quiz.question.getQuestion',{
+						data : {
+							id : id,
 						}
-					}
-				)
+					})
 				.then((response) => {
 					const question = response.data.question;
 					resolve(question);
@@ -111,7 +115,7 @@ export class QuizEdit
 				}
 			)
 			.then((response) => {
-				console.log(response);
+				alert('Данные о вопросе успешно сохранены!');
 			})
 			.catch((error) => {
 				console.error(error);
@@ -119,68 +123,148 @@ export class QuizEdit
 		;
 	}
 
+	createQuestion()
+	{
+		BX.ajax.runAction(
+				'up:quiz.question.createQuestion',
+			)
+			.then((response) => {
+				this.getQuestion(response.data.newQuestionId);
+				this.render();
+			})
+			.catch((error) => {
+				console.error(error);
+			})
+		;
+	}
+
+	getQuestion(id)
+	{
+		this.loadQuestion(id).then(question =>{
+			this.question = question;
+			this.renderPreview();
+			this.renderSettings();
+		})
+	}
+
+	reload()
+	{
+		this.loadQuiz().then(quiz => {
+			this.quiz = quiz;
+			this.loadQuestions()
+				.then(questions => {
+					this.questions = questions;
+					this.loadQuestion(this.currentQuestionId).then(question =>{
+						this.question = question;
+						this.render();
+					});
+				});
+		});
+	}
+
 	render()
 	{
 		this.rootNode.innerHTML = ``;
-		const QuestionsContainerNode = Tag.render`
-			<div class="column is-one-fifth question-list">
-				<div class="question-list__title">Вопросы</div>
-				<div class="question-list__questions" id="questions">
-					
-				</div>
-				<div class="question-list__append-button mt-2">
-					+
-				</div>
+		this.rootNode.appendChild(this.getQuestionListNode());
+		this.rootNode.appendChild(this.getQuestionPreviewNode());
+		this.rootNode.appendChild(this.getQuestionSettingsNode());
+	}
+
+	renderPreview()
+	{
+		document.getElementById('preview').replaceWith(this.getQuestionPreviewNode());
+	}
+
+	renderSettings()
+	{
+		document.getElementById('settings').replaceWith(this.getQuestionSettingsNode());
+	}
+
+	getQuestionListNode()
+	{
+		const QuestionsContainer = Tag.render`
+			<div class="question-list__questions" id="questions">
 			</div>
 		`;
-		this.rootNode.appendChild(QuestionsContainerNode);
-		this.renderQuestionsList();
-		this.renderQuestion();
-	}
-	renderQuestionsList(){
-		const QuestionsNode = Tag.render`<div></div>`;
+
 		this.questions.forEach(questionData => {
 			const questionCard = Tag.render`
-				<div class="question-list__question" data-id="${questionData.ID}">
+				<a class="question-list__question button" data-id="${questionData.ID}">
 					${questionData.QUESTION_TEXT}
-				</div>
+				</a>
 			`;
-			QuestionsNode.appendChild(questionCard);
+			questionCard.onclick = () => { this.getQuestion(+questionData.ID); };
+			QuestionsContainer.appendChild(questionCard);
 		});
-		let questionsContainer = document.getElementById('questions');
-		questionsContainer.innerHTML = ``;
-		questionsContainer.appendChild(QuestionsNode);
+
+		const AddNewQuestionButton = Tag.render`<a class="button question_list__add-btn">+</a>`;
+		AddNewQuestionButton.onclick = () => { this.createQuestion(); }
+		QuestionsContainer.appendChild(AddNewQuestionButton);
+
+		return Tag.render`
+			<div class="column is-one-fifth question-list">
+				<div class="question-list__title">Вопросы</div>
+				${QuestionsContainer}
+			</div>
+		`;
 	}
-	renderQuestion()
+
+	getQuestionPreviewNode()
 	{
-		console.log(this.question);
-		//рендер превью
 		const PreviewContainerNode =  Tag.render`
-			<div class="column is-three-fifths question-preview">
+			<div class="column is-three-fifths question-preview" id="preview">
 				<div class="question-preview__title">Превью</div>
 				<div class="box">
 					<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.QUESTION_TEXT}</h3>
-					<div id="questionPreviewContainer">
-						<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
-					</div>
+						<div id="questionPreviewContainer"></div>
 					<a class="button is-success">Отправить</a>
-					
 				</div>
 				<div class="box" id="displayTypePreview">
 					<h3 class="title">Результаты опроса:</h3>
 					<div id="chartPreviewContainer">
-						<div id="pieChartPreview">
-							Круговая диаграмма
-						</div>
 					</div>
 				</div>
 			</div>
 		`;
-		this.rootNode.appendChild(PreviewContainerNode);
 
-		//рендер настроек
+		let AnswerPreviewContainer = PreviewContainerNode.querySelector('#questionPreviewContainer');
+		if ( (this.question.OPTIONS != null) && (this.question.OPTIONS != 'undefinded') && (this.question.OPTIONS != '')){
+			let options = JSON.parse(this.question.OPTIONS);
+			for (let i = 0; i < options.length; i++)
+			{
+				const AnswerPreview = Tag.render`
+					<label class="radio"><input type="radio">
+						${options[i]}
+					</label>
+				`;
+				AnswerPreviewContainer.appendChild(AnswerPreview);
+			}
+		}
+		else
+		{
+			AnswerPreviewContainer.appendChild(Tag.render`
+				<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
+			`);
+		}
+
+		let DisplayPreviewContainer = PreviewContainerNode.querySelector('#chartPreviewContainer');
+		let question_display_id = this.question.QUESTION_DISPLAY_ID;
+		let DisplayPreviewNode = Tag.render`
+			<div id="tagCloudPreview">
+				${this.DISPLAY_TYPES[question_display_id]}
+			</div>
+		`;
+
+		DisplayPreviewContainer.appendChild(DisplayPreviewNode);
+
+		return PreviewContainerNode;
+	}
+
+	getQuestionSettingsNode()
+	{
+		console.log(this.question);
 		const SettingsContainerNode =  Tag.render`
-			<div class="column question-settings">
+			<div class="column question-settings" id="settings">
 				<div class="question-settings__title">Настройки</div>
 				
 				<div class="question-settings__input-title">Текст вопроса:</div>
@@ -195,7 +279,6 @@ export class QuizEdit
 				<div class="question-settings__selectable-answers ${this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : ''}" id="selectableAnswers">
 					<div class="question-settings__input-title">Вариаты ответа:</div>
 					<div class="question-settings__answers-container" id="answersContainer">
-						
 					</div>
 					<a class="button" id="addAnswerButton">
 						<i class="fa-solid fa-plus "></i>
@@ -204,10 +287,10 @@ export class QuizEdit
 				
 				<div class="question-settings__input-title">Тип отображения результатов:</div>
 				<select name="displayType" id="displayType">
-					<option value="0" ${this.question.QUESTION_TYPE_ID == 0 ? 'selected' : ''}>Круговая диаграмма</option>
-					<option value="1" ${this.question.QUESTION_TYPE_ID == 1 ? 'selected' : ''}>Облако тэгов</option>
-					<option value="2" ${this.question.QUESTION_TYPE_ID == 2 ? 'selected' : ''}>Столбчатая диаграмма</option>
-					<option value="3" ${this.question.QUESTION_TYPE_ID == 3 ? 'selected' : ''}>Текстовый формат</option>
+					<option value="0" ${this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : ''}>Круговая диаграмма</option>
+					<option value="1" ${this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : ''}>Облако тэгов</option>
+					<option value="2" ${this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : ''}>Столбчатая диаграмма</option>
+					<option value="3" ${this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : ''}>Текстовый формат</option>
 				</select>
 				<button type="submit" class="button is-success" id="save-question-button">Сохранить</button>
 			</div>
@@ -218,18 +301,35 @@ export class QuizEdit
 			for (let i = 0; i < options.length; i++)
 			{
 				let answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
-				const AnswerInput = Tag.render`
-				<input type="text" class="question-settings__answer input" name="selectableAnswer" value="${options[i]}">
-			`;
-				answerInputsContainer.appendChild(AnswerInput);
+				const AnswerInput = Tag.render`<input type="text" class="question-settings__answer input" name="selectableAnswer" value="${options[i]}">`;
+				const AnswerDelete = Tag.render`<a class="button is-danger"><i class="fa-solid fa-trash"></i></a>`;
+				AnswerDelete.onclick = () => { this.deleteAnswer(options[i]) };
+				const AnswerInputNode = Tag.render`<div class="question-settings__answer-inputs">
+					${AnswerInput}
+					${AnswerDelete}
+				</div>`;
+
+				answerInputsContainer.appendChild(AnswerInputNode);
 			}
 		}
 
 		SettingsContainerNode.querySelector('#addAnswerButton').onclick = () => {
 			let answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
 			let currentAnswerCount = answerInputsContainer.childElementCount;
-			const newAnswerInput = Tag.render`
+
+			const AnswerInput = Tag.render`
 				<input type="text" class="question-settings__answer input" name="selectableAnswer" value="Вариант ${currentAnswerCount+1}">
+			`;
+
+			const AnswerDelete = Tag.render`<a class="button is-danger"><i class="fa-solid fa-trash"></i></a>`;
+
+			AnswerDelete.onclick = () => { this.deleteAnswer(options[i]) };
+
+			const newAnswerInput = Tag.render`
+				<div class="question-settings__answer-inputs">
+					${AnswerInput}
+					${AnswerDelete}
+				</div>
 			`;
 			answerInputsContainer.appendChild(newAnswerInput);
 			this.changeQuestion();
@@ -238,11 +338,11 @@ export class QuizEdit
 
 		SettingsContainerNode.querySelector('#save-question-button').onclick = () => {this.saveQuestion()};
 
-		this.rootNode.appendChild(SettingsContainerNode);
-		this.renderPreview();
+		return SettingsContainerNode;
 	}
 
-	changeQuestion(){
+	changeQuestion()
+	{
 		const questionTextInput = document.getElementById('questionText');
 		this.question.QUESTION_TEXT = questionTextInput.value;
 
@@ -256,7 +356,6 @@ export class QuizEdit
 			let answerInputs = document.querySelectorAll('.question-settings__answer');
 			let answerValues = Array.from(answerInputs, input => input.value);
 			this.question.OPTIONS = JSON.stringify(answerValues);
-			console.log(this.question.OPTIONS);
 		}
 		else
 		{
@@ -270,69 +369,8 @@ export class QuizEdit
 		this.renderPreview();
 	}
 
-	renderPreview()
+	deleteAnswer(AnswerValue)
 	{
-		//рендерим текст
-		const questionTextPreview = document.getElementById('questionTextPreview');
-		questionTextPreview.innerHTML = this.question.QUESTION_TEXT;
-
-		//рендерим ввод ответов
-		const questionPreviewContainer = document.getElementById('questionPreviewContainer');
-		let questionPreview;
-		if (this.question.QUESTION_TYPE_ID  == 0){
-			questionPreview = Tag.render`
-				<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
-			`;
-		}
-		if (this.question.QUESTION_TYPE_ID == 1){
-			questionPreview = Tag.render`
-				<div class="control" id="selectablePreview">
-					<label class="radio">
-						<input type="radio">
-						Тут захардкожено пока что
-					</label>
-					<label class="radio">
-						<input type="radio">
-						Тут захардкожено пока что
-					</label>
-				</div>
-			`;
-		}
-		questionPreviewContainer.innerHTML = '';
-		questionPreviewContainer.appendChild(questionPreview);
-
-		//рендерим превью диаграммы
-		const chartPreviewContainer = document.getElementById('chartPreviewContainer');
-		let ChartPreview;
-		if (this.question.QUESTION_DISPLAY_ID === '0'){
-			ChartPreview = Tag.render`
-				<div id="pieChartPreview">
-					Тут типо превью круговой
-				</div>
-			`;
-		}
-		if (this.question.QUESTION_DISPLAY_ID === '1'){
-			ChartPreview = Tag.render`
-				<div id="tagCloudPreview">
-					Облако тегов
-				</div>
-			`;
-		}
-		if (this.question.QUESTION_DISPLAY_ID === '2'){
-			ChartPreview = Tag.render`
-				<div id="barChartPreview">
-					Столбчатая диаграмма
-				</div>
-			`;
-		}
-		if (this.question.QUESTION_DISPLAY_ID === '3'){
-			ChartPreview = Tag.render`
-				<div id="rawOutputPreview">
-					Сырой вывод
-				</div>
-			`;
-		}
-		chartPreviewContainer.innerHTML = '';
-		chartPreviewContainer.appendChild(ChartPreview);
+		alert('TODO : Удаление варианта ответа');
 	}
 }
