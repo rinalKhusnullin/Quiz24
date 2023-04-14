@@ -3,16 +3,18 @@ import {Type, Tag} from 'main.core';
 export class QuizEdit
 {
 	QUESTION_TYPES = {
-		free : 'Свободный ответ',
-		selectable : 'Выбираемый ответ'
+		free : 'Свободный ответ',//0
+		selectable : 'Выбираемый ответ'//1
 	};
 
 	DISPLAY_TYPES = {
-		pieChart : 'Круговая диаграмма',
-		barChart : 'Столбчатая диаграмма',
-		tagCloud : 'Облако тэгов',
-		rawOutput : 'Сырой вывод'
+		pieChart : 'Круговая диаграмма',//0
+		barChart : 'Столбчатая диаграмма',//1
+		tagCloud : 'Облако тэгов',//2
+		rawOutput : 'Сырой вывод'//3
 	};
+
+	question = {};
 
 	constructor(options = {})
 	{
@@ -38,50 +40,55 @@ export class QuizEdit
 
 	reload()
 	{
-		this.loadQuestion()
-			.then(question => {
-				this.question = question;
-				this.render();
+		this.loadQuestions(1)
+			.then(questions => {
+				this.questions = questions;
+				console.log(questions);
+				this.loadQuestion(1)
+					.then(question => {
+						this.question = question;
+						this.render();
+					});
 			});
+
 	}
 
-	// loadQuestions()
-	// {
-	// 	return new Promise((resolve, reject) => {
-	// 		BX.ajax.runAction(
-	// 				'up:quiz.quiz.getQuestions',
-	// 				{
-	// 					data:{
-	// 						quizId:1,
-	// 					}
-	// 				}
-	// 			)
-	// 			.then((response) => {
-	// 				const question = response.data.question;
-	// 				resolve(question);
-	// 			})
-	// 			.catch((error) => {
-	// 				console.error(error);
-	// 				reject(error);
-	// 			})
-	// 		;
-	// 	});
-	// }
-
-	loadQuestion()
+	loadQuestions(quizId)
 	{
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.question.getQuestions',
+					{
+						data:{
+							quizId: quizId,
+						}
+					}
+				)
+				.then((response) => {
+					const questions = response.data.questions;
+					resolve(questions);
+				})
+				.catch((error) => {
+					console.error(error);
+					reject(error);
+				})
+			;
+		});
+	}
 
+	loadQuestion(id)
+	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 					'up:quiz.question.getQuestion',
 					{
 						data:{
-							id:1,
+							id: id,
 						}
 					}
 				)
 				.then((response) => {
-					const question = response.data.question;
+					const question = response.data.question[0];
 					console.log(question);
 					resolve(question);
 				})
@@ -93,46 +100,46 @@ export class QuizEdit
 		});
 	}
 
-
 	render()
 	{
 		this.rootNode.innerHTML = ``;
-
-		//рендер вопросов
 		const QuestionsContainerNode = Tag.render`
 			<div class="column is-one-fifth question-list">
 				<div class="question-list__title">Вопросы</div>
 				<div class="question-list__questions" id="questions">
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
-					<div class="question-list__question">
-					</div>
+					
+				</div>
+				<div class="question-list__append-button mt-2">
+					+
 				</div>
 			</div>
 		`;
 		this.rootNode.appendChild(QuestionsContainerNode);
-
+		this.renderQuestionsList();
+		this.renderQuestion();
+	}
+	renderQuestionsList(){
+		const QuestionsNode = Tag.render`<div></div>`;
+		this.questions.forEach(questionData => {
+			const questionCard = Tag.render`
+				<div class="question-list__question" data-id="${questionData.ID}">
+					${questionData.QUESTION_TEXT}
+				</div>
+			`;
+			QuestionsNode.appendChild(questionCard);
+		});
+		let questionsContainer = document.getElementById('questions');
+		questionsContainer.innerHTML = ``;
+		questionsContainer.appendChild(QuestionsNode);
+	}
+	renderQuestion()
+	{
 		//рендер превью
-		//Название вопроса, тип ответа (выбираемый -> варианты ответа),
 		const PreviewContainerNode =  Tag.render`
 			<div class="column is-three-fifths question-preview">
 				<div class="question-preview__title">Превью</div>
 				<div class="box">
-					<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.title}</h3>
+					<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.QUESTION_TEXT}</h3>
 					<div id="questionPreviewContainer">
 						<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
 					</div>
@@ -157,64 +164,87 @@ export class QuizEdit
 				<div class="question-settings__title">Настройки</div>
 				
 				<div class="question-settings__input-title">Текст вопроса:</div>
-				<input value="${this.question.title}" class="input" type="text" placeholder="Введите вопрос" name="questionText" id="questionText">
+				<input value="${this.question.QUESTION_TEXT}" class="input" type="text" placeholder="Введите вопрос" name="questionText" id="questionText">
 				
 				<div class="question-settings__input-title">Тип ответа:</div>
 				<select class="select" name="questionType" id="questionType">
-					<option value="free" selected>${this.QUESTION_TYPES.free}</option>
-					<option value="selectable">${this.QUESTION_TYPES.selectable}</option>
+					<option value="0" ${this.question.QUESTION_TYPE_ID == 0 ? 'selected' : ''}>Свободный ответ</option>
+					<option value="1" ${this.question.QUESTION_TYPE_ID == 1 ? 'selected' : ''}>Выбор варианта</option>
 				</select>
 				
-				<div class="question-settings__selectable-answers hidden" id="selectableAnswers">
-				<div class="question-settings__input-title">Вариаты ответа:</div>
-				<div class="question-settings__answers-container" id="answersContainer">
-					<input type="text" class="question-settings__answer input" name="selectableAnswer">
+				<div class="question-settings__selectable-answers" id="selectableAnswers">
+					<div class="question-settings__input-title">Вариаты ответа:</div>
+					<div class="question-settings__answers-container" id="answersContainer">
+						<input type="text" class="question-settings__answer input" name="selectableAnswer" value="Вариант 1">
+					</div>
+					<a class="button" id="addAnswerButton">
+						<i class="fa-solid fa-plus "></i>
+					</a>
 				</div>
-				<a class="button" id="addAnswerButton">
-					<i class="fa-solid fa-plus "></i>
-				</a>
-			</div>
 				
-			<div class="question-settings__input-title">Тип отображения результатов:</div>
+				<div class="question-settings__input-title">Тип отображения результатов:</div>
 				<select name="displayType" id="displayType">
-					<option value="pieChart" selected>Круговая диаграмма</option>
-					<option value="tagCloud">Облако тэгов</option>
-					<option value="barChart">Столбчатая диаграмма</option>
-					<option value="rawOutput">Текстовый формат</option>
+					<option value="0" ${this.question.QUESTION_TYPE_ID == 0 ? 'selected' : ''}>Круговая диаграмма</option>
+					<option value="1" ${this.question.QUESTION_TYPE_ID == 1 ? 'selected' : ''}>Облако тэгов</option>
+					<option value="2" ${this.question.QUESTION_TYPE_ID == 2 ? 'selected' : ''}>Столбчатая диаграмма</option>
+					<option value="3" ${this.question.QUESTION_TYPE_ID == 3 ? 'selected' : ''}>Текстовый формат</option>
 				</select>
 				<button type="submit" class="button is-success">Сохранить</button>
 			</div>
 		`;
-		SettingsContainerNode.oninput = this.renderPreview;
+
+		SettingsContainerNode.querySelector('#addAnswerButton').onclick = function(){
+			let answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
+			let currentAnswerCount = answerInputsContainer.childElementCount;
+			console.log(currentAnswerCount);
+			const newAnswerInput = Tag.render`
+				<input type="text" class="question-settings__answer input" name="selectableAnswer" value="Вариант ${currentAnswerCount+1}">
+			`;
+			answerInputsContainer.appendChild(newAnswerInput);
+		}
+		SettingsContainerNode.oninput = () => { this.changeQuestion() };
 		this.rootNode.appendChild(SettingsContainerNode);
+	}
+
+	changeQuestion(){
+		const questionTextInput = document.getElementById('questionText');
+		this.question.QUESTION_TEXT = questionTextInput.value;
+
+		const questionTypeInput = document.getElementById('questionType');
+		this.question.QUESTION_TYPE_ID = questionTypeInput.value;
+
+		const selectableAnswers = document.getElementById('selectableAnswers');
+		if (this.question.QUESTION_TYPE_ID == 1)
+		{
+			selectableAnswers.classList.remove("hidden");
+		}
+		else
+		{
+			selectableAnswers.classList.add("hidden");
+		}
+
+
+		const displayTypeInput = document.getElementById('displayType');
+		this.question.QUESTION_DISPLAY_ID = displayTypeInput.value;
+
+		this.renderPreview();
 	}
 
 	renderPreview()
 	{
-		//получаем настройки
-		let QuestionSettings = {};
-		const questionTextInput = document.getElementById('questionText');
-		QuestionSettings.questionText = questionTextInput.value;
-
-		const questionTypeInput = document.getElementById('questionType');
-		QuestionSettings.questionType = questionTypeInput.value;
-
-		const displayTypeInput = document.getElementById('displayType');
-		QuestionSettings.displayType = displayTypeInput.value;
-
 		//рендерим текст
 		const questionTextPreview = document.getElementById('questionTextPreview');
-		questionTextPreview.innerHTML = QuestionSettings.questionText;
+		questionTextPreview.innerHTML = this.question.QUESTION_TEXT;
 
 		//рендерим ввод ответов
 		const questionPreviewContainer = document.getElementById('questionPreviewContainer');
 		let questionPreview;
-		if (QuestionSettings.questionType === 'free'){
+		if (this.question.QUESTION_TYPE_ID  == '0'){
 			questionPreview = Tag.render`
 				<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
 			`;
 		}
-		if (QuestionSettings.questionType === 'selectable'){
+		if (this.question.QUESTION_TYPE_ID == '1'){
 			questionPreview = Tag.render`
 				<div class="control" id="selectablePreview">
 					<label class="radio">
@@ -234,28 +264,28 @@ export class QuizEdit
 		//рендерим превью диаграммы
 		const chartPreviewContainer = document.getElementById('chartPreviewContainer');
 		let ChartPreview;
-		if (QuestionSettings.displayType === 'pieChart'){
+		if (this.question.QUESTION_DISPLAY_ID === '0'){
 			ChartPreview = Tag.render`
 				<div id="pieChartPreview">
 					Тут типо превью круговой
 				</div>
 			`;
 		}
-		if (QuestionSettings.displayType === 'tagCloud'){
+		if (this.question.QUESTION_DISPLAY_ID === '1'){
 			ChartPreview = Tag.render`
 				<div id="tagCloudPreview">
 					Облако тегов
 				</div>
 			`;
 		}
-		if (QuestionSettings.displayType === 'barChart'){
+		if (this.question.QUESTION_DISPLAY_ID === '2'){
 			ChartPreview = Tag.render`
 				<div id="barChartPreview">
 					Столбчатая диаграмма
 				</div>
 			`;
 		}
-		if (QuestionSettings.displayType === 'rawOutput'){
+		if (this.question.QUESTION_DISPLAY_ID === '3'){
 			ChartPreview = Tag.render`
 				<div id="rawOutputPreview">
 					Сырой вывод

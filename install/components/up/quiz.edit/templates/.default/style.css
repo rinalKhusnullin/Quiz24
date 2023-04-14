@@ -7,13 +7,12 @@
 }
 
 .question-list{
+	overflow-y: auto;
+	max-height: calc(100vh - 70px);
 }
 
 .question-list__questions{
 
-	overflow-y: auto;
-	height: 100%;
-	max-height: calc(100vh - 70px);
 }
 
 .question-list__questions::-webkit-scrollbar {
@@ -36,6 +35,13 @@
 }
 
 .question-list__question{
+	width: 100px;
+	height: 50px;
+	background: red;
+	margin: 0 auto;
+}
+
+.question-list__append-button{
 	width: 100px;
 	height: 50px;
 	background: red;
