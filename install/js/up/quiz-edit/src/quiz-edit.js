@@ -47,6 +47,7 @@ export class QuizEdit
 				this.loadQuestion(1)
 					.then(question => {
 						this.question = question;
+						console.log(question)
 						this.render();
 					});
 			});
@@ -88,8 +89,7 @@ export class QuizEdit
 					}
 				)
 				.then((response) => {
-					const question = response.data.question[0];
-					console.log(question);
+					const question = response.data.question;
 					resolve(question);
 				})
 				.catch((error) => {
@@ -98,6 +98,25 @@ export class QuizEdit
 				})
 			;
 		});
+	}
+
+	saveQuestion()
+	{
+		BX.ajax.runAction(
+				'up:quiz.question.setQuestion',
+				{
+					data:{
+						question : this.question
+					}
+				}
+			)
+			.then((response) => {
+				console.log(response);
+			})
+			.catch((error) => {
+				console.error(error);
+			})
+		;
 	}
 
 	render()
@@ -134,6 +153,7 @@ export class QuizEdit
 	}
 	renderQuestion()
 	{
+		console.log(this.question);
 		//рендер превью
 		const PreviewContainerNode =  Tag.render`
 			<div class="column is-three-fifths question-preview">
@@ -172,10 +192,10 @@ export class QuizEdit
 					<option value="1" ${this.question.QUESTION_TYPE_ID == 1 ? 'selected' : ''}>Выбор варианта</option>
 				</select>
 				
-				<div class="question-settings__selectable-answers" id="selectableAnswers">
+				<div class="question-settings__selectable-answers ${this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : ''}" id="selectableAnswers">
 					<div class="question-settings__input-title">Вариаты ответа:</div>
 					<div class="question-settings__answers-container" id="answersContainer">
-						<input type="text" class="question-settings__answer input" name="selectableAnswer" value="Вариант 1">
+						
 					</div>
 					<a class="button" id="addAnswerButton">
 						<i class="fa-solid fa-plus "></i>
@@ -189,21 +209,37 @@ export class QuizEdit
 					<option value="2" ${this.question.QUESTION_TYPE_ID == 2 ? 'selected' : ''}>Столбчатая диаграмма</option>
 					<option value="3" ${this.question.QUESTION_TYPE_ID == 3 ? 'selected' : ''}>Текстовый формат</option>
 				</select>
-				<button type="submit" class="button is-success">Сохранить</button>
+				<button type="submit" class="button is-success" id="save-question-button">Сохранить</button>
 			</div>
 		`;
 
-		SettingsContainerNode.querySelector('#addAnswerButton').onclick = function(){
+		if ( (this.question.OPTIONS != null) && (this.question.OPTIONS != 'undefinded') && (this.question.OPTIONS != '')){
+			let options = JSON.parse(this.question.OPTIONS);
+			for (let i = 0; i < options.length; i++)
+			{
+				let answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
+				const AnswerInput = Tag.render`
+				<input type="text" class="question-settings__answer input" name="selectableAnswer" value="${options[i]}">
+			`;
+				answerInputsContainer.appendChild(AnswerInput);
+			}
+		}
+
+		SettingsContainerNode.querySelector('#addAnswerButton').onclick = () => {
 			let answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
 			let currentAnswerCount = answerInputsContainer.childElementCount;
-			console.log(currentAnswerCount);
 			const newAnswerInput = Tag.render`
 				<input type="text" class="question-settings__answer input" name="selectableAnswer" value="Вариант ${currentAnswerCount+1}">
 			`;
 			answerInputsContainer.appendChild(newAnswerInput);
+			this.changeQuestion();
 		}
 		SettingsContainerNode.oninput = () => { this.changeQuestion() };
+
+		SettingsContainerNode.querySelector('#save-question-button').onclick = () => {this.saveQuestion()};
+
 		this.rootNode.appendChild(SettingsContainerNode);
+		this.renderPreview();
 	}
 
 	changeQuestion(){
@@ -217,12 +253,16 @@ export class QuizEdit
 		if (this.question.QUESTION_TYPE_ID == 1)
 		{
 			selectableAnswers.classList.remove("hidden");
+			let answerInputs = document.querySelectorAll('.question-settings__answer');
+			let answerValues = Array.from(answerInputs, input => input.value);
+			this.question.OPTIONS = JSON.stringify(answerValues);
+			console.log(this.question.OPTIONS);
 		}
 		else
 		{
 			selectableAnswers.classList.add("hidden");
+			this.question.OPTIONS = null;
 		}
-
 
 		const displayTypeInput = document.getElementById('displayType');
 		this.question.QUESTION_DISPLAY_ID = displayTypeInput.value;
@@ -239,12 +279,12 @@ export class QuizEdit
 		//рендерим ввод ответов
 		const questionPreviewContainer = document.getElementById('questionPreviewContainer');
 		let questionPreview;
-		if (this.question.QUESTION_TYPE_ID  == '0'){
+		if (this.question.QUESTION_TYPE_ID  == 0){
 			questionPreview = Tag.render`
 				<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
 			`;
 		}
-		if (this.question.QUESTION_TYPE_ID == '1'){
+		if (this.question.QUESTION_TYPE_ID == 1){
 			questionPreview = Tag.render`
 				<div class="control" id="selectablePreview">
 					<label class="radio">
