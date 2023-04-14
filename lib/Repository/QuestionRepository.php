@@ -19,17 +19,17 @@ class QuestionRepository
 		return $questionList;
 	}
 
-	public static function createQuestion(int $quizId): ?array
-	{
-		$permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$code = substr(str_shuffle($permitted_chars), 0, 4);
-		$result = QuizzesTable::add(['QUIZ_ID' => $quizId, 'CODE'=>$code]);
-		if ($result->isSuccess())
-		{
-			return null;
-		}
-		return $result->getErrors();
-	}
+	// public static function createQuestion(int $quizId): ?array
+	// {
+	// 	$permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	// 	$code = substr(str_shuffle($permitted_chars), 0, 4);
+	// 	$result = QuizzesTable::add(['QUIZ_ID' => $quizId, 'CODE'=>$code]);
+	// 	if ($result->isSuccess())
+	// 	{
+	// 		return null;
+	// 	}
+	// 	return $result->getErrors();
+	// }
 
 	public static function getQuestion(int $id): ?array
 	{
@@ -49,5 +49,24 @@ class QuestionRepository
 		$result = QuestionsTable::update($id,$newValues);
 
 		return $result->getData();
+	}
+
+	public static function createQuestion() : ?int
+	{
+		$questionValues = [
+			'QUIZ_ID' => 1,
+			'QUESTION_TEXT' => 'Новый вопрос',
+			'QUESTION_TYPE_ID' => 0,
+			'QUESTION_DISPLAY_ID' => 0,
+			'OPTIONS' => null,
+		];
+
+		$result = QuestionsTable::add($questionValues);
+
+		if (!$result->isSuccess())
+		{
+			return null;
+		}
+		return $result->getId();
 	}
 }
