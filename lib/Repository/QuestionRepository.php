@@ -33,7 +33,21 @@ class QuestionRepository
 
 	public static function getQuestion(int $id): ?array
 	{
-		$question = QuestionsTable::getById($id)->fetch();
-		return $question;
+		return QuestionsTable::getById($id)->fetch();
+	}
+
+	public static function setQuestions($question): ?array
+	{
+
+		$id = $question['ID'];
+		$newValues = array(
+			'QUESTION_TEXT' => $question['QUESTION_TEXT'],
+			'QUESTION_TYPE_ID' => $question['QUESTION_TYPE_ID'],
+			'QUESTION_DISPLAY_ID' => $question['QUESTION_DISPLAY_ID'],
+			'OPTIONS' => $question['OPTIONS'],
+		);
+		$result = QuestionsTable::update($id,$newValues);
+
+		return $result->getData();
 	}
 }

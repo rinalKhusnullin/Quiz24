@@ -37,4 +37,10 @@ class Question extends Engine\Controller
 			'questions' => $questions
 		];
 	}
+
+	public function setQuestionAction(array $question): ?array
+	{
+
+		return QuestionRepository::setQuestions($question);
+	}
 }
