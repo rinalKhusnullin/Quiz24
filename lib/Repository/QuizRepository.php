@@ -51,7 +51,7 @@ class QuizRepository
 	public static function getQuiz(int $id)
 	{
 		$result = QuizzesTable::getList([
-			'select' => ['ID', 'TITLE', 'CODE'],
+			'select' => ['ID', 'TITLE', 'CODE', 'IS_ACTIVE'],
 			'filter' => ['=ID' => $id],
 		])->fetch();
 
