@@ -24,6 +24,12 @@ class Question extends Engine\Controller
 
 	public function getQuestionAction(int $id): ?array
 	{
+		if ($id <= 0)
+		{
+			$this->addError(new Error('Question id should be greater than 0', 'invalid_question_id'));
+			return null;
+		}
+
 		$question = QuestionRepository::getQuestion($id);
 		return [
 			'question' => $question
@@ -32,6 +38,12 @@ class Question extends Engine\Controller
 
 	public function getQuestionsAction(int $quizId) : ?array
 	{
+		if ($quizId <= 0)
+		{
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
+			return null;
+		}
+
 		$questions = QuestionRepository::getQuestions($quizId);
 		return [
 			'questions' => $questions
@@ -44,11 +56,16 @@ class Question extends Engine\Controller
 		return QuestionRepository::setQuestions($question);
 	}
 
-	public function createQuestionAction() : ?array
+	public function createQuestionAction(int $quizId) : ?array
 	{
-		//check valid question
+		if ($quizId <= 0)
+		{
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
+			return null;
+		}
+
 		return [
-			'newQuestionId' => QuestionRepository::createQuestion()
+			'newQuestionId' => QuestionRepository::createQuestion($quizId)
 		];
 	}
 }

@@ -22,18 +22,33 @@ class Quiz extends Engine\Controller
 		);
 	}
 
-	public function createQuizAction(string $title, int $id): ?array
+	public function createQuizAction(string $title, int $userId)
 	{
-		if (!empty(trim($title)))
+		if (empty(trim($title)))
 		{
-			return QuizRepository::createQuiz($title, $id);
+			$this->addError(new Error('Quiz title must not be empty', 'invalid_quiz_title'));
+			return null;
 		}
-		return null;
+
+		if ($userId <= 0)
+		{
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
+			return null;
+		}
+
+		return QuizRepository::createQuiz($title, $userId);
 	}
 
-	public function getListAction(): ?array
+	public function getListAction(int $userId): ?array
 	{
-		$quizList = QuizRepository::getList();
+		if ($userId <= 0)
+		{
+			$this->addError(new Error('User id should be greater than 0', 'invalid_user_id'));
+			return null;
+		}
+
+		$quizList = QuizRepository::getList($userId);
+
 		return [
 			'quizList' => $quizList
 		];
@@ -41,6 +56,12 @@ class Quiz extends Engine\Controller
 
 	public function deleteQuizAction(int $id): ?array
 	{
+		if ($id <= 0)
+		{
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
+			return null;
+		}
+
 		return QuizRepository::deleteQuiz($id);
 	}
 
@@ -48,10 +69,22 @@ class Quiz extends Engine\Controller
 	{
 		if ($id <= 0)
 		{
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
 			return null;
 		}
 		return [
 			'quiz' => QuizRepository::getQuiz($id),
+		];
+	}
+
+	public function changeStateAction(int $id) : ?array
+	{
+		if ($id <= 0)
+		{
+			return null;
+		}
+		return [
+			'quizId' => QuizRepository::changeState($id),
 		];
 	}
 }
