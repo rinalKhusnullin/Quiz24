@@ -71,6 +71,10 @@ class QuizzesTable extends DataManager
 							  []
 			))->configureTitle(Loc::getMessage('QUIZZES_ENTITY_USER_ID_FIELD'))
 			  ->configureRequired(true),
+			(new IntegerField('IS_ACTIVE',
+							  []
+			))->configureTitle(Loc::getMessage('QUIZZES_ENTITY_IS_ACTIVE_FIELD'))
+			  ->configureDefaultValue(0),
 
 			(new Reference(
 				'USERS',
