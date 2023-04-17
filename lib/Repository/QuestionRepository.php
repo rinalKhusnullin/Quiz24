@@ -14,7 +14,8 @@ class QuestionRepository
 				'ID',
 				'QUESTION_TEXT',
 				'CODE',
-			]
+			],
+			'filter' => ['=QUIZ_ID' => $quizId],
 		])->fetchAll();
 		return $questionList;
 	}
@@ -31,7 +32,7 @@ class QuestionRepository
 	// 	return $result->getErrors();
 	// }
 
-	public static function getQuestion(int $id): ?array
+	public static function getQuestion(int $id)
 	{
 		return QuestionsTable::getById($id)->fetch();
 	}
@@ -51,10 +52,10 @@ class QuestionRepository
 		return $result->getData();
 	}
 
-	public static function createQuestion() : ?int
+	public static function createQuestion(int $quizId) : ?int
 	{
 		$questionValues = [
-			'QUIZ_ID' => 1,
+			'QUIZ_ID' => $quizId,
 			'QUESTION_TEXT' => 'Новый вопрос',
 			'QUESTION_TYPE_ID' => 0,
 			'QUESTION_DISPLAY_ID' => 0,
