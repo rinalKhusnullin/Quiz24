@@ -408,5 +408,6 @@ export class QuizEdit
 		options.splice(AnswerPosition, 1);
 		this.question.OPTIONS = JSON.stringify(options);
 		this.renderSettings();
+		this.renderPreview();
 	}
 }
