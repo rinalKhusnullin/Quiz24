@@ -1,0 +1,26 @@
+.question-form__container{
+	width: 400px;
+	margin: 30px auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: left;
+}
+
+.radio + .radio {
+	margin-left: 0!important;
+}
+
+.control
+{
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+}
+
+.question-form__input{
+	margin-bottom: 20px;
+}
+
+.question-form__button{
+	width: 100%;
+}
