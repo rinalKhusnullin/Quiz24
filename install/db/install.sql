@@ -44,7 +44,7 @@ INSERT INTO up_quiz_questions VALUES (1, 1, 'Кто же нальет кофей
 
 CREATE TABLE IF NOT EXISTS up_quiz_answers
 (
-	ID INT NOT NULL,
+	ID INT NOT NULL AUTO_INCREMENT,
 	QUESTION_ID INT NOT NULL,
 	ANSWER varchar(128),
 	PRIMARY KEY(ID),
