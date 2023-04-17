@@ -12,8 +12,7 @@ class QuestionRepository
 		$questionList = QuestionsTable::getList([
 			'select' => [
 				'ID',
-				'QUESTION_TEXT',
-				'CODE',
+				'QUESTION_TEXT'
 			],
 			'filter' => ['=QUIZ_ID' => $quizId],
 		])->fetchAll();
@@ -68,6 +67,7 @@ class QuestionRepository
 		{
 			return null;
 		}
+
 		return $result->getId();
 	}
 }

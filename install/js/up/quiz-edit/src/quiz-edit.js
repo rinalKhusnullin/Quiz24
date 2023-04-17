@@ -114,6 +114,13 @@ export class QuizEdit
 				}
 			)
 			.then((response) => {
+				console.log(this.currentQuestionId);
+				console.log(this.questions);
+				const curr = this.questions.find(item => item.ID == this.currentQuestionId);
+				if (curr) {
+					curr.QUESTION_TEXT = this.question.QUESTION_TEXT;
+				}
+				console.log(this.questions);
 				this.render();
 				alert('Данные о вопросе успешно сохранены!');
 			})
@@ -133,8 +140,12 @@ export class QuizEdit
 				}
 			)
 			.then((response) => {
-				this.currentQuestionId = response.data.newQuestionId; // Тут нужно еще загрузить список вопрос и зарендерить ыы
+				console.log(response.data);
+				this.currentQuestionId = response.data.newQuestionId;
+				this.questions = response.data.questions;
 				this.getQuestion(this.currentQuestionId);
+				this.render();
+
 			})
 			.catch((error) => {
 				console.error(error);
@@ -211,6 +222,7 @@ export class QuizEdit
 			`;
 			questionCard.onclick = () => {
 				this.getQuestion(+questionData.ID);
+				this.currentQuestionId = +questionData.ID;
 			};
 			QuestionsContainer.appendChild(questionCard);
 		});
@@ -316,6 +328,7 @@ export class QuizEdit
 			</div>
 		`;
 
+
 		if ( (this.question.OPTIONS != null) && (this.question.OPTIONS != 'undefinded') && (this.question.OPTIONS != '')){
 			let options = JSON.parse(this.question.OPTIONS);
 			for (let i = 0; i < options.length; i++)
@@ -323,7 +336,7 @@ export class QuizEdit
 				let answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
 				const AnswerInput = Tag.render`<input type="text" class="question-settings__answer input" name="selectableAnswer" value="${options[i]}">`;
 				const AnswerDelete = Tag.render`<a class="button is-danger"><i class="fa-solid fa-trash"></i></a>`;
-				AnswerDelete.onclick = () => { this.deleteAnswer(options[i]) };
+				AnswerDelete.onclick = () => { this.deleteAnswer(i) };
 				const AnswerInputNode = Tag.render`<div class="question-settings__answer-inputs">
 					${AnswerInput}
 					${AnswerDelete}
@@ -342,8 +355,8 @@ export class QuizEdit
 			`;
 
 			const AnswerDelete = Tag.render`<a class="button is-danger"><i class="fa-solid fa-trash"></i></a>`;
-
-			AnswerDelete.onclick = () => { this.deleteAnswer(options[i]) };
+			let options = JSON.parse(this.question.OPTIONS);
+			AnswerDelete.onclick = () => { this.deleteAnswer(options.length) };
 
 			const newAnswerInput = Tag.render`
 				<div class="question-settings__answer-inputs">
@@ -389,8 +402,11 @@ export class QuizEdit
 		this.renderPreview();
 	}
 
-	deleteAnswer(AnswerValue)
+	deleteAnswer(AnswerPosition)
 	{
-		alert('TODO : Удаление варианта ответа');
+		let options = JSON.parse(this.question.OPTIONS);
+		options.splice(AnswerPosition, 1);
+		this.question.OPTIONS = JSON.stringify(options);
+		this.renderSettings();
 	}
 }

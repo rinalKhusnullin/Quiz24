@@ -99,6 +99,15 @@ this.Up = this.Up || {};
 	          question: this.question
 	        }
 	      }).then(function (response) {
+	        console.log(_this3.currentQuestionId);
+	        console.log(_this3.questions);
+	        var curr = _this3.questions.find(function (item) {
+	          return item.ID == _this3.currentQuestionId;
+	        });
+	        if (curr) {
+	          curr.QUESTION_TEXT = _this3.question.QUESTION_TEXT;
+	        }
+	        console.log(_this3.questions);
 	        _this3.render();
 	        alert('Данные о вопросе успешно сохранены!');
 	      })["catch"](function (error) {
@@ -114,8 +123,11 @@ this.Up = this.Up || {};
 	          quizId: this.quizId
 	        }
 	      }).then(function (response) {
-	        _this4.currentQuestionId = response.data.newQuestionId; // Тут нужно еще загрузить список вопрос и зарендерить ыы
+	        console.log(response.data);
+	        _this4.currentQuestionId = response.data.newQuestionId;
+	        _this4.questions = response.data.questions;
 	        _this4.getQuestion(_this4.currentQuestionId);
+	        _this4.render();
 	      })["catch"](function (error) {
 	        console.error(error);
 	      });
@@ -182,6 +194,7 @@ this.Up = this.Up || {};
 	        var questionCard = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a class=\"question-list__question button\" data-id=\"", "\">\n\t\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), questionData.ID, questionData.QUESTION_TEXT);
 	        questionCard.onclick = function () {
 	          _this7.getQuestion(+questionData.ID);
+	          _this7.currentQuestionId = +questionData.ID;
 	        };
 	        QuestionsContainer.appendChild(questionCard);
 	      });
@@ -198,9 +211,9 @@ this.Up = this.Up || {};
 	      var PreviewContainerNode = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-three-fifths question-preview\" id=\"preview\">\n\t\t\t\t<div class=\"question-preview__title\">\u041F\u0440\u0435\u0432\u044C\u044E</div>\n\t\t\t\t<div class=\"box\">\n\t\t\t\t\t<h3 class=\"title question-preview__question-text\" id=\"questionTextPreview\">", "</h3>\n\t\t\t\t\t\t<div id=\"questionPreviewContainer\"></div>\n\t\t\t\t\t<a class=\"button is-success\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C</a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"box\" id=\"displayTypePreview\">\n\t\t\t\t\t<h3 class=\"title\">\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u043E\u043F\u0440\u043E\u0441\u0430:</h3>\n\t\t\t\t\t<div id=\"chartPreviewContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
 	      var AnswerPreviewContainer = PreviewContainerNode.querySelector('#questionPreviewContainer');
 	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
-	        var _options = JSON.parse(this.question.OPTIONS);
-	        for (var _i = 0; _i < _options.length; _i++) {
-	          var AnswerPreview = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\"><input type=\"radio\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), _options[_i]);
+	        var options = JSON.parse(this.question.OPTIONS);
+	        for (var i = 0; i < options.length; i++) {
+	          var AnswerPreview = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\"><input type=\"radio\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), options[i]);
 	          AnswerPreviewContainer.appendChild(AnswerPreview);
 	        }
 	      } else {
@@ -219,19 +232,19 @@ this.Up = this.Up || {};
 	      console.log(this.question);
 	      var SettingsContainerNode = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column question-settings\" id=\"settings\">\n\t\t\t\t<div class=\"question-settings__title\">\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0435\u043A\u0441\u0442 \u0432\u043E\u043F\u0440\u043E\u0441\u0430:</div>\n\t\t\t\t<input value=\"", "\" class=\"input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\" name=\"questionText\" id=\"questionText\">\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t<select class=\"select\" name=\"questionType\" id=\"questionType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u0421\u0432\u043E\u0431\u043E\u0434\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u0412\u044B\u0431\u043E\u0440 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u0430</option>\n\t\t\t\t</select>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__selectable-answers ", "\" id=\"selectableAnswers\">\n\t\t\t\t\t<div class=\"question-settings__input-title\">\u0412\u0430\u0440\u0438\u0430\u0442\u044B \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t\t<div class=\"question-settings__answers-container\" id=\"answersContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<a class=\"button\" id=\"addAnswerButton\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-plus \"></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432:</div>\n\t\t\t\t<select name=\"displayType\" id=\"displayType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u041A\u0440\u0443\u0433\u043E\u0432\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u041E\u0431\u043B\u0430\u043A\u043E \u0442\u044D\u0433\u043E\u0432</option>\n\t\t\t\t\t<option value=\"2\" ", ">\u0421\u0442\u043E\u043B\u0431\u0447\u0430\u0442\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"3\" ", ">\u0422\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0439 \u0444\u043E\u0440\u043C\u0430\u0442</option>\n\t\t\t\t</select>\n\t\t\t\t<button type=\"submit\" class=\"button is-success\" id=\"save-question-button\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT, this.question.QUESTION_TYPE_ID == 0 ? 'selected' : '', this.question.QUESTION_TYPE_ID == 1 ? 'selected' : '', this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : '', this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : '');
 	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
-	        var _options2 = JSON.parse(this.question.OPTIONS);
+	        var options = JSON.parse(this.question.OPTIONS);
 	        var _loop = function _loop(i) {
 	          var answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
-	          var AnswerInput = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"", "\">"])), _options2[i]);
+	          var AnswerInput = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"", "\">"])), options[i]);
 	          var AnswerDelete = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["<a class=\"button is-danger\"><i class=\"fa-solid fa-trash\"></i></a>"])));
 	          AnswerDelete.onclick = function () {
-	            _this8.deleteAnswer(_options2[i]);
+	            _this8.deleteAnswer(i);
 	          };
 	          var AnswerInputNode = main_core.Tag.render(_templateObject12 || (_templateObject12 = babelHelpers.taggedTemplateLiteral(["<div class=\"question-settings__answer-inputs\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>"])), AnswerInput, AnswerDelete);
 	          answerInputsContainer.appendChild(AnswerInputNode);
 	        };
-	        for (var _i2 = 0; _i2 < _options2.length; _i2++) {
-	          _loop(_i2);
+	        for (var i = 0; i < options.length; i++) {
+	          _loop(i);
 	        }
 	      }
 	      SettingsContainerNode.querySelector('#addAnswerButton').onclick = function () {
@@ -239,8 +252,9 @@ this.Up = this.Up || {};
 	        var currentAnswerCount = answerInputsContainer.childElementCount;
 	        var AnswerInput = main_core.Tag.render(_templateObject13 || (_templateObject13 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"\u0412\u0430\u0440\u0438\u0430\u043D\u0442 ", "\">\n\t\t\t"])), currentAnswerCount + 1);
 	        var AnswerDelete = main_core.Tag.render(_templateObject14 || (_templateObject14 = babelHelpers.taggedTemplateLiteral(["<a class=\"button is-danger\"><i class=\"fa-solid fa-trash\"></i></a>"])));
+	        var options = JSON.parse(_this8.question.OPTIONS);
 	        AnswerDelete.onclick = function () {
-	          _this8.deleteAnswer(options[i]);
+	          _this8.deleteAnswer(options.length);
 	        };
 	        var newAnswerInput = main_core.Tag.render(_templateObject15 || (_templateObject15 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"question-settings__answer-inputs\">\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), AnswerInput, AnswerDelete);
 	        answerInputsContainer.appendChild(newAnswerInput);
@@ -279,8 +293,11 @@ this.Up = this.Up || {};
 	    }
 	  }, {
 	    key: "deleteAnswer",
-	    value: function deleteAnswer(AnswerValue) {
-	      alert('TODO : Удаление варианта ответа');
+	    value: function deleteAnswer(AnswerPosition) {
+	      var options = JSON.parse(this.question.OPTIONS);
+	      options.splice(AnswerPosition, 1);
+	      this.question.OPTIONS = JSON.stringify(options);
+	      this.renderSettings();
 	    }
 	  }]);
 	  return QuizEdit;
