@@ -37,7 +37,6 @@ export class QuizEdit
 		this.questions = [];
 		this.quiz = {};
 		this.question = {};
-		this.currentQuestionId = 1;
 		this.reload();
 	}
 
@@ -115,6 +114,7 @@ export class QuizEdit
 				}
 			)
 			.then((response) => {
+				this.render();
 				alert('Данные о вопросе успешно сохранены!');
 			})
 			.catch((error) => {
@@ -126,24 +126,26 @@ export class QuizEdit
 	createQuestion()
 	{
 		BX.ajax.runAction(
-				'up:quiz.question.createQuestion',
+				'up:quiz.question.createQuestion', {
+					data: {
+						quizId: this.quizId,
+					}
+				}
 			)
 			.then((response) => {
-				this.getQuestion(response.data.newQuestionId);
-				this.render();
+				this.currentQuestionId = response.data.newQuestionId; // Тут нужно еще загрузить список вопрос и зарендерить ыы
+				this.getQuestion(this.currentQuestionId);
 			})
 			.catch((error) => {
 				console.error(error);
-			})
-		;
+			});
 	}
 
 	getQuestion(id)
 	{
 		this.loadQuestion(id).then(question =>{
 			this.question = question;
-			this.renderPreview();
-			this.renderSettings();
+			this.render();
 		})
 	}
 
@@ -154,10 +156,19 @@ export class QuizEdit
 			this.loadQuestions()
 				.then(questions => {
 					this.questions = questions;
-					this.loadQuestion(this.currentQuestionId).then(question =>{
-						this.question = question;
-						this.render();
-					});
+					if (this.questions.length === 0)
+					{
+						this.createQuestion();
+						this.reload();
+					}
+					else
+					{
+						this.currentQuestionId = this.questions[0].ID;
+						this.loadQuestion(this.currentQuestionId).then(question =>{
+							this.question = question;
+							this.render();
+						});
+					}
 				});
 		});
 	}
@@ -180,6 +191,11 @@ export class QuizEdit
 		document.getElementById('settings').replaceWith(this.getQuestionSettingsNode());
 	}
 
+	renderQuestionList()
+	{
+		document.getElementById('questions').replaceWith(this.getQuestionSettingsNode());
+	}
+
 	getQuestionListNode()
 	{
 		const QuestionsContainer = Tag.render`
@@ -193,12 +209,16 @@ export class QuizEdit
 					${questionData.QUESTION_TEXT}
 				</a>
 			`;
-			questionCard.onclick = () => { this.getQuestion(+questionData.ID); };
+			questionCard.onclick = () => {
+				this.getQuestion(+questionData.ID);
+			};
 			QuestionsContainer.appendChild(questionCard);
 		});
 
 		const AddNewQuestionButton = Tag.render`<a class="button question_list__add-btn">+</a>`;
-		AddNewQuestionButton.onclick = () => { this.createQuestion(); }
+		AddNewQuestionButton.onclick = () => {
+			this.createQuestion();
+		}
 		QuestionsContainer.appendChild(AddNewQuestionButton);
 
 		return Tag.render`
