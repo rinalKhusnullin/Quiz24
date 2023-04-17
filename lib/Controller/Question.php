@@ -66,8 +66,7 @@ class Question extends Engine\Controller
 
 		$newQuestionId = QuestionRepository::createQuestion($quizId);
 		return [
-			'newQuestionId' => $newQuestionId,
-			'questions' => QuestionRepository::getQuestions($quizId)
+			'newQuestion' => QuestionRepository::getQuestion($newQuestionId)
 		];
 	}
 }

@@ -124,8 +124,8 @@ this.Up = this.Up || {};
 	        }
 	      }).then(function (response) {
 	        console.log(response.data);
-	        _this4.currentQuestionId = response.data.newQuestionId;
-	        _this4.questions = response.data.questions;
+	        _this4.currentQuestionId = response.data.newQuestion.ID;
+	        _this4.questions.push(response.data.newQuestion);
 	        _this4.getQuestion(_this4.currentQuestionId);
 	        _this4.render();
 	      })["catch"](function (error) {

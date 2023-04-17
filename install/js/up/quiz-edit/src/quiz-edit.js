@@ -141,8 +141,8 @@ export class QuizEdit
 			)
 			.then((response) => {
 				console.log(response.data);
-				this.currentQuestionId = response.data.newQuestionId;
-				this.questions = response.data.questions;
+				this.currentQuestionId = response.data.newQuestion.ID;
+				this.questions.push(response.data.newQuestion);
 				this.getQuestion(this.currentQuestionId);
 				this.render();
 
