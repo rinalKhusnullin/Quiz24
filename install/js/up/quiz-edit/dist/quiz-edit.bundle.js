@@ -298,6 +298,7 @@ this.Up = this.Up || {};
 	      options.splice(AnswerPosition, 1);
 	      this.question.OPTIONS = JSON.stringify(options);
 	      this.renderSettings();
+	      this.renderPreview();
 	    }
 	  }]);
 	  return QuizEdit;
