@@ -16811,7 +16811,7 @@ this.Up = this.Up || {};
       value: function connectChart() {
         var _this5 = this;
         var chartNode = document.getElementById('chart');
-        var chart = new Chart(chartNode, {
+        this.chart = new Chart(chartNode, {
           type: 'bar',
           data: {
             labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -16830,7 +16830,7 @@ this.Up = this.Up || {};
           }
         });
         document.getElementById('testButton').onclick = function () {
-          _this5.testFunc(chart);
+          _this5.loadAnswers(_this5.chart);
         };
       } //update ResultNode
     }, {
@@ -16844,9 +16844,33 @@ this.Up = this.Up || {};
         });
       }
     }, {
-      key: "testFunc",
-      value: function testFunc(chart) {
-        chart.data.datasets[0].data[0]++;
+      key: "loadAnswers",
+      value: function loadAnswers() {
+        var _this7 = this;
+        BX.ajax.runAction('up:quiz.answer.getAnswers', {
+          data: {
+            questionId: this.currentQuestionId
+          }
+        }).then(function (response) {
+          _this7.answers = response.data;
+          _this7.updateChart(_this7.chart);
+        })["catch"](function (error) {
+          console.error(error);
+        });
+      }
+    }, {
+      key: "updateChart",
+      value: function updateChart(chart) {
+        var labels = [];
+        var counts = [];
+        for (var i = 0; i < this.answers.length; i++) {
+          labels[i] = this.answers[i].ANSWER;
+          counts[i] = this.answers[i].COUNT;
+        }
+        console.log(labels);
+        console.log(counts);
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = counts;
         chart.update();
       }
     }]);

@@ -6,7 +6,7 @@ export class QuizShow
 	quiz; // Текущий quiz
 	question; // Текущий question
 	chart; // Диаграмма
-
+	answers;
 	constructor(options = {})
 	{
 		this.quizId = options.quizId;
@@ -189,8 +189,7 @@ export class QuizShow
 	connectChart()
 	{
 		const chartNode = document.getElementById('chart');
-
-		let chart = new Chart(chartNode, {
+		this.chart = new Chart(chartNode, {
 			type: 'bar',
 			data: {
 				labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
@@ -209,7 +208,7 @@ export class QuizShow
 			}
 		});
 		document.getElementById('testButton').onclick = () => {
-			this.testFunc(chart);
+			this.loadAnswers(this.chart);
 		};
 	}
 
@@ -223,9 +222,34 @@ export class QuizShow
 		});
 	}
 
-	testFunc(chart)
-	{
-		chart.data.datasets[0].data[0]++;
+	loadAnswers(){
+		BX.ajax.runAction(
+				'up:quiz.answer.getAnswers', {
+					data: {
+						questionId: this.currentQuestionId,
+					}
+				}
+			)
+			.then((response) => {
+				this.answers = response.data;
+				this.updateChart(this.chart);
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	}
+	updateChart(chart){
+		let labels = [];
+		let counts = [];
+		for (let i = 0; i < this.answers.length; i++)
+		{
+			labels[i] = this.answers[i].ANSWER;
+			counts[i] = this.answers[i].COUNT;
+		}
+		console.log(labels);
+		console.log(counts);
+		chart.data.labels = labels;
+		chart.data.datasets[0].data = counts;
 		chart.update();
 	}
 }

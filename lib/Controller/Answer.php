@@ -26,7 +26,7 @@ class Answer extends Engine\Controller
 	{
 		if ($questionId <= 0)
 		{
-			$this->addError(new Error('Question id should be greater than 0', 'invalid_quiz_id'));
+			$this->addError(new Error('Question id should be greater than 0', 'invalid_question_id'));
 			return null;
 		}
 		if (trim($answer) === '' ){
@@ -34,5 +34,15 @@ class Answer extends Engine\Controller
 			return null;
 		}
 		return AnswerRepository::createAnswer($questionId, $answer);
+	}
+
+	public function getAnswersAction(int $questionId): ?array
+	{
+		if ($questionId <= 0)
+		{
+			$this->addError(new Error('Question id should be greater than 0', 'invalid_question_id'));
+			return null;
+		}
+		return AnswerRepository::getAnswersCounts($questionId);
 	}
 }
