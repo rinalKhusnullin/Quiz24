@@ -127,7 +127,6 @@ export class QuizTake
 	render()
 	{
 		this.rootNode.innerHTML = ``;
-
 		const QuizHeroSection = Tag.render`
 			<section class="hero is-small is-primary">
 				<div class="hero-body">
@@ -152,7 +151,7 @@ export class QuizTake
 
 		if (+this.question.QUESTION_TYPE_ID === 0)
 		{
-			const QuestionTypeInput = Tag.render`<input type="text" class="input question-form__input" placeholder="Тут типо свободный ответ">`;
+			const QuestionTypeInput = Tag.render`<input type="text" class="input question-form__input" placeholder="Свободный ответ">`;
 			QuestionFormNode.appendChild(QuestionTypeInput);
 		}
 		else if (+this.question.QUESTION_TYPE_ID === 1)
@@ -164,7 +163,7 @@ export class QuizTake
 				{
 					const Answer = Tag.render`
 					<label class="radio">
-						<input type="radio" name="questionAnswer">
+						<input type="radio" name="questionAnswer" value="${options[i]}">
 						${options[i]}
 					</label>
 				`;
@@ -177,31 +176,60 @@ export class QuizTake
 		const SendButton = Tag.render`<button class="button question-form__button">Отправить</button>`;
 
 		SendButton.onclick = () => {
-			this.sendAnswer(this.question.ID);
+			let answer = '';
+			if (+this.question.QUESTION_TYPE_ID === 0)
+			{
+				const AnswerInput = QuestionFormNode.querySelector('.question-form__input');
+				answer = AnswerInput.value;
+			}
+			else if (+this.question.QUESTION_TYPE_ID === 1)
+			{
+				const radios = QuestionFormNode.querySelectorAll('input[type="radio"]');
+				for (let i = 0; i < radios.length; i++) {
+					if (radios[i].checked) {
+						answer = radios[i].value;
+						break;
+					}
+				}
+			}
+
+			this.sendAnswer(this.question.ID, answer);
 		};
 
 		QuestionFormNode.appendChild(SendButton);
 		return QuestionFormNode;
 	}
 
-	sendAnswer(questionId)
+	sendAnswer(questionId, answer)
 	{
 		this.questions.shift();
+		BX.ajax.runAction(
+				'up:quiz.answer.createAnswer', {
+					data: {
+						questionId: questionId,
+						answer: answer
+					}
+				}
+			)
+			.then((response) => {
+				console.log(response.data);
 
-		// TODO : Отправить answer в БД
-
-		if (+this.questions.length === 0)
-		{
-			this.renderCompletely();
-		}
-		else
-		{
-			this.currentQuestionId = this.questions[0].ID;
-			this.loadQuestion(this.currentQuestionId).then(question => {
-				this.question = question;
-				this.renderQuestion();
+				if (+this.questions.length === 0)
+				{
+					this.renderCompletely();
+				}
+				else
+				{
+					this.currentQuestionId = this.questions[0].ID;
+					this.loadQuestion(this.currentQuestionId).then(question => {
+						this.question = question;
+						this.renderQuestion();
+					})
+				}
 			})
-		}
+			.catch((error) => {
+				console.error(error);
+			});
 	}
 
 	renderQuestion(){

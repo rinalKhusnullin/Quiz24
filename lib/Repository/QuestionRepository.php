@@ -3,7 +3,6 @@
 namespace Up\Quiz\Repository;
 
 use Up\Quiz\Model\QuestionsTable;
-use Up\Quiz\Model\QuizzesTable;
 
 class QuestionRepository
 {

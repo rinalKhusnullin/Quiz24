@@ -116,14 +116,14 @@ this.Up = this.Up || {};
 	      var _this4 = this;
 	      var QuestionFormNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-form__container box\" id=\"question-form\">\n\t\t\t\t<h1 class=\"subtitle is-4\">", "</h1>\n\t\t\t</div>"])), this.question.QUESTION_TEXT);
 	      if (+this.question.QUESTION_TYPE_ID === 0) {
-	        var QuestionTypeInput = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"input question-form__input\" placeholder=\"\u0422\u0443\u0442 \u0442\u0438\u043F\u043E \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442\">"])));
+	        var QuestionTypeInput = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"input question-form__input\" placeholder=\"\u0421\u0432\u043E\u0431\u043E\u0434\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442\">"])));
 	        QuestionFormNode.appendChild(QuestionTypeInput);
 	      } else if (+this.question.QUESTION_TYPE_ID === 1) {
 	        var AnswerContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
 	        if (this.question.OPTIONS != null && this.question.OPTIONS !== 'undefined' && this.question.OPTIONS !== '') {
 	          var options = JSON.parse(this.question.OPTIONS);
 	          for (var i = 0; i < options.length; i++) {
-	            var Answer = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input type=\"radio\" name=\"questionAnswer\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), options[i]);
+	            var Answer = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input type=\"radio\" name=\"questionAnswer\" value=\"", "\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), options[i], options[i]);
 	            AnswerContainer.appendChild(Answer);
 	          }
 	        }
@@ -131,28 +131,48 @@ this.Up = this.Up || {};
 	      }
 	      var SendButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C</button>"])));
 	      SendButton.onclick = function () {
-	        _this4.sendAnswer(_this4.question.ID);
+	        var answer = '';
+	        if (+_this4.question.QUESTION_TYPE_ID === 0) {
+	          var AnswerInput = QuestionFormNode.querySelector('.question-form__input');
+	          answer = AnswerInput.value;
+	        } else if (+_this4.question.QUESTION_TYPE_ID === 1) {
+	          var radios = QuestionFormNode.querySelectorAll('input[type="radio"]');
+	          for (var _i = 0; _i < radios.length; _i++) {
+	            if (radios[_i].checked) {
+	              answer = radios[_i].value;
+	              break;
+	            }
+	          }
+	        }
+	        _this4.sendAnswer(_this4.question.ID, answer);
 	      };
 	      QuestionFormNode.appendChild(SendButton);
 	      return QuestionFormNode;
 	    }
 	  }, {
 	    key: "sendAnswer",
-	    value: function sendAnswer(questionId) {
+	    value: function sendAnswer(questionId, answer) {
 	      var _this5 = this;
 	      this.questions.shift();
-
-	      // TODO : Отправить answer в БД
-
-	      if (+this.questions.length === 0) {
-	        this.renderCompletely();
-	      } else {
-	        this.currentQuestionId = this.questions[0].ID;
-	        this.loadQuestion(this.currentQuestionId).then(function (question) {
-	          _this5.question = question;
-	          _this5.renderQuestion();
-	        });
-	      }
+	      BX.ajax.runAction('up:quiz.answer.createAnswer', {
+	        data: {
+	          questionId: questionId,
+	          answer: answer
+	        }
+	      }).then(function (response) {
+	        console.log(response.data);
+	        if (+_this5.questions.length === 0) {
+	          _this5.renderCompletely();
+	        } else {
+	          _this5.currentQuestionId = _this5.questions[0].ID;
+	          _this5.loadQuestion(_this5.currentQuestionId).then(function (question) {
+	            _this5.question = question;
+	            _this5.renderQuestion();
+	          });
+	        }
+	      })["catch"](function (error) {
+	        console.error(error);
+	      });
 	    }
 	  }, {
 	    key: "renderQuestion",
