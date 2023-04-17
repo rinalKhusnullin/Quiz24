@@ -1,13 +1,14 @@
 .quiz-card{
 	position: relative;
 	overflow: hidden;
-	width: 250px;
-	height: 150px;
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
+	height: 180px;
 	border: 2px solid #363636;
 	background: #363636;
+	flex: 0 1 auto;
+	min-width: 24.4%;
 }
 
 .quiz-container{
@@ -41,6 +42,10 @@
 .quiz-card__header{
 	height: 30%;
 	background: transparent;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	position: relative;
 }
 
 .quiz-card__content{
@@ -61,13 +66,12 @@
 .quiz-card__hidden-btns{
 	display: flex;
 	position: absolute;
-	left: 0;
+	right: 0;
 	top: -100%;
 	width: 100%;
-	height: 100%;
 	color: black;
+	padding: 10px;
 
-	justify-content: center;
 	align-items: center;
 	gap: 10px;
 
@@ -75,8 +79,12 @@
 	transition: top .4s ease-in;
 }
 
-.quiz-card__hidden-btns .button{
-	border-radius: 40px;
+.quiz-card__hidden-btns a{
+	border: 1px solid silver;
+	border-radius: 0.25em;
+	padding: 0.1em;
+	background: white;
+	color: black;
 }
 
 .quiz-card:hover .quiz-card__hidden-btns{
@@ -112,3 +120,52 @@
 	height: 30px;
 	animation: donut-spin 1.2s linear infinite;
 }
+
+.quiz-card__more-action-btn{
+	background: transparent!important;
+	color: white!important;
+	border: 0!important;
+}
+
+/*.quiz-card__hidden-actions{*/
+/*	position: absolute;*/
+/*	top: calc(100% + 1px);*/
+/*	right:  1px;*/
+/*	display: flex;*/
+/*	flex-direction: column;*/
+/*	align-items: baseline;*/
+/*	background: white;*/
+/*	padding: 5px 0;*/
+/*	border: 1px solid gray;*/
+/*	border-radius: 5px;*/
+/*	z-index: 100;*/
+/*	box-shadow: 1px 1px 1em rgba(0, 0, 0, 0.11), -1px -1px 1em rgba(0, 0, 0, 0.11);*/
+/*}*/
+
+/*.hidden-action{*/
+/*	width: 100%;*/
+/*	border: 0!important;*/
+/*	border-radius: 0!important;*/
+/*	justify-content: flex-start!important;*/
+/*	font-size: .8rem!important;*/
+/*	transition: .3s;*/
+/*}*/
+
+/*.hidden-action:hover{*/
+/*	background: #cecccc;*/
+/*	transition: .3s;*/
+/*}*/
+
+/*.hidden-action i{*/
+/*	margin-right: 10px;*/
+/*}*/
+
+/*.delete-quiz-button:hover{*/
+/*	background: #f14668;*/
+/*	color: white!important;*/
+/*	transition: .3s;*/
+/*}*/
+
+/*.hidden{*/
+/*	display: none;*/
+/*}*/
