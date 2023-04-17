@@ -152,6 +152,30 @@ export class QuizEdit
 			});
 	}
 
+	deleteQuestion(id)
+	{
+		BX.ajax.runAction(
+				'up:quiz.question.deleteQuestion', {
+					data: {
+						id: id
+					}
+				}
+			)
+			.then((response) => {
+				if (response.data != null)
+				{
+					console.error('errors:', response.data);
+				}
+				else
+				{
+					this.reload();
+				}
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	}
+
 	getQuestion(id)
 	{
 		this.loadQuestion(id).then(question =>{
@@ -216,14 +240,27 @@ export class QuizEdit
 
 		this.questions.forEach(questionData => {
 			const questionCard = Tag.render`
-				<a class="question-list__question button" data-id="${questionData.ID}">
+				<div class="question-list__question-container"></div>
+			`;
+			const questionButton = Tag.render`
+				<div class="question-list__question button" data-id="${questionData.ID}">
 					${questionData.QUESTION_TEXT}
+				</div>
+			`;
+			const questionDeleteButton = Tag.render`
+				<a class="question-list__question-delete button">
+					<i class="fa-solid fa-trash"></i>
 				</a>
 			`;
-			questionCard.onclick = () => {
+			questionButton.onclick = () => {
 				this.getQuestion(+questionData.ID);
 				this.currentQuestionId = +questionData.ID;
 			};
+			questionDeleteButton.onclick = () => {
+				this.deleteQuestion(+questionData.ID);
+			};
+			questionCard.appendChild(questionButton);
+			questionCard.appendChild(questionDeleteButton);
 			QuestionsContainer.appendChild(questionCard);
 		});
 

@@ -36,6 +36,17 @@ class QuestionRepository
 		return QuestionsTable::getById($id)->fetch();
 	}
 
+	public static function deleteQuestion(int $id): ?array
+	{
+		$result = QuestionsTable::delete($id);
+
+		if ($result->isSuccess())
+		{
+			return null;
+		}
+		return $result->getErrors();
+	}
+
 	public static function setQuestions($question): ?array
 	{
 

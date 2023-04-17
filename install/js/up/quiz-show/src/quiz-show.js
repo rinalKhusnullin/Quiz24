@@ -120,6 +120,7 @@ export class QuizShow
 			});
 	}
 
+
 	render()
 	{
 		this.rootNode.innerHTML = ``;

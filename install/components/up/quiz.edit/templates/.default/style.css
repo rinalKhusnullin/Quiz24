@@ -11,12 +11,20 @@
 	max-height: calc(100vh - 70px);
 }
 
+.question-list__question-container{
+	display: flex;
+	justify-content: space-between;
+}
+.question-list__question{
+	width: calc(100% - 50px) !important;
+}
 .question-list__questions{
 	width: 100%;
 	padding: 10px 0;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+
 }
 
 .question-list__questions::-webkit-scrollbar {
