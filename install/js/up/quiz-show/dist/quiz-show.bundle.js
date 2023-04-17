@@ -16762,10 +16762,16 @@ this.Up = this.Up || {};
           _this3.quiz = quiz;
           _this3.loadQuestions().then(function (questions) {
             _this3.questions = questions;
-            _this3.loadQuestion(_this3.currentQuestionId).then(function (question) {
-              _this3.question = question;
-              _this3.render();
-            });
+            if (_this3.questions.length === 0) {
+              alert("todo вопросов нет");
+              //this.reload();
+            } else {
+              _this3.currentQuestionId = _this3.questions[0].ID;
+              _this3.loadQuestion(_this3.currentQuestionId).then(function (question) {
+                _this3.question = question;
+                _this3.render();
+              });
+            }
           });
         });
       }

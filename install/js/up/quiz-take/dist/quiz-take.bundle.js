@@ -1,4 +1,4 @@
-this.BX = this.BX || {};
+this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
@@ -28,4 +28,4 @@ this.BX = this.BX || {};
 
 	exports.QuizTake = QuizTake;
 
-}((this.BX.UP = this.BX.UP || {}),BX));
+}((this.Up.Quiz = this.Up.Quiz || {}),BX));

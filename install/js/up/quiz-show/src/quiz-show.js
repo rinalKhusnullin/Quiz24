@@ -100,11 +100,22 @@ export class QuizShow
 			this.quiz = quiz;
 			this.loadQuestions()
 				.then(questions => {
+
 					this.questions = questions;
-					this.loadQuestion(this.currentQuestionId).then(question =>{
-						this.question = question;
-						this.render();
-					});
+					if (this.questions.length === 0)
+					{
+						alert("todo вопросов нет");
+						//this.reload();
+					}
+					else
+					{
+						this.currentQuestionId = this.questions[0].ID;
+						this.loadQuestion(this.currentQuestionId).then(question =>{
+							this.question = question;
+							this.render();
+						});
+					}
+
 				});
 			});
 	}
