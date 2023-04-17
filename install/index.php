@@ -24,8 +24,8 @@ class up_quiz extends CModule
 			$this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
 		}
 
-		$this->MODULE_NAME = Loc::getMessage('UP_TASKS_MODULE_NAME');
-		$this->MODULE_DESCRIPTION = Loc::getMessage('UP_TASKS_MODULE_DESCRIPTION');
+		$this->MODULE_NAME = Loc::getMessage('UP_QUIZ_MODULE_NAME');
+		$this->MODULE_DESCRIPTION = Loc::getMessage('UP_QUIZ_MODULE_DESCRIPTION');
 	}
 
 	public function installDB(): void
