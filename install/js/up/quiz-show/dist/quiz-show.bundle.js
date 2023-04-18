@@ -16678,15 +16678,15 @@ this.Up = this.Up || {};
 
   Chart.register.apply(Chart, babelHelpers.toConsumableArray(registerables));
 
-  var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6;
+  var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5;
   var QuizShow = /*#__PURE__*/function () {
-    // Текущий quiz
-    // Текущий question
-    // Диаграмма
-
     function QuizShow() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       babelHelpers.classCallCheck(this, QuizShow);
+      babelHelpers.defineProperty(this, "DISPLAY_TYPES", {
+        0: 'pie',
+        2: 'bar'
+      });
       this.quizId = options.quizId;
       if (main_core.Type.isStringFilled(options.rootNodeId)) {
         this.rootNodeId = options.rootNodeId;
@@ -16755,21 +16755,41 @@ this.Up = this.Up || {};
         });
       }
     }, {
+      key: "loadAnswers",
+      value: function loadAnswers() {
+        var _this3 = this;
+        return new Promise(function (resolve, reject) {
+          BX.ajax.runAction('up:quiz.answer.getAnswers', {
+            data: {
+              questionId: _this3.question.ID
+            }
+          }).then(function (response) {
+            var answers = response.data;
+            resolve(answers);
+          })["catch"](function (error) {
+            console.error(error);
+          });
+        });
+      }
+    }, {
       key: "reload",
       value: function reload() {
-        var _this3 = this;
+        var _this4 = this;
         this.loadQuiz().then(function (quiz) {
-          _this3.quiz = quiz;
-          _this3.loadQuestions().then(function (questions) {
-            _this3.questions = questions;
-            if (_this3.questions.length === 0) {
+          _this4.quiz = quiz;
+          _this4.loadQuestions().then(function (questions) {
+            _this4.questions = questions;
+            if (_this4.questions.length === 0) {
               alert("todo вопросов нет");
               //this.reload();
             } else {
-              _this3.currentQuestionId = _this3.questions[0].ID;
-              _this3.loadQuestion(_this3.currentQuestionId).then(function (question) {
-                _this3.question = question;
-                _this3.render();
+              _this4.currentQuestionId = _this4.questions[0].ID;
+              _this4.loadQuestion(_this4.currentQuestionId).then(function (question) {
+                _this4.question = question;
+                _this4.loadAnswers().then(function (answers) {
+                  _this4.answers = answers;
+                  _this4.render();
+                });
               });
             }
           });
@@ -16779,45 +16799,45 @@ this.Up = this.Up || {};
       key: "render",
       value: function render() {
         this.rootNode.innerHTML = "";
-        var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<button class=\"button\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t\t\t</button>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), this.quiz.TITLE, this.quiz.CODE);
+        var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<button class=\"button\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t\t\t</button>\n\t\t\t\t\t<div class=\"modal is-active\">\n\t\t\t\t\t\t<div class=\"modal-background\"></div>\n\t\t\t\t\t    <div class=\"modal-content\">\n\t\t\t\t\t\t\t<p class=\"image is-4by3\">\n\t\t\t\t\t\t\t  <img src=\"https://bulma.io/images/placeholders/1280x960.png\" alt=\"\">\n\t\t\t\t\t\t\t</p>\n\t\t\t\t\t    </div>\n\t\t\t\t\t\t<button class=\"modal-close is-large\" aria-label=\"close\"></button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), this.quiz.TITLE, this.quiz.CODE);
         this.rootNode.appendChild(QuizHeroSection);
         var QuizResultContent = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box\">\n\t\t\t\t<div class=\"columns\">\n\t\t\t\t\t<div class=\"column is-one-quarter question-list\">\n\t\t\t\t\t\t<div class=\"question-list__title has-text-weight-semibold has-text-centered is-uppercase\">\u0412\u043E\u043F\u0440\u043E\u0441</div>\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.getQuestionsListNode(), this.getQuestionResultNode());
         this.rootNode.appendChild(QuizResultContent);
-        this.connectChart();
+        this.renderChart();
       }
     }, {
       key: "getQuestionsListNode",
       value: function getQuestionsListNode() {
-        var _this4 = this;
+        var _this5 = this;
         var QuestionListNode = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<div class=\"question-list__questions\"></div>"])));
         this.questions.forEach(function (question) {
           var QuestionNode = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<a class=\"question-list__question button\">", "</a>"])), question.QUESTION_TEXT);
           QuestionNode.onclick = function () {
-            _this4.renderQuestionResult(+question.ID);
+            _this5.renderQuestionResult(+question.ID);
           };
           QuestionListNode.appendChild(QuestionNode);
         });
-        var testButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["<button id=\"testButton\">\u0422\u0415\u0421\u0422\u041E\u0412\u0410\u042F \u041A\u041D\u041E\u041F\u041A\u0410 \u041F\u041E\u041A\u0410 \u0427\u0422\u041E!</button>>"])));
-        QuestionListNode.appendChild(testButton);
         return QuestionListNode;
       }
     }, {
       key: "getQuestionResultNode",
       value: function getQuestionResultNode() {
-        return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>\u0412\u043E\u043F\u0440\u043E\u0441 : </strong>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<canvas id=\"chart\"></canvas>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
+        return main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>\u0412\u043E\u043F\u0440\u043E\u0441 : </strong>\n\t\t\t\t\t", "\n\t\t\t\t\t<button id=\"updateButton\"><i class=\"fa-solid fa-rotate-right\"></i></button>\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<canvas id=\"chart\"></canvas>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
       }
     }, {
-      key: "connectChart",
-      value: function connectChart() {
-        var _this5 = this;
+      key: "renderChart",
+      value: function renderChart() {
+        var _this$DISPLAY_TYPES$t,
+          _this6 = this;
         var chartNode = document.getElementById('chart');
+        var answersData = this.getAnswersData();
         this.chart = new Chart(chartNode, {
-          type: 'bar',
+          type: (_this$DISPLAY_TYPES$t = this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) !== null && _this$DISPLAY_TYPES$t !== void 0 ? _this$DISPLAY_TYPES$t : 'bar',
           data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: answersData.labels,
             datasets: [{
               label: this.question.QUESTION_TEXT,
-              data: [12, 19, 3, 5, 2, 3],
+              data: answersData.counts,
               borderWidth: 1
             }]
           },
@@ -16829,49 +16849,48 @@ this.Up = this.Up || {};
             }
           }
         });
-        document.getElementById('testButton').onclick = function () {
-          _this5.loadAnswers(_this5.chart);
+        document.getElementById('updateButton').onclick = function () {
+          _this6.updateChart(_this6.chart);
         };
+      }
+    }, {
+      key: "updateChart",
+      value: function updateChart() {
+        var _this7 = this;
+        this.loadAnswers().then(function (answers) {
+          _this7.answers = answers;
+          var answersData = _this7.getAnswersData();
+          _this7.chart.data.labels = answersData.labels;
+          _this7.chart.data.datasets[0].data = answersData.counts;
+          _this7.chart.update();
+        });
       } //update ResultNode
     }, {
       key: "renderQuestionResult",
       value: function renderQuestionResult(questionId) {
-        var _this6 = this;
+        var _this8 = this;
         this.loadQuestion(questionId).then(function (question) {
-          _this6.question = question;
-          document.getElementById('questionResult').replaceWith(_this6.getQuestionResultNode());
-          _this6.connectChart();
+          _this8.question = question;
+          _this8.loadAnswers().then(function (answers) {
+            _this8.answers = answers;
+            document.getElementById('questionResult').replaceWith(_this8.getQuestionResultNode());
+            _this8.renderChart();
+          });
         });
       }
     }, {
-      key: "loadAnswers",
-      value: function loadAnswers() {
-        var _this7 = this;
-        BX.ajax.runAction('up:quiz.answer.getAnswers', {
-          data: {
-            questionId: this.currentQuestionId
-          }
-        }).then(function (response) {
-          _this7.answers = response.data;
-          _this7.updateChart(_this7.chart);
-        })["catch"](function (error) {
-          console.error(error);
-        });
-      }
-    }, {
-      key: "updateChart",
-      value: function updateChart(chart) {
+      key: "getAnswersData",
+      value: function getAnswersData() {
         var labels = [];
         var counts = [];
         for (var i = 0; i < this.answers.length; i++) {
           labels[i] = this.answers[i].ANSWER;
           counts[i] = this.answers[i].COUNT;
         }
-        console.log(labels);
-        console.log(counts);
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = counts;
-        chart.update();
+        return {
+          labels: labels,
+          counts: counts
+        };
       }
     }]);
     return QuizShow;

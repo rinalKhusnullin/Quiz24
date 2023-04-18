@@ -3,10 +3,16 @@ import Chart from 'chart.js/auto';
 
 export class QuizShow
 {
+	DISPLAY_TYPES = {
+		0 : 'pie',
+		2 : 'bar',
+	};
+
 	quiz; // Текущий quiz
 	question; // Текущий question
 	chart; // Диаграмма
 	answers;
+
 	constructor(options = {})
 	{
 		this.quizId = options.quizId;
@@ -94,6 +100,26 @@ export class QuizShow
 		});
 	}
 
+	loadAnswers()
+	{
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.answer.getAnswers', {
+						data: {
+							questionId: this.question.ID,
+						}
+					}
+				)
+				.then((response) => {
+					const answers = response.data;
+					resolve(answers);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		});
+	}
+
 	reload()
 	{
 		this.loadQuiz().then(quiz => {
@@ -112,7 +138,10 @@ export class QuizShow
 						this.currentQuestionId = this.questions[0].ID;
 						this.loadQuestion(this.currentQuestionId).then(question =>{
 							this.question = question;
-							this.render();
+							this.loadAnswers().then(answers =>{
+								this.answers = answers;
+								this.render();
+							});
 						});
 					}
 
@@ -134,6 +163,15 @@ export class QuizShow
 					<button class="button">
 						<i class="fa-solid fa-qrcode"></i>
 					</button>
+					<div class="modal is-active">
+						<div class="modal-background"></div>
+					    <div class="modal-content">
+							<p class="image is-4by3">
+							  <img src="https://bulma.io/images/placeholders/1280x960.png" alt="">
+							</p>
+					    </div>
+						<button class="modal-close is-large" aria-label="close"></button>
+					</div>
 				</div>
 			</section>
 		`;
@@ -152,7 +190,7 @@ export class QuizShow
 		`;
 
 		this.rootNode.appendChild(QuizResultContent);
-		this.connectChart();
+		this.renderChart();
 	}
 
 	getQuestionsListNode()
@@ -165,8 +203,6 @@ export class QuizShow
 			}
 			QuestionListNode.appendChild(QuestionNode);
 		})
-		const testButton = Tag.render`<button id="testButton">ТЕСТОВАЯ КНОПКА ПОКА ЧТО!</button>>`;
-		QuestionListNode.appendChild(testButton);
 		return QuestionListNode;
 	}
 
@@ -178,6 +214,7 @@ export class QuizShow
 				<div class="statistics__question-title">
 					<strong>Вопрос : </strong>
 					${this.question.QUESTION_TEXT}
+					<button id="updateButton"><i class="fa-solid fa-rotate-right"></i></button>
 				</div>
 				<div>
 					<canvas id="chart"></canvas>
@@ -186,17 +223,20 @@ export class QuizShow
 		`;
 	}
 
-	connectChart()
+	renderChart()
 	{
 		const chartNode = document.getElementById('chart');
+
+		let answersData = this.getAnswersData();
+
 		this.chart = new Chart(chartNode, {
-			type: 'bar',
+			type: this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID] ?? 'bar',
 			data: {
-				labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+				labels: answersData.labels,
 				datasets: [{
 					label: this.question.QUESTION_TEXT,
-					data: [12, 19, 3, 5, 2, 3],
-					borderWidth: 1
+					data: answersData.counts,
+					borderWidth: 1,
 				}]
 			},
 			options: {
@@ -207,9 +247,21 @@ export class QuizShow
 				}
 			}
 		});
-		document.getElementById('testButton').onclick = () => {
-			this.loadAnswers(this.chart);
+
+		document.getElementById('updateButton').onclick = () => {
+			this.updateChart(this.chart);
 		};
+	}
+
+	updateChart()
+	{
+		this.loadAnswers().then(answers => {
+			this.answers = answers;
+			let answersData = this.getAnswersData();
+			this.chart.data.labels = answersData.labels;
+			this.chart.data.datasets[0].data = answersData.counts;
+			this.chart.update();
+		})
 	}
 
 	//update ResultNode
@@ -217,28 +269,15 @@ export class QuizShow
 	{
 		this.loadQuestion(questionId).then(question =>{
 			this.question = question;
-			document.getElementById('questionResult').replaceWith(this.getQuestionResultNode());
-			this.connectChart();
+			this.loadAnswers().then(answers => {
+				this.answers = answers;
+				document.getElementById('questionResult').replaceWith(this.getQuestionResultNode());
+				this.renderChart();
+			});
 		});
 	}
 
-	loadAnswers(){
-		BX.ajax.runAction(
-				'up:quiz.answer.getAnswers', {
-					data: {
-						questionId: this.currentQuestionId,
-					}
-				}
-			)
-			.then((response) => {
-				this.answers = response.data;
-				this.updateChart(this.chart);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	}
-	updateChart(chart){
+	getAnswersData(){
 		let labels = [];
 		let counts = [];
 		for (let i = 0; i < this.answers.length; i++)
@@ -246,10 +285,10 @@ export class QuizShow
 			labels[i] = this.answers[i].ANSWER;
 			counts[i] = this.answers[i].COUNT;
 		}
-		console.log(labels);
-		console.log(counts);
-		chart.data.labels = labels;
-		chart.data.datasets[0].data = counts;
-		chart.update();
+
+		return {
+			labels : labels,
+			counts : counts,
+		};
 	}
 }
