@@ -205,10 +205,8 @@ this.Up = this.Up || {};
 	    value: function updateChart() {
 	      var _this7 = this;
 	      this.loadAnswers().then(function (answers) {
-	        var _this7$chart$series;
 	        _this7.answers = answers;
-	        (_this7$chart$series = _this7.chart.series).addData.apply(_this7$chart$series, babelHelpers.toConsumableArray(_this7.getAnswersData()).concat([1]));
-	        _this7.chart.series.invalidateData();
+	        _this7.chart.data = _this7.getAnswersData();
 	      });
 	    } //update ResultNode
 	  }, {
