@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS up_quiz_quizzes
 		ON DELETE CASCADE
 );
 
-INSERT INTO up_quiz_quizzes (TITLE, CODE, USER_ID) VALUES ('Default', 'zxc', 1);
+INSERT INTO up_quiz_quizzes (TITLE, CODE, USER_ID) VALUES ('Default', 'ZXCV', 1);
 
 
 CREATE TABLE IF NOT EXISTS up_quiz_questions

@@ -168,8 +168,8 @@ this.Up = this.Up || {};
 	      }
 
 	      // здесь ошибка, чтобы ее увидеть надо убрать if
-	      var chart = am4core.create('chart', am4plugins_wordCloud.WordCloud);
-	      var series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+	      var chart = am4core.create('chart', am4charts.WordCloud);
+	      var series = chart.series.push(new am4charts.WordCloud.WordCloudSeries());
 	      series.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta nihil quae quas voluptas. Amet beatae consequatur corporis delectus doloribus illo numquam optio porro provident quos reiciendis sit unde veniam, voluptate?';
 
 	      // And, for a good measure, let's add a legend

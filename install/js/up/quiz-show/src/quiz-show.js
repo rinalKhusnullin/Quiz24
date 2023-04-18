@@ -244,8 +244,8 @@ export class QuizShow
 		}
 
 		// здесь ошибка, чтобы ее увидеть надо убрать if
-		let chart = am4core.create('chart', am4plugins_wordCloud.WordCloud)
-		let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+		let chart = am4core.create('chart', am4charts.WordCloud)
+		let series = chart.series.push(new am4charts.WordCloud.WordCloudSeries());
 		series.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta nihil quae quas voluptas. Amet beatae consequatur corporis delectus doloribus illo numquam optio porro provident quos reiciendis sit unde veniam, voluptate?';
 
 
