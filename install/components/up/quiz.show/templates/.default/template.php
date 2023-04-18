@@ -3,7 +3,12 @@
 use Bitrix\Main\Application;
 
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-\Bitrix\Main\UI\Extension::load('up.quiz-show');
+
+\Bitrix\Main\UI\Extension::load([
+	'up.quiz-show',
+	'amcharts4',
+	'amcharts4_theme_animated',
+]);
 ?>
 
 <div id="quiz-container-root"></div>

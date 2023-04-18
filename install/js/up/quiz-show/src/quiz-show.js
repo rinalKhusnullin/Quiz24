@@ -1,12 +1,15 @@
-import {Type, Tag} from 'main.core';
-import Chart from 'chart.js/auto';
+import {Type, Tag, } from 'main.core';
+window.am4core.useTheme(am4themes_animated);
+// import Chart from 'chart.js/auto';
 
 export class QuizShow
 {
 	DISPLAY_TYPES = {
-		0 : 'pie',
-		2 : 'bar',
+		0 : 'PieChart3D',
+		1 : 'WordCloud',
+		2 : 'BarChart',
 	};
+
 
 	quiz; // Текущий quiz
 	question; // Текущий question
@@ -163,7 +166,7 @@ export class QuizShow
 					<button class="button">
 						<i class="fa-solid fa-qrcode"></i>
 					</button>
-					<div class="modal is-active">
+					<div class="modal">
 						<div class="modal-background"></div>
 					    <div class="modal-content">
 							<p class="image is-4by3">
@@ -217,7 +220,7 @@ export class QuizShow
 					<button id="updateButton"><i class="fa-solid fa-rotate-right"></i></button>
 				</div>
 				<div>
-					<canvas id="chart"></canvas>
+					<div id="chart" style="width: 900px; height: 800px;"></div>
 				</div>
 			</div>
 		`;
@@ -225,32 +228,59 @@ export class QuizShow
 
 	renderChart()
 	{
-		const chartNode = document.getElementById('chart');
+		// Create chart instance
+		let chartType = (this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) ?? 'PieChart';
 
-		let answersData = this.getAnswersData();
+		let data = this.getAnswersData();
 
-		this.chart = new Chart(chartNode, {
-			type: this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID] ?? 'bar',
-			data: {
-				labels: answersData.labels,
-				datasets: [{
-					label: this.question.QUESTION_TEXT,
-					data: answersData.counts,
-					borderWidth: 1,
-				}]
-			},
-			options: {
-				scales: {
-					y: {
-						beginAtZero: true
-					}
-				}
-			}
-		});
 
-		document.getElementById('updateButton').onclick = () => {
-			this.updateChart(this.chart);
-		};
+		if (chartType === 'PieChart3D')
+		{
+			let chart = am4core.create('chart', 'PieChart')
+			let series = chart.series.push(new am4charts.PieSeries3D());
+			series.dataFields.value = "count";
+			series.dataFields.category = "answer";
+			chart.data = data;
+		}
+
+		// здесь ошибка, чтобы ее увидеть надо убрать if
+		let chart = am4core.create('chart', am4plugins_wordCloud.WordCloud)
+		let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+		series.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta nihil quae quas voluptas. Amet beatae consequatur corporis delectus doloribus illo numquam optio porro provident quos reiciendis sit unde veniam, voluptate?';
+
+
+
+
+	// And, for a good measure, let's add a legend
+		chart.legend = new am4charts.Legend();
+
+
+		// const chartNode = document.getElementById('chart');
+		//
+		// let answersData = this.getAnswersData();
+		//
+		// this.chart = new Chart(chartNode, {
+		// 	type: this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID] ?? 'bar',
+		// 	data: {
+		// 		labels: answersData.labels,
+		// 		datasets: [{
+		// 			label: this.question.QUESTION_TEXT,
+		// 			data: answersData.counts,
+		// 			borderWidth: 1,
+		// 		}]
+		// 	},
+		// 	options: {
+		// 		scales: {
+		// 			y: {
+		// 				beginAtZero: true
+		// 			}
+		// 		}
+		// 	}
+		// });
+		//
+		// document.getElementById('updateButton').onclick = () => {
+		// 	this.updateChart(this.chart);
+		// };
 	}
 
 	updateChart()
@@ -278,17 +308,17 @@ export class QuizShow
 	}
 
 	getAnswersData(){
-		let labels = [];
-		let counts = [];
+		let result = [];
+
 		for (let i = 0; i < this.answers.length; i++)
 		{
-			labels[i] = this.answers[i].ANSWER;
-			counts[i] = this.answers[i].COUNT;
+			result.push({
+				'answer' : this.answers[i].ANSWER,
+				'count' : this.answers[i].COUNT,
+			});
 		}
 
-		return {
-			labels : labels,
-			counts : counts,
-		};
+		console.log(result);
+		return result;
 	}
 }
