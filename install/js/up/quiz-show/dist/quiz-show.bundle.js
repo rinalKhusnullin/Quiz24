@@ -2,8 +2,9 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6;
 	window.am4core.useTheme(am4themes_animated);
+	window.am4core.useTheme(am4themes_material);
 	// import Chart from 'chart.js/auto';
 
 	var QuizShow = /*#__PURE__*/function () {
@@ -11,9 +12,10 @@ this.Up = this.Up || {};
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, QuizShow);
 	    babelHelpers.defineProperty(this, "DISPLAY_TYPES", {
-	      0: 'PieChart3D',
+	      0: 'PieChart',
 	      1: 'WordCloud',
-	      2: 'BarChart'
+	      2: 'BarChart',
+	      3: 'RawOutput'
 	    });
 	    this.quizId = options.quizId;
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
@@ -26,7 +28,6 @@ this.Up = this.Up || {};
 	      throw new Error("QuizShow: element with id \"".concat(this.rootNodeId, "\" not found"));
 	    }
 	    this.questions = []; // Все вопросы : title, id
-	    this.currentQuestionId = 1; // Текущий id вопроса
 	    this.reload();
 	  }
 	  babelHelpers.createClass(QuizShow, [{
@@ -150,83 +151,76 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getQuestionResultNode",
 	    value: function getQuestionResultNode() {
-	      return main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>\u0412\u043E\u043F\u0440\u043E\u0441 : </strong>\n\t\t\t\t\t", "\n\t\t\t\t\t<button id=\"updateButton\"><i class=\"fa-solid fa-rotate-right\"></i></button>\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<div id=\"chart\" style=\"width: 900px; height: 800px;\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
+	      var _this6 = this;
+	      var updateButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["<button id=\"updateButton\"><i class=\"fa-solid fa-rotate-right\"></i></button>"])));
+	      updateButton.onclick = function () {
+	        _this6.updateChart();
+	      };
+	      return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>\u0412\u043E\u043F\u0440\u043E\u0441 : </strong>\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<div id=\"chart\" style=\"width: 900px; height: 800px;\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT, updateButton);
 	    }
 	  }, {
 	    key: "renderChart",
 	    value: function renderChart() {
 	      var _this$DISPLAY_TYPES$t;
 	      // Create chart instance
-	      var chartType = (_this$DISPLAY_TYPES$t = this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) !== null && _this$DISPLAY_TYPES$t !== void 0 ? _this$DISPLAY_TYPES$t : 'PieChart';
+	      var chartType = (_this$DISPLAY_TYPES$t = this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) !== null && _this$DISPLAY_TYPES$t !== void 0 ? _this$DISPLAY_TYPES$t : 'PieChart'; //PieChart - Default chart series
+
 	      var data = this.getAnswersData();
-	      if (chartType === 'PieChart3D') {
-	        var _chart = am4core.create('chart', 'PieChart');
-	        var _series = _chart.series.push(new am4charts.PieSeries3D());
-	        _series.dataFields.value = "count";
-	        _series.dataFields.category = "answer";
-	        _chart.data = data;
+	      var chart;
+	      var series;
+	      if (chartType === 'PieChart') {
+	        chart = am4core.create('chart', 'PieChart');
+	        series = chart.series.push(new am4charts.PieSeries());
+	        series.dataFields.value = "count";
+	        series.dataFields.category = "answer";
+	        chart.data = data;
+	      } else if (chartType === 'WordCloud') {
+	        chart = am4core.create('chart', am4plugins_wordCloud.WordCloud);
+	        series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+	        //series.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim ex neque repellendus tempore? Architecto atque beatae, eius excepturi, incidunt laudantium maiores neque nesciunt nisi reiciendis reprehenderit vel. At, possimus voluptatum.';
+	        series.data = data;
+	        series.dataFields.word = "answer";
+	        series.dataFields.value = "count";
+	        series.colors = new am4core.ColorSet();
+	        series.colors.passOptions = {};
+	      } else if (chartType === 'BarChart' || 1) {
+	        chart = am4core.create('chart', am4charts.XYChart);
+	        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+	        categoryAxis.dataFields.category = "answer";
+	        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+	        series = chart.series.push(new am4charts.ColumnSeries());
+	        series.columns.template.tooltipText = "Вариант ответа: {categoryX}\nКоличество ответов: {valueY}";
+	        series.dataFields.valueY = "count";
+	        series.dataFields.categoryX = "answer";
+	        chart.data = data;
 	      }
-
-	      // здесь ошибка, чтобы ее увидеть надо убрать if
-	      console.log(am4plugins_wordCloud);
-	      var chart = am4core.create('chart', am4plugins_wordCloud.WordCloud);
-	      var series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
-	      series.data = data;
-	      series.dataFields.word = "answer";
-	      series.dataFields.value = "count";
-
-	      // And, for a good measure, let's add a legend
+	      series.interpolationDuration = 1500;
+	      series.defaultState.transitionDuration = 1500;
+	      chart.animated = true;
 	      chart.legend = new am4charts.Legend();
-
-	      // const chartNode = document.getElementById('chart');
-	      //
-	      // let answersData = this.getAnswersData();
-	      //
-	      // this.chart = new Chart(chartNode, {
-	      // 	type: this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID] ?? 'bar',
-	      // 	data: {
-	      // 		labels: answersData.labels,
-	      // 		datasets: [{
-	      // 			label: this.question.QUESTION_TEXT,
-	      // 			data: answersData.counts,
-	      // 			borderWidth: 1,
-	      // 		}]
-	      // 	},
-	      // 	options: {
-	      // 		scales: {
-	      // 			y: {
-	      // 				beginAtZero: true
-	      // 			}
-	      // 		}
-	      // 	}
-	      // });
-	      //
-	      // document.getElementById('updateButton').onclick = () => {
-	      // 	this.updateChart(this.chart);
-	      // };
+	      this.chart = chart;
 	    }
 	  }, {
 	    key: "updateChart",
 	    value: function updateChart() {
-	      var _this6 = this;
+	      var _this7 = this;
 	      this.loadAnswers().then(function (answers) {
-	        _this6.answers = answers;
-	        var answersData = _this6.getAnswersData();
-	        _this6.chart.data.labels = answersData.labels;
-	        _this6.chart.data.datasets[0].data = answersData.counts;
-	        _this6.chart.update();
+	        var _this7$chart$series;
+	        _this7.answers = answers;
+	        (_this7$chart$series = _this7.chart.series).addData.apply(_this7$chart$series, babelHelpers.toConsumableArray(_this7.getAnswersData()).concat([1]));
+	        _this7.chart.series.invalidateData();
 	      });
 	    } //update ResultNode
 	  }, {
 	    key: "renderQuestionResult",
 	    value: function renderQuestionResult(questionId) {
-	      var _this7 = this;
+	      var _this8 = this;
 	      this.loadQuestion(questionId).then(function (question) {
-	        _this7.question = question;
-	        _this7.loadAnswers().then(function (answers) {
-	          _this7.answers = answers;
-	          document.getElementById('questionResult').replaceWith(_this7.getQuestionResultNode());
-	          _this7.renderChart();
+	        _this8.question = question;
+	        _this8.loadAnswers().then(function (answers) {
+	          _this8.answers = answers;
+	          document.getElementById('questionResult').replaceWith(_this8.getQuestionResultNode());
+	          _this8.renderChart();
 	        });
 	      });
 	    }
@@ -240,7 +234,6 @@ this.Up = this.Up || {};
 	          'count': this.answers[i].COUNT
 	        });
 	      }
-	      console.log(result);
 	      return result;
 	    }
 	  }]);

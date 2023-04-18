@@ -1,13 +1,15 @@
 import {Type, Tag, } from 'main.core';
 window.am4core.useTheme(am4themes_animated);
+window.am4core.useTheme(am4themes_material);
 // import Chart from 'chart.js/auto';
 
 export class QuizShow
 {
 	DISPLAY_TYPES = {
-		0 : 'PieChart3D',
+		0 : 'PieChart',
 		1 : 'WordCloud',
 		2 : 'BarChart',
+		3 : 'RawOutput',
 	};
 
 
@@ -36,7 +38,6 @@ export class QuizShow
 		}
 
 		this.questions = []; // Все вопросы : title, id
-		this.currentQuestionId = 1; // Текущий id вопроса
 		this.reload();
 	}
 
@@ -211,13 +212,19 @@ export class QuizShow
 
 	getQuestionResultNode()
 	{
+		let updateButton = Tag.render`<button id="updateButton"><i class="fa-solid fa-rotate-right"></i></button>`;
+
+		updateButton.onclick = () => {
+			this.updateChart();
+		};
+
 		return Tag.render`
 			<div class=" column is-three-quarters statistics" id="questionResult">
 				<div class="statistics__title has-text-weight-semibold has-text-centered is-uppercase">Статистика</div>
 				<div class="statistics__question-title">
 					<strong>Вопрос : </strong>
 					${this.question.QUESTION_TEXT}
-					<button id="updateButton"><i class="fa-solid fa-rotate-right"></i></button>
+					${updateButton}
 				</div>
 				<div>
 					<div id="chart" style="width: 900px; height: 800px;"></div>
@@ -229,74 +236,72 @@ export class QuizShow
 	renderChart()
 	{
 		// Create chart instance
-		let chartType = (this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) ?? 'PieChart';
+		let chartType = (this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) ?? 'PieChart'; //PieChart - Default chart series
 
 		let data = this.getAnswersData();
 
+		let chart;
+		let series;
 
-		if (chartType === 'PieChart3D')
+
+		if (chartType === 'PieChart')
 		{
-			let chart = am4core.create('chart', 'PieChart')
-			let series = chart.series.push(new am4charts.PieSeries3D());
+			chart = am4core.create('chart', 'PieChart')
+
+			series = chart.series.push(new am4charts.PieSeries());
+
 			series.dataFields.value = "count";
 			series.dataFields.category = "answer";
 			chart.data = data;
 		}
+		else if (chartType === 'WordCloud')
+		{
+			chart = am4core.create('chart', am4plugins_wordCloud.WordCloud);
 
-		// здесь ошибка, чтобы ее увидеть надо убрать if
-		console.log(am4plugins_wordCloud);
-		let chart = am4core.create('chart', am4plugins_wordCloud.WordCloud);
+			series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+			//series.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim ex neque repellendus tempore? Architecto atque beatae, eius excepturi, incidunt laudantium maiores neque nesciunt nisi reiciendis reprehenderit vel. At, possimus voluptatum.';
+			series.data = data;
+			series.dataFields.word = "answer";
+			series.dataFields.value = "count";
 
-		let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
-		series.data = data;
-		series.dataFields.word = "answer";
-		series.dataFields.value = "count";
+			series.colors = new am4core.ColorSet();
+			series.colors.passOptions = {};
 
+		}
+		else if (chartType === 'BarChart' || 1)
+		{
+			chart = am4core.create('chart', am4charts.XYChart);
 
+			let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+			categoryAxis.dataFields.category = "answer";
+			let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
+			series = chart.series.push(new am4charts.ColumnSeries());
 
-		// And, for a good measure, let's add a legend
+			series.columns.template.tooltipText = "Вариант ответа: {categoryX}\nКоличество ответов: {valueY}";
+			series.dataFields.valueY = "count";
+			series.dataFields.categoryX = "answer";
+
+			chart.data = data;
+		}
+
+		series.interpolationDuration = 1500;
+		series.defaultState.transitionDuration = 1500;
+
+		chart.animated = true;
+
 		chart.legend = new am4charts.Legend();
-
-
-		// const chartNode = document.getElementById('chart');
-		//
-		// let answersData = this.getAnswersData();
-		//
-		// this.chart = new Chart(chartNode, {
-		// 	type: this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID] ?? 'bar',
-		// 	data: {
-		// 		labels: answersData.labels,
-		// 		datasets: [{
-		// 			label: this.question.QUESTION_TEXT,
-		// 			data: answersData.counts,
-		// 			borderWidth: 1,
-		// 		}]
-		// 	},
-		// 	options: {
-		// 		scales: {
-		// 			y: {
-		// 				beginAtZero: true
-		// 			}
-		// 		}
-		// 	}
-		// });
-		//
-		// document.getElementById('updateButton').onclick = () => {
-		// 	this.updateChart(this.chart);
-		// };
+		this.chart = chart;
 	}
 
 	updateChart()
 	{
 		this.loadAnswers().then(answers => {
 			this.answers = answers;
-			let answersData = this.getAnswersData();
-			this.chart.data.labels = answersData.labels;
-			this.chart.data.datasets[0].data = answersData.counts;
-			this.chart.update();
+			this.chart.data = this.getAnswersData();
 		})
 	}
+
 
 	//update ResultNode
 	renderQuestionResult(questionId)
@@ -322,7 +327,6 @@ export class QuizShow
 			});
 		}
 
-		console.log(result);
 		return result;
 	}
 }

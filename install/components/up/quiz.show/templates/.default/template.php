@@ -7,9 +7,10 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 \Bitrix\Main\UI\Extension::load([
 	'up.quiz-show',
 	'amcharts4',
-	'amcharts4_theme_animated'
+	'amcharts4_theme_animated',
 ]);
 \Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/amcharts/4.8.5/plugins/wordCloud.js');
+\Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/amcharts/4.8.5/themes/material.js');
 ?>
 
 <div id="quiz-container-root"></div>
