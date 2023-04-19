@@ -22,26 +22,24 @@ class User extends Engine\Controller
 		);
 	}
 
-	public function qauthAction(string $login, string $password)
+	public function authAction(string $login, string $password): ?array
 	{
-		return["123"];
-		// $USER = new \CUser;
-		// $authResult = $USER->Login($login, $password, "Y");
-		// if ($authResult === true) {
-		// 	return ["status" => "success"];
-		// } else {
-		// 	return ["status" => "error", "message" => $authResult["MESSAGE"]];
-		// }
+		$USER = new \CUser;
+		$authResult = $USER->Login($login, $password, "Y");
+		if ($authResult === true) {
+			return ["status" => "success"];
+		}
+		return ["status" => "error", "message" => $authResult["MESSAGE"]];
 	}
 
-	// public function configureActions()
-	// {
-	// 	return [
-	// 		'auth' => [
-	// 			'prefilters' => [
-	// 				new ActionFilter\Authentication
-	// 			],
-	// 		],
-	// 	];
-	// }
+	public function configureActions()
+	{
+		return [
+			'auth' => [
+				'-prefilters' => [
+					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
+				],
+			],
+		];
+	}
 }

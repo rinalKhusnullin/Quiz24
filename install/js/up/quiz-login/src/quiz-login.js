@@ -28,20 +28,32 @@ export class QuizLogin
 	}
 
 	auth(login, password){
-		BX.ajax.runAction('up:quiz.user.qauth', {
-				data: {
-					login: login,
-					password: password
-				}
-			}).then(function(response) {
-				if (response.status === "success") {
-					// Авторизация прошла успешно
-					alert('success');
-				} else {
-					// Ошибка авторизации
-					alert(response.message);
-				}
-			});
+
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.user.auth',{
+						data : {
+							login: login,
+							password: password
+						}
+					}
+				)
+				.then((response) => {
+					console.log(response);
+					if (response.status === "success") {
+						// Авторизация прошла успешно
+						console.log('success');
+					} else {
+						// Ошибка авторизации
+						console.log(response.message);
+					}
+				})
+				.catch((error) => {
+					console.error(error);
+					reject(error);
+				})
+			;
+		});
 	}
 
 	render()
