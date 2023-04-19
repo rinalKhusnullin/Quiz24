@@ -39,6 +39,21 @@ class Quiz extends Engine\Controller
 		return QuizRepository::createQuiz($title, $userId);
 	}
 
+	public function getQuizByCodeAction(string $code) : ?array
+	{
+		if (mb_strlen($code) !== 4)
+		{
+			$this->addError(new Error('Quiz code length must be 4', 'invalid_quiz_code'));
+			return null;
+		}
+
+		$quiz = QuizRepository::getQuizByCode($code);
+
+		return [
+			'quiz' => $quiz,
+		];
+	}
+
 	public function getListAction(int $userId): ?array
 	{
 		if ($userId <= 0)

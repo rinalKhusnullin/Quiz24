@@ -4,9 +4,7 @@ export class QuizTake
 {
 	constructor(options = {})
 	{
-
-		//VALIDATE QUIZ_ID !
-		this.quizId = options.quizId;
+		this.quizCode = options.quizCode;
 
 		if (Type.isStringFilled(options.rootNodeId))
 		{
@@ -30,10 +28,9 @@ export class QuizTake
 	reload()
 	{
 		this.loadQuiz().then(quiz => {
-			console.log(quiz);
-			if (quiz == null)
+			if (quiz === false)
 			{
-				alert ('TODO : ЕСЛИ QUIZ НЕ НАЙДЕН');
+				alert ('TODO : ЕСЛИ QUIZ НЕ НАЙДЕН');//TODO:Сделать страницу с отображением, что не найден QUIZ введите другой linkCode
 			}
 			else if (+quiz.IS_ACTIVE === 0)
 			{
@@ -65,9 +62,9 @@ export class QuizTake
 	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
-					'up:quiz.quiz.getQuiz',{
+					'up:quiz.quiz.getQuizByCode',{
 						data : {
-							id : this.quizId,
+							code: this.quizCode,
 						}
 					})
 				.then((response) => {
@@ -88,7 +85,7 @@ export class QuizTake
 			BX.ajax.runAction(
 					'up:quiz.question.getQuestions',{
 						data : {
-							quizId : this.quizId,
+							quizId : this.quiz.ID,
 						}
 					})
 				.then((response) => {
