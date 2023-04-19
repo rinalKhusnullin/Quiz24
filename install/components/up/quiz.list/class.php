@@ -4,6 +4,10 @@ class QuizListComponent extends CBitrixComponent
 {
 	public function executeComponent()
 	{
-		$this->includeComponentTemplate();
+		global $USER;
+		if ($USER->IsAuthorized())
+		{
+			$this->includeComponentTemplate();
+		}
 	}
 }
