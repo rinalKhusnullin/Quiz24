@@ -2,7 +2,7 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9;
 	window.am4core.useTheme(am4themes_animated);
 	window.am4core.useTheme(am4themes_material);
 	// import Chart from 'chart.js/auto';
@@ -128,7 +128,7 @@ this.Up = this.Up || {};
 	    key: "render",
 	    value: function render() {
 	      this.rootNode.innerHTML = "";
-	      var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<button class=\"button\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t\t\t</button>\n\t\t\t\t\t<div class=\"modal\">\n\t\t\t\t\t\t<div class=\"modal-background\"></div>\n\t\t\t\t\t    <div class=\"modal-content\">\n\t\t\t\t\t\t\t<p class=\"image is-4by3\">\n\t\t\t\t\t\t\t  <img src=\"https://bulma.io/images/placeholders/1280x960.png\" alt=\"\">\n\t\t\t\t\t\t\t</p>\n\t\t\t\t\t    </div>\n\t\t\t\t\t\t<button class=\"modal-close is-large\" aria-label=\"close\"></button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), this.quiz.TITLE, this.quiz.CODE);
+	      var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), this.quiz.TITLE, this.quiz.CODE, this.getShareNode(this.quiz));
 	      this.rootNode.appendChild(QuizHeroSection);
 	      var QuizResultContent = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box\">\n\t\t\t\t<div class=\"columns\">\n\t\t\t\t\t<div class=\"column is-one-quarter question-list\">\n\t\t\t\t\t\t<div class=\"question-list__title has-text-weight-semibold has-text-centered is-uppercase\">\u0412\u043E\u043F\u0440\u043E\u0441</div>\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.getQuestionsListNode(), this.getQuestionResultNode());
 	      this.rootNode.appendChild(QuizResultContent);
@@ -233,6 +233,36 @@ this.Up = this.Up || {};
 	        });
 	      }
 	      return result;
+	    }
+	  }, {
+	    key: "getShareNode",
+	    value: function getShareNode(quiz) {
+	      var quizTakeLink = "".concat(location.hostname, "/quiz/").concat(quiz.CODE, "/take");
+	      var shareButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<button class=\"button\">\n\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t</button>\n\t\t"])));
+	      var shareModal = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-success copy\">\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), quizTakeLink);
+	      shareButton.onclick = function () {
+	        shareModal.classList.add('is-active');
+	      };
+	      var elemsToCloseModal = shareModal.querySelectorAll('.to-close');
+	      elemsToCloseModal.forEach(function (elem) {
+	        elem.onclick = function () {
+	          shareModal.classList.remove('is-active');
+	        };
+	      });
+	      var copyButton = shareModal.querySelector('.copy');
+	      copyButton.onclick = function () {
+	        shareModal.querySelector('.input').select();
+	        document.execCommand("copy");
+	      };
+	      new QRCode(shareModal.querySelector(".qr"), {
+	        text: quizTakeLink,
+	        width: 600,
+	        height: 600,
+	        colorDark: "#000000",
+	        colorLight: "#ffffff",
+	        correctLevel: QRCode.CorrectLevel.H
+	      });
+	      return main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t", "\n\t\t\t", "\n\t\t"])), shareButton, shareModal);
 	    }
 	  }]);
 	  return QuizShow;

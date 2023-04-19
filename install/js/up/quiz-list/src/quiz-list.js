@@ -187,9 +187,7 @@ export class QuizList
 						<a href="/quiz/${QuizData.ID}/show" title="Показать результаты">
 							<i class="fa-sharp fa-solid fa-chart-column fa-fw"></i>
 						</a>
-						<a href="/quiz/${QuizData.ID}/show" title="Поделиться">
-							<i class="fa-solid fa-link fa-fw"></i>
-						</a>
+						${this.getShareNode(QuizData)}
 						<a class="delete-quiz-button" title="Удалить опрос">
 							<i class="fa-sharp fa-solid fa-trash fa-fw"></i>
 						</a>
@@ -285,6 +283,61 @@ export class QuizList
 		};
 
 		return button;
+	}
+
+	getShareNode(quiz)
+	{
+		let quizTakeLink = `${location.hostname}/quiz/${quiz.CODE}/take`;
+
+		const shareButton = Tag.render`
+			<a title="Поделиться">
+				<i class="fa-solid fa-link fa-fw"></i>
+			</a>
+		`;
+		const shareModal = Tag.render`
+			<div class="modal">
+				<div class="modal-background to-close"></div>
+				<div class="modal-content box">
+					<div class="qr mb-4"></div>
+					<div>
+						<input type="text" class="input mb-2" value="${quizTakeLink}" readonly>
+						<button class="button is-success copy">Скопировать</button>
+					</div>
+				</div>
+				<button class="modal-close is-large to-close" aria-label="close"></button>
+			</div>
+		`;
+
+		shareButton.onclick = () => {
+			shareModal.classList.add('is-active');
+		};
+
+		let elemsToCloseModal = shareModal.querySelectorAll('.to-close');
+		elemsToCloseModal.forEach(elem => {
+			elem.onclick = () => {
+				shareModal.classList.remove('is-active');
+			};
+		});
+
+		let copyButton = shareModal.querySelector('.copy');
+		copyButton.onclick = () => {
+			shareModal.querySelector('.input').select();
+			document.execCommand("copy");
+		};
+
+		new QRCode(shareModal.querySelector(`.qr`), {
+			text: quizTakeLink,
+			width: 600,
+			height: 600,
+			colorDark : "#000000",
+			colorLight : "#ffffff",
+			correctLevel : QRCode.CorrectLevel.H
+		});
+
+		return Tag.render`
+			${shareButton}
+			${shareModal}
+		`;
 	}
 
 	changeState(id)

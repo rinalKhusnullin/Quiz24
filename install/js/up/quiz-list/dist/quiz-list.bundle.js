@@ -2,7 +2,7 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8;
 	var QuizList = /*#__PURE__*/function () {
 	  function QuizList() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -102,7 +102,7 @@ this.Up = this.Up || {};
 	      var QuizContainerNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"quiz-container\">\n\t\t\t\t<div class=\"quiz-card quiz-card__add-new\">\n\t\t\t\t\t<a class=\"is-success is-button quiz-card__new-quiz-btn\" id=\"open_creating_modal_btn\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-plus\"></i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<div class=\"modal\" id=\"new_quiz_modal\">\n\t\t\t\t\t\t<div class=\"modal-background close-modal\"></div>\n\t\t\t\t\t\t<div class=\"modal-card\">\n\t\t\t\t\t\t\t<header class=\"modal-card-head\">\n\t\t\t\t\t\t\t\t<p class=\"modal-card-title\">\u0421\u043E\u0437\u0434\u0430\u043D\u0438\u0435 \u043E\u043F\u0440\u043E\u0441\u0430</p>\n\t\t\t\t\t\t\t\t<button class=\"delete close-modal\" aria-label=\"close\"></button>\n\t\t\t\t\t\t\t</header>\n\t\t\t\t\t\t\t<section class=\"modal-card-body is-dark\">\n\t\t\t\t\t\t\t\t<div class=\"field\">\n\t\t\t\t\t\t\t\t\t<label class=\"label\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u043E\u043F\u0440\u043E\u0441\u0430</label>\n\t\t\t\t\t\t\t\t\t<div class=\"control\">\n\t\t\t\t\t\t\t\t\t\t<input id=\"quizTitle\" class=\"input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u043E\u043F\u0440\u043E\u0441\u0430\">\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<p class=\"help\" id=\"creating-quiz-helper\"></p>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t<footer class=\"modal-card-foot\">\n\t\t\t\t\t\t\t\t<button class=\"button is-success\" id=\"creating_quiz_btn\">\u0421\u043E\u0437\u0434\u0430\u0442\u044C</button>\n\t\t\t\t\t\t\t\t<button class=\"button close-modal\">Cancel</button>\n\t\t\t\t\t\t\t</footer>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])));
 	      this.quizList.forEach(function (QuizData) {
 	        var isActive = +QuizData.IS_ACTIVE === 1 ? 'Включен' : 'Выключен';
-	        var QuizCard = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"quiz-card\" data-quiz-id=\"", "\">\n\t\t\t\t\t<div class=\"quiz-card__header\"></div>\n\t\t\t\t\t\t<div class=\"quiz-card__content\">\n\t\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">linkcode:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"quiz-card__hidden-btns\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t<a href=\"/quiz/", "/edit\" title=\"\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043E\u043F\u0440\u043E\u0441\">\n\t\t\t\t\t\t\t<i class=\"fa-solid fa-pen fa-fw\"></i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\t<a href=\"/quiz/", "/show\" title=\"\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B\">\n\t\t\t\t\t\t\t<i class=\"fa-sharp fa-solid fa-chart-column fa-fw\"></i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\t<a href=\"/quiz/", "/show\" title=\"\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F\">\n\t\t\t\t\t\t\t<i class=\"fa-solid fa-link fa-fw\"></i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\t<a class=\"delete-quiz-button\" title=\"\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u043E\u043F\u0440\u043E\u0441\">\n\t\t\t\t\t\t\t<i class=\"fa-sharp fa-solid fa-trash fa-fw\"></i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), QuizData.ID, QuizData.TITLE, QuizData.CODE, isActive, _this3.getStateButton(QuizData), QuizData.ID, QuizData.ID, QuizData.ID);
+	        var QuizCard = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"quiz-card\" data-quiz-id=\"", "\">\n\t\t\t\t\t<div class=\"quiz-card__header\"></div>\n\t\t\t\t\t\t<div class=\"quiz-card__content\">\n\t\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">linkcode:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"quiz-card__hidden-btns\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t<a href=\"/quiz/", "/edit\" title=\"\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043E\u043F\u0440\u043E\u0441\">\n\t\t\t\t\t\t\t<i class=\"fa-solid fa-pen fa-fw\"></i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\t<a href=\"/quiz/", "/show\" title=\"\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B\">\n\t\t\t\t\t\t\t<i class=\"fa-sharp fa-solid fa-chart-column fa-fw\"></i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t<a class=\"delete-quiz-button\" title=\"\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u043E\u043F\u0440\u043E\u0441\">\n\t\t\t\t\t\t\t<i class=\"fa-sharp fa-solid fa-trash fa-fw\"></i>\n\t\t\t\t\t\t</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), QuizData.ID, QuizData.TITLE, QuizData.CODE, isActive, _this3.getStateButton(QuizData), QuizData.ID, QuizData.ID, _this3.getShareNode(QuizData));
 	        QuizContainerNode.appendChild(QuizCard);
 	      });
 	      this.rootNode.appendChild(QuizContainerNode);
@@ -179,6 +179,36 @@ this.Up = this.Up || {};
 	        _this4.changeState(quiz.ID);
 	      };
 	      return button;
+	    }
+	  }, {
+	    key: "getShareNode",
+	    value: function getShareNode(quiz) {
+	      var quizTakeLink = "".concat(location.hostname, "/quiz/").concat(quiz.CODE, "/take");
+	      var shareButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a title=\"\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F\">\n\t\t\t\t<i class=\"fa-solid fa-link fa-fw\"></i>\n\t\t\t</a>\n\t\t"])));
+	      var shareModal = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-success copy\">\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), quizTakeLink);
+	      shareButton.onclick = function () {
+	        shareModal.classList.add('is-active');
+	      };
+	      var elemsToCloseModal = shareModal.querySelectorAll('.to-close');
+	      elemsToCloseModal.forEach(function (elem) {
+	        elem.onclick = function () {
+	          shareModal.classList.remove('is-active');
+	        };
+	      });
+	      var copyButton = shareModal.querySelector('.copy');
+	      copyButton.onclick = function () {
+	        shareModal.querySelector('.input').select();
+	        document.execCommand("copy");
+	      };
+	      new QRCode(shareModal.querySelector(".qr"), {
+	        text: quizTakeLink,
+	        width: 600,
+	        height: 600,
+	        colorDark: "#000000",
+	        colorLight: "#ffffff",
+	        correctLevel: QRCode.CorrectLevel.H
+	      });
+	      return main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t", "\n\t\t\t", "\n\t\t"])), shareButton, shareModal);
 	    }
 	  }, {
 	    key: "changeState",

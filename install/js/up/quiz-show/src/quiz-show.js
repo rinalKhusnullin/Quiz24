@@ -164,18 +164,7 @@ export class QuizShow
 					<p class="title mb-0">
 						${this.quiz.TITLE}#${this.quiz.CODE}
 					</p>
-					<button class="button">
-						<i class="fa-solid fa-qrcode"></i>
-					</button>
-					<div class="modal">
-						<div class="modal-background"></div>
-					    <div class="modal-content">
-							<p class="image is-4by3">
-							  <img src="https://bulma.io/images/placeholders/1280x960.png" alt="">
-							</p>
-					    </div>
-						<button class="modal-close is-large" aria-label="close"></button>
-					</div>
+					${this.getShareNode(this.quiz)}
 				</div>
 			</section>
 		`;
@@ -328,5 +317,60 @@ export class QuizShow
 		}
 
 		return result;
+	}
+
+	getShareNode(quiz)
+	{
+		let quizTakeLink = `${location.hostname}/quiz/${quiz.CODE}/take`;
+
+		const shareButton = Tag.render`
+			<button class="button">
+				<i class="fa-solid fa-qrcode"></i>
+			</button>
+		`;
+		const shareModal = Tag.render`
+			<div class="modal">
+				<div class="modal-background to-close"></div>
+				<div class="modal-content box">
+					<div class="qr mb-4"></div>
+					<div>
+						<input type="text" class="input mb-2" value="${quizTakeLink}" readonly>
+						<button class="button is-success copy">Скопировать</button>
+					</div>
+				</div>
+				<button class="modal-close is-large to-close" aria-label="close"></button>
+			</div>
+		`;
+
+		shareButton.onclick = () => {
+			shareModal.classList.add('is-active');
+		};
+
+		let elemsToCloseModal = shareModal.querySelectorAll('.to-close');
+		elemsToCloseModal.forEach(elem => {
+			elem.onclick = () => {
+				shareModal.classList.remove('is-active');
+			};
+		});
+
+		let copyButton = shareModal.querySelector('.copy');
+		copyButton.onclick = () => {
+			shareModal.querySelector('.input').select();
+			document.execCommand("copy");
+		};
+
+		new QRCode(shareModal.querySelector(`.qr`), {
+			text: quizTakeLink,
+			width: 600,
+			height: 600,
+			colorDark : "#000000",
+			colorLight : "#ffffff",
+			correctLevel : QRCode.CorrectLevel.H
+		});
+
+		return Tag.render`
+			${shareButton}
+			${shareModal}
+		`;
 	}
 }
