@@ -1,0 +1,12 @@
+.title{
+	text-align: center;
+}
+
+.login{
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.login-button button, .login-button{
+	width: 100%;
+}
