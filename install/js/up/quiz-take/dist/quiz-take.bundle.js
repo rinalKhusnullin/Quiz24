@@ -7,8 +7,7 @@ this.Up = this.Up || {};
 	  function QuizTake() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, QuizTake);
-	    //VALIDATE QUIZ_ID !
-	    this.quizId = options.quizId;
+	    this.quizCode = options.quizCode;
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -26,8 +25,7 @@ this.Up = this.Up || {};
 	    value: function reload() {
 	      var _this = this;
 	      this.loadQuiz().then(function (quiz) {
-	        console.log(quiz);
-	        if (quiz == null) {
+	        if (quiz === false) {
 	          alert('TODO : ЕСЛИ QUIZ НЕ НАЙДЕН');
 	        } else if (+quiz.IS_ACTIVE === 0) {
 	          alert('TODO : ЕСЛИ QUIZ ЗАКРЫТ ДЛЯ ПРОХОЖДЕНИЯ');
@@ -53,9 +51,9 @@ this.Up = this.Up || {};
 	    value: function loadQuiz() {
 	      var _this2 = this;
 	      return new Promise(function (resolve, reject) {
-	        BX.ajax.runAction('up:quiz.quiz.getQuiz', {
+	        BX.ajax.runAction('up:quiz.quiz.getQuizByCode', {
 	          data: {
-	            id: _this2.quizId
+	            code: _this2.quizCode
 	          }
 	        }).then(function (response) {
 	          var quiz = response.data.quiz;
@@ -73,7 +71,7 @@ this.Up = this.Up || {};
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:quiz.question.getQuestions', {
 	          data: {
-	            quizId: _this3.quizId
+	            quizId: _this3.quiz.ID
 	          }
 	        }).then(function (response) {
 	          var questions = response.data.questions;

@@ -58,6 +58,16 @@ class QuizRepository
 		return $result;
 	}
 
+	public static function getQuizByCode(string $code)
+	{
+		$result = QuizzesTable::getList([
+			'select' => ['ID', 'TITLE', 'CODE', 'IS_ACTIVE'],
+			'filter' => ['=CODE' => $code],
+		])->fetch();
+
+		return $result;
+	}
+
 	public static function changeState(int $id)
 	{
 		$isActive = QuizzesTable::getByPrimary($id)->fetch()['IS_ACTIVE'];
@@ -65,6 +75,7 @@ class QuizRepository
 		$result = QuizzesTable::update($id, [
 			'IS_ACTIVE' => ($isActive === '1') ? 0 : 1,
 		]);
+
 		if (!$result->isSuccess())
 		{
 			return $result->getErrorMessages();
