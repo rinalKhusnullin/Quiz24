@@ -1,6 +1,7 @@
 <?php
 	if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 	\Bitrix\Main\UI\Extension::load('up.quiz-list');
+	\Bitrix\Main\UI\Extension::load('qrcode');
 ?>
 <!-- Main container -->
 <nav class="level">

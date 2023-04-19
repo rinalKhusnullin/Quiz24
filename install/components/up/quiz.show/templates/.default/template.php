@@ -8,6 +8,7 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 	'up.quiz-show',
 	'amcharts4',
 	'amcharts4_theme_animated',
+	'qrcode',
 ]);
 \Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/amcharts/4.8.5/plugins/wordCloud.js');
 \Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/amcharts/4.8.5/themes/material.js');
