@@ -15,4 +15,10 @@ return function (RoutingConfigurator $routes)
 
 	$routes->get('/quiz/{quizCode}/take', new PublicPageController('/local/modules/up.quiz/views/quiz-take.php')); //для прохождения опроса
 	$routes->get('/quiz/{quizCode}/take/', new PublicPageController('/local/modules/up.quiz/views/quiz-take.php'));
+
+	$routes->get('/login/', new PublicPageController('/local/modules/up.quiz/views/quiz-login.php')); //Войти в аккаунт
+	$routes->get('/login', new PublicPageController('/local/modules/up.quiz/views/quiz-login.php'));
+
+	$routes->get('/registration/', new PublicPageController('/local/modules/up.quiz/views/quiz-registration.php')); //Зарегистрироваться
+	$routes->get('/registration', new PublicPageController('/local/modules/up.quiz/views/quiz-registration.php'));
 };
