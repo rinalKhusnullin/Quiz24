@@ -221,7 +221,7 @@ export class QuizList
 		const QuizTitleInput = document.getElementById('quizTitle');
 		QuizTitleInput.addEventListener('input', () => {
 			const QuizTitleInputHelper = document.getElementById('creating-quiz-helper');
-			if (QuizTitleInput.value === ''){ // Я знаю, что это ужасно! Думаю вынести в отдельную функцию
+			if (QuizTitleInput.value === ''){ //todo Я знаю, что это ужасно! Думаю вынести в отдельную функцию
 				QuizTitleInput.classList.add('is-danger');
 				QuizTitleInput.classList.remove('is-success');
 				QuizTitleInputHelper.textContent = 'Название опроса не может быть пустым!'
