@@ -31,11 +31,11 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 			<div class="navbar-end">
 				<div class="navbar-item">
 					<div class="buttons">
-						<a class="button is-primary" href="/login/">
+						<a class="button is-primary" href="/login">
 							<strong>Войти</strong>
 						</a>
-						<a class="button is-light" href="/reg/">
-							Регистрация
+						<a class="button is-light" href="/registration">
+							Создать аккаунт
 						</a>
 					</div>
 				</div>
