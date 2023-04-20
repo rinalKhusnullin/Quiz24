@@ -40,3 +40,29 @@ body {
 .navbar-brand__logo i::before{
 	align-self: flex-end;
 }
+
+.user-info{
+	display: flex;
+}
+
+.user-info i{
+	display: flex;
+	align-items: center;
+	margin-right: 10px;
+}
+
+.user{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.user p{
+	font-weight: 700;
+	font-size: 20px;
+}
+
+.user a{
+	font-size: 13px;
+	margin-top: -8px;
+}
