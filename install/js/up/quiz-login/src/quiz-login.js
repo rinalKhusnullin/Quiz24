@@ -40,11 +40,20 @@ export class QuizLogin
 				)
 				.then((response) => {
 					console.log(response);
-					if (response.status === "success") {
-						// Авторизация прошла успешно
-						console.log('success');
-					} else {
-						// Ошибка авторизации
+					if (response.status === "success")
+					{
+						if (response.data.status === "success")
+						{
+							resolve(true);
+							document.location.href = '/';
+						}
+						else{
+							resolve(false);
+							this.failAuth();
+						}
+					}
+					else
+					{
 						console.log(response.message);
 					}
 				})
@@ -65,15 +74,11 @@ export class QuizLogin
 				<div class="field">
 					<label class="label">Логин</label>
 					<div class="control has-icons-left has-icons-right">
-						<input id="login-input" class="input is-success" type="text" placeholder="Введите логин" value="">
+						<input id="login-input" class="input" type="text" placeholder="Введите логин" value="">
 						<span class="icon is-small is-left">
 							<i class="fas fa-user"></i>
 						</span>
-						<span class="icon is-small is-right">
-							<i class ="fas fa-check"></i>
-						</span>
 					</div>
-					<p class="help is-success">This username is available</p>
 				</div>
 	
 				<div class="field">
@@ -85,6 +90,9 @@ export class QuizLogin
 						</span>
 					</p>
 				</div>
+				
+				<article class="message is-danger" id="error-container">
+				</article>
 	
 				<div class="mb-2">Если у вас нет аккаунта Вы можете создать его тут - <a href="/registration" class="">Создать аккаунт</a>
 				</div>
@@ -101,9 +109,37 @@ export class QuizLogin
 		const submitButton = LoginContainerNode.querySelector('#submit-button');
 
 		submitButton.onclick = () => {
-			this.auth(loginInput.value, passwordInput.value);
+			submitButton.classList.add('is-loading');
+			this.auth(loginInput.value, passwordInput.value).then(isSuccess => {
+				if (isSuccess) {
+					submitButton.innerHTML = `<i class="fa-solid fa-check"></i>`;
+					submitButton.classList.add('is-success');
+				}
+				submitButton.classList.remove('is-loading');
+			});
 		}
 
 		this.rootNode.appendChild(LoginContainerNode);
+	}
+
+	failAuth()
+	{
+		const errorContainer = document.getElementById('error-container');
+		const loginInput = document.getElementById('login-input');
+		const passwordInput = document.getElementById('password-input')
+
+		errorContainer.appendChild(Tag.render`<div class="message-body">
+			Неверный <strong>Логин</strong> или <strong>Пароль</strong>
+		</div>`);
+		let inputs = [loginInput, passwordInput];
+		inputs.forEach(input => {
+			input.classList.add('is-danger');
+			input.oninput = () => {
+				inputs.forEach(input => {
+					input.classList.remove('is-danger');
+				});
+				errorContainer.innerHTML = ``;
+			};
+		});
 	}
 }
