@@ -22,7 +22,7 @@ class User extends Engine\Controller
 		);
 	}
 
-	public function authAction(string $login, string $password): ?array
+	public function loginAction(string $login, string $password): ?array
 	{
 		$USER = new \CUser;
 		$authResult = $USER->Login($login, $password, "Y");
@@ -32,10 +32,16 @@ class User extends Engine\Controller
 		return ["status" => "error", "message" => $authResult["MESSAGE"]];
 	}
 
+	public function logoutAcion()
+	{
+		global $USER;
+		$USER->Logout();
+	}
+
 	public function configureActions()
 	{
 		return [
-			'auth' => [
+			'login' => [
 				'-prefilters' => [
 					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
 				],
