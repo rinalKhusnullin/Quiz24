@@ -31,6 +31,12 @@ class Quiz extends Engine\Controller
 			return null;
 		}
 
+		if (!$USER->IsAuthorized())
+		{
+			$this->addError(new Error('User must be authorized', 'unauthorized_user'));
+			return null;
+		}
+
 		$userId = $USER->GetID();
 
 		return QuizRepository::createQuiz($title, $userId);
@@ -54,6 +60,12 @@ class Quiz extends Engine\Controller
 	public function getListAction(): ?array
 	{
 		global $USER;
+
+		if (!$USER->IsAuthorized())
+		{
+			$this->addError(new Error('User must be authorized', 'unauthorized_user'));
+			return null;
+		}
 
 		$userId = $USER->GetID();
 
