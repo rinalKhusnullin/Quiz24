@@ -70,37 +70,38 @@ export class QuizLogin
 		const LoginContainerNode = Tag.render`
 			<div class="login-container-node">
 				<h1 class="title">Войти</h1>
-	
-				<div class="field">
-					<label class="label">Логин</label>
-					<div class="control has-icons-left has-icons-right">
-						<input id="login-input" class="input" type="text" placeholder="Введите логин" value="">
-						<span class="icon is-small is-left">
-							<i class="fas fa-user"></i>
-						</span>
+				<form action="##">
+					<div class="field">
+						<label class="label">Логин</label>
+						<div class="control has-icons-left has-icons-right">
+							<input id="login-input" class="input" type="text" placeholder="Введите логин" value="">
+							<span class="icon is-small is-left">
+								<i class="fas fa-user"></i>
+							</span>
+						</div>
 					</div>
-				</div>
-	
-				<div class="field">
-					<label class="label">Пароль</label>
-					<p class="control has-icons-left">
-						<input id="password-input" class="input" type="password" placeholder="Введите пароль">
-						<span class="icon is-small is-left">
-							<i class="fas fa-lock"></i>
-						</span>
-					</p>
-				</div>
-				
-				<article class="message is-danger" id="error-container"></article>
-	
-				<div class="mb-2">Если у вас нет аккаунта Вы можете <a href="/registration" class="is-underlined">Создать его</a>
-				</div>
-	
-				<div class="field is-grouped">
-					<div class="control login-button">
-						<button id="submit-button" class="button is-link">Войти</button>
+		
+					<div class="field">
+						<label class="label">Пароль</label>
+						<p class="control has-icons-left">
+							<input id="password-input" class="input" type="password" placeholder="Введите пароль">
+							<span class="icon is-small is-left">
+								<i class="fas fa-lock"></i>
+							</span>
+						</p>
 					</div>
-				</div>
+					
+					<article class="message is-danger" id="error-container"></article>
+		
+					<div class="mb-2"><a href="/registration" class="is-underlined">Создать аккаунт</a> если у Вас его нет.
+					</div>
+		
+					<div class="field is-grouped">
+						<div class="control login-button">
+							<button type="submit" id="submit-button" class="button is-link">Войти</button>
+						</div>
+					</div>
+				</form>
 			</div>
 		`;
 		const loginInput = LoginContainerNode.querySelector('#login-input');
