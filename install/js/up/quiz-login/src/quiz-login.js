@@ -91,10 +91,9 @@ export class QuizLogin
 					</p>
 				</div>
 				
-				<article class="message is-danger" id="error-container">
-				</article>
+				<article class="message is-danger" id="error-container"></article>
 	
-				<div class="mb-2">Если у вас нет аккаунта Вы можете создать его тут - <a href="/registration" class="">Создать аккаунт</a>
+				<div class="mb-2">Если у вас нет аккаунта Вы можете <a href="/registration" class="is-underlined">Создать его</a>
 				</div>
 	
 				<div class="field is-grouped">
@@ -128,9 +127,13 @@ export class QuizLogin
 		const loginInput = document.getElementById('login-input');
 		const passwordInput = document.getElementById('password-input')
 
-		errorContainer.appendChild(Tag.render`<div class="message-body">
-			Неверный <strong>Логин</strong> или <strong>Пароль</strong>
-		</div>`);
+		if (!errorContainer.hasChildNodes())
+		{
+			errorContainer.appendChild(Tag.render`<div class="message-body">
+				Неверный <strong>Логин</strong> или <strong>Пароль</strong>
+			</div>`);
+		}
+
 		let inputs = [loginInput, passwordInput];
 		inputs.forEach(input => {
 			input.classList.add('is-danger');
