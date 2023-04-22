@@ -32,10 +32,34 @@ class User extends Engine\Controller
 		return ["status" => "error", "message" => $authResult["MESSAGE"]];
 	}
 
+	public function registerUserAction(string $login, string $email, string $password, string $confirmPassword) : ?array
+	{
+		$USER = new \CUser;
+
+		$newUserID = $USER->Add([
+			'LOGIN' => $login,
+			'EMAIL' => $email,
+			'PASSWORD' => $password,
+			'CONFIRM_PASSWORD' => $confirmPassword,
+		]);
+
+		if (intval($newUserID) > 0)
+		{
+			$USER->Authorize($newUserID);
+			return ["status" => "success"];
+		}
+		return ["status" => "error", "message" => $USER->LAST_ERROR];
+	}
+
 	public function configureActions()
 	{
 		return [
 			'auth' => [
+				'-prefilters' => [
+					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
+				],
+			],
+			'registerUser' => [
 				'-prefilters' => [
 					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
 				],
