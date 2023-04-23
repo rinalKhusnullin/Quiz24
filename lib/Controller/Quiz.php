@@ -22,7 +22,7 @@ class Quiz extends Engine\Controller
 		);
 	}
 
-	public function createQuizAction(string $title, int $userId)
+	public function createQuizAction(string $title)
 	{
 		global $USER;
 		if (empty(trim($title)))

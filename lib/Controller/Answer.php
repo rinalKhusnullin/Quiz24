@@ -22,6 +22,7 @@ class Answer extends Engine\Controller
 		);
 	}
 
+	//Создать ответ на вопрос
 	public function createAnswerAction(int $questionId, string $answer): ?array
 	{
 		if ($questionId <= 0)
@@ -44,5 +45,16 @@ class Answer extends Engine\Controller
 			return null;
 		}
 		return AnswerRepository::getAnswersCounts($questionId);
+	}
+
+	public function configureActions()
+	{
+		return [
+			'createAnswer' => [
+				'-prefilters' => [
+					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
+				],
+			],
+		];
 	}
 }

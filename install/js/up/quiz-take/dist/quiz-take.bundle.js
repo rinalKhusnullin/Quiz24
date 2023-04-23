@@ -26,7 +26,7 @@ this.Up = this.Up || {};
 	      var _this = this;
 	      this.loadQuiz().then(function (quiz) {
 	        if (quiz === false) {
-	          alert('TODO : ЕСЛИ QUIZ НЕ НАЙДЕН');
+	          alert('TODO : ЕСЛИ QUIZ НЕ НАЙДЕН'); //TODO:Сделать страницу с отображением, что не найден QUIZ введите другой linkCode
 	        } else if (+quiz.IS_ACTIVE === 0) {
 	          alert('TODO : ЕСЛИ QUIZ ЗАКРЫТ ДЛЯ ПРОХОЖДЕНИЯ');
 	        } else {
