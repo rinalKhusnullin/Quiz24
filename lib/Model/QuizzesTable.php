@@ -11,6 +11,7 @@ use Bitrix\Main\Localization\Loc,
 use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\SystemException;
+use Bitrix\Main\UserTable;
 
 Loc::loadMessages(__FILE__);
 
@@ -78,7 +79,7 @@ class QuizzesTable extends DataManager
 
 			(new Reference(
 				'USERS',
-				UsersTable::class,
+				UserTable::class,
 				Join::on('this.USER_ID', 'ref.ID')
 			))->configureJoinType('inner'),
 
