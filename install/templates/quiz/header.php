@@ -29,16 +29,26 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
                 </a>
             </div>
 			<div class="navbar-end">
-				<div class="navbar-item">
-					<div class="buttons">
-						<a class="button is-primary" href="/login">
-							<strong>Войти</strong>
-						</a>
-						<a class="button is-light" href="/registration">
-							Создать аккаунт
-						</a>
+				<?php if ($USER->IsAuthorized()): ?>
+					<div class="user-info">
+						<i class="fa-solid fa-circle-user fa-2xl"></i>
+						<div class="user">
+							<p><?= htmlspecialchars($USER->GetLogin()) ?></p>
+							<a href="/logout">Выйти</a>
+						</div>
 					</div>
-				</div>
+				<?php else: ?>
+					<div class="navbar-item">
+						<div class="buttons">
+							<a class="button is-primary" href="/login">
+								<strong>Войти</strong>
+							</a>
+							<a class="button is-light" href="/registration">
+								Создать аккаунт
+							</a>
+						</div>
+					</div>
+				<?php endif; ?>
 			</div>
         </nav>
     <div class="wrapper">

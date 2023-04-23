@@ -19,8 +19,6 @@ export class QuizList
 			throw new Error(`QuizList: element with id "${this.rootNodeId}" not found`);
 		}
 
-		this.userId = 1;
-
 		this.quizList = [];
 		this.reload();
 	}
@@ -40,11 +38,7 @@ export class QuizList
 		let UserId = 1;
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
-					'up:quiz.quiz.getList',{
-						data : {
-							userId : UserId,
-						}
-					}
+					'up:quiz.quiz.getList',
 				)
 				.then((response) => {
 					const quizList = response.data.quizList;
@@ -65,7 +59,6 @@ export class QuizList
 				{
 					data: {
 						title: title,
-						userId: this.userId,
 					},
 				})
 			.then((response) => {

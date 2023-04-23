@@ -22,7 +22,7 @@ class User extends Engine\Controller
 		);
 	}
 
-	public function loginAction(string $login, string $password): ?array
+	public function authAction(string $login, string $password): ?array
 	{
 		$USER = new \CUser;
 		$authResult = $USER->Login($login, $password, "Y");
@@ -32,16 +32,34 @@ class User extends Engine\Controller
 		return ["status" => "error", "message" => $authResult["MESSAGE"]];
 	}
 
-	public function logoutAcion()
+	public function registerUserAction(string $login, string $email, string $password, string $confirmPassword) : ?array
 	{
-		global $USER;
-		$USER->Logout();
+		$USER = new \CUser;
+
+		$newUserID = $USER->Add([
+			'LOGIN' => $login,
+			'EMAIL' => $email,
+			'PASSWORD' => $password,
+			'CONFIRM_PASSWORD' => $confirmPassword,
+		]);
+
+		if (intval($newUserID) > 0)
+		{
+			$USER->Authorize($newUserID);
+			return ["status" => "success"];
+		}
+		return ["status" => "error", "message" => $USER->LAST_ERROR];
 	}
 
 	public function configureActions()
 	{
 		return [
-			'login' => [
+			'auth' => [
+				'-prefilters' => [
+					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
+				],
+			],
+			'registerUser' => [
 				'-prefilters' => [
 					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
 				],

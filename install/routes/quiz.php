@@ -21,4 +21,7 @@ return function (RoutingConfigurator $routes)
 
 	$routes->get('/registration/', new PublicPageController('/local/modules/up.quiz/views/quiz-registration.php')); //Зарегистрироваться
 	$routes->get('/registration', new PublicPageController('/local/modules/up.quiz/views/quiz-registration.php'));
+
+	$routes->get('/logout', new PublicPageController('/local/modules/up.quiz/views/quiz-logout.php')); //Выйти из аккаунта
+	$routes->get('/logout/', new PublicPageController('/local/modules/up.quiz/views/quiz-logout.php'));
 };

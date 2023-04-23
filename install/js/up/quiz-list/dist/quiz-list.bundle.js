@@ -16,7 +16,6 @@ this.Up = this.Up || {};
 	    if (!this.rootNode) {
 	      throw new Error("QuizList: element with id \"".concat(this.rootNodeId, "\" not found"));
 	    }
-	    this.userId = 1;
 	    this.quizList = [];
 	    this.reload();
 	  }
@@ -33,13 +32,8 @@ this.Up = this.Up || {};
 	    key: "loadList",
 	    value: function loadList() {
 	      this.renderLoading();
-	      var UserId = 1;
 	      return new Promise(function (resolve, reject) {
-	        BX.ajax.runAction('up:quiz.quiz.getList', {
-	          data: {
-	            userId: UserId
-	          }
-	        }).then(function (response) {
+	        BX.ajax.runAction('up:quiz.quiz.getList').then(function (response) {
 	          var quizList = response.data.quizList;
 	          resolve(quizList);
 	        })["catch"](function (error) {
@@ -53,8 +47,7 @@ this.Up = this.Up || {};
 	    value: function createQuiz(title) {
 	      BX.ajax.runAction('up:quiz.quiz.createQuiz', {
 	        data: {
-	          title: title,
-	          userId: this.userId
+	          title: title
 	        }
 	      }).then(function (response) {
 	        if (Number.isInteger(response.data)) {
