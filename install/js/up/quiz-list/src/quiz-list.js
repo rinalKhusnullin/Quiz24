@@ -5,7 +5,7 @@ export class QuizList
 {
 
 	config = {
-		MAX_QUIZ_TITLE_LENGTH : 40,
+		MAX_QUIZ_TITLE_LENGTH : 38,
 	}
 
 	constructor(options = {})
@@ -143,6 +143,7 @@ export class QuizList
 				<div class="quiz-card quiz-card__add-new">
 					<a class="is-success is-button quiz-card__new-quiz-btn" id="open_creating_modal_btn">
 						<i class="fa-solid fa-plus"></i>
+						<span class="quiz-card__add-new-title mobile">Создать опрос</span>
 					</a>
 					<div class="modal" id="new_quiz_modal">
 						<div class="modal-background close-modal"></div>
@@ -162,7 +163,7 @@ export class QuizList
 							</section>
 							<footer class="modal-card-foot">
 								<button class="button is-success" id="creating_quiz_btn">Создать</button>
-								<button class="button close-modal">Cancel</button>
+								<button class="button close-modal">Назад</button>
 							</footer>
 						</div>
 					</div>
@@ -194,7 +195,7 @@ export class QuizList
 						<div class="quiz-card__title">
 							<strong class="quiz-card__subtitle is-family-monospace">Состояние:</strong>
 							<div class="quiz-card__title-text has-text-weight-light">
-								${(+QuizData.IS_ACTIVE === 1) ? 'Активный' : 'Не активный'}
+								${(+QuizData.IS_ACTIVE === 1) ? 'Активный' : 'Неактивный'}
 							</div>
 						</div>
 					</div>
@@ -226,14 +227,7 @@ export class QuizList
 
 			this.createQuiz(quizTitleInput.value).then(result => {
 				addButton.classList.remove('is-loading');
-
-				window.open(`/quiz/${result.data}/edit`, '_blank');
-				this.reload();
-
-				this.closeCreateQuizModal();
-
-				quizTitleInput.value = '';
-				quizTitleHelper.textContent = '';
+				window.location.replace(`/quiz/${result.data}/edit`);
 
 			}, reject => {
 				addButton.classList.remove('is-loading');
@@ -272,11 +266,11 @@ export class QuizList
 		const shareModal = Tag.render`
 			<div class="modal">
 				<div class="modal-background to-close"></div>
-				<div class="modal-content box">
+				<div class="modal-content box qr-modal">
 					<div class="qr mb-4"></div>
 					<div>
 						<input type="text" class="input mb-2" value="${BX.util.htmlspecialchars(quizTakeLink)}" readonly>
-						<button class="button is-success copy">Скопировать</button>
+						<button class="button is-dark copy">Скопировать</button>
 					</div>
 				</div>
 				<button class="modal-close is-large to-close" aria-label="close"></button>
@@ -296,6 +290,13 @@ export class QuizList
 
 		let copyButton = shareModal.querySelector('.copy');
 		copyButton.onclick = () => {
+			copyButton.classList.remove('is-loading');
+			copyButton.classList.add('is-success');
+			copyButton.innerHTML = `<i class="fa-solid fa-check"></i>`;
+			setTimeout(() => {
+				copyButton.classList.remove('is-success');
+				copyButton.textContent = `Скопировать`;
+			}, 400);
 			shareModal.querySelector('.input').select();
 			document.execCommand("copy");
 		};
@@ -309,6 +310,10 @@ export class QuizList
 			correctLevel : QRCode.CorrectLevel.H
 		});
 
+		window.addEventListener('resize', (e) => {
+			console.log(e);
+		});
+
 		return Tag.render`
 			${shareButton}
 			${shareModal}
@@ -317,7 +322,7 @@ export class QuizList
 
 	getHiddenActions(quiz)
 	{
-		const showHiddenActions = Tag.render`
+		const showHiddenActionsButton = Tag.render`
 			<a class="button quiz-card__more-action-btn">
 				<i class="fa-solid fa-bars"></i>
 			</a>
@@ -353,19 +358,28 @@ export class QuizList
 				Показать результаты
 			</a>`;
 
-		const hiddenActions = Tag.render`
+		const goToTakeQuizButton = Tag.render`
+			<a href="/quiz/${quiz.CODE}/take" class="button hidden-action">
+				<i class="fa-sharp fa-solid fa-arrow-up-right-from-square fa-fw"></i>
+				Перейти к прохождению опроса
+			</a>`;
+
+		const hiddenActionsNode = Tag.render`
 			<div class="quiz-card__hidden-actions hidden">
 				${stateQuizButton}
 				${editQuizButton}
 				${showResultButton}
 				${this.getShareNode(quiz)}
+				${goToTakeQuizButton}
 				${deleteQuizButton}
 			</div>
 		`;
 
-		showHiddenActions.onclick = () => {
-			hiddenActions.classList.toggle('hidden')
-			const icon = showHiddenActions.querySelector('i');
+
+
+		showHiddenActionsButton.onclick = () => {
+			hiddenActionsNode.classList.toggle('hidden')
+			const icon = showHiddenActionsButton.querySelector('i');
 			if (icon.classList.contains('fa-bars'))
 			{
 				icon.classList.remove('fa-bars');
@@ -378,7 +392,7 @@ export class QuizList
 			}
 		};
 
-		return Tag.render`${showHiddenActions}${hiddenActions}`;
+		return Tag.render`${showHiddenActionsButton}${hiddenActionsNode}`;
 	}
 
 	truncateText(text, length)
@@ -387,6 +401,6 @@ export class QuizList
 		{
 			return text;
 		}
-		return text.slice(0, length) + '...';
+		return text.slice(0, length - 3) + '...';
 	}
 }

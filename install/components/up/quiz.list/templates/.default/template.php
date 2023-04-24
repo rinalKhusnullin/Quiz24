@@ -23,9 +23,23 @@
 
 	<!-- Right side -->
 	<div class="level-right">
-		<p class="level-item"><strong>Все</strong></p>
-		<p class="level-item"><a>Открытые</a></p>
-		<p class="level-item"><a>Закрытые</a></p>
+		<div class="field has-addons">
+			<p class="control">
+				<button class="button">
+					<span>Все</span>
+				</button>
+			</p>
+			<p class="control">
+				<button class="button">
+					<span>Активные</span>
+				</button>
+			</p>
+			<p class="control">
+				<button class="button">
+					<span>Неактивные</span>
+				</button>
+			</p>
+		</div>
 	</div>
 </nav>
 
