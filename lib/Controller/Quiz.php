@@ -109,4 +109,15 @@ class Quiz extends Engine\Controller
 			'quizId' => QuizRepository::changeState($id),
 		];
 	}
+
+	public function configureActions()
+	{
+		return [
+			'getQuizByCode' => [
+				'-prefilters' => [
+					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
+				],
+			],
+		];
+	}
 }
