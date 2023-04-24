@@ -3,6 +3,11 @@ import './quiz-list.css';
 
 export class QuizList
 {
+
+	config = {
+		MAX_QUIZ_TITLE_LENGTH : 40,
+	}
+
 	constructor(options = {})
 	{
 		if (Type.isStringFilled(options.rootNodeId))
@@ -166,7 +171,7 @@ export class QuizList
 		`;
 
 		this.quizList.forEach(QuizData => {
-
+			let shortQuizTitle = this.truncateText(QuizData.TITLE, this.config.MAX_QUIZ_TITLE_LENGTH);
 			const QuizCard = Tag.render`
 				<div class="quiz-card" data-quiz-id="${QuizData.ID}">
 					<div class="quiz-card__header">
@@ -176,7 +181,8 @@ export class QuizList
 							<div class="quiz-card__title">
 								<strong class="quiz-card__subtitle is-family-monospace">Название:</strong>
 								<div class="quiz-card__title-text has-text-weight-light">
-									${BX.util.htmlspecialchars(QuizData.TITLE)}
+									${BX.util.htmlspecialchars(shortQuizTitle)}
+									${(QuizData.TITLE.length > 50) ? `<div class="quiz-card__title-show-more">${BX.util.htmlspecialchars(QuizData.TITLE)}</div>` : ''}
 								</div>
 							</div>
 						<div class="quiz-card__title">
@@ -222,6 +228,7 @@ export class QuizList
 				addButton.classList.remove('is-loading');
 
 				window.open(`/quiz/${result.data}/edit`, '_blank');
+				this.reload();
 
 				this.closeCreateQuizModal();
 
@@ -372,5 +379,14 @@ export class QuizList
 		};
 
 		return Tag.render`${showHiddenActions}${hiddenActions}`;
+	}
+
+	truncateText(text, length)
+	{
+		if (text.length < length)
+		{
+			return text;
+		}
+		return text.slice(0, length) + '...';
 	}
 }
