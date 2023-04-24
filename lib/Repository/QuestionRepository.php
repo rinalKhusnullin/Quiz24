@@ -46,9 +46,8 @@ class QuestionRepository
 		return $result->getErrors();
 	}
 
-	public static function setQuestions($question): ?array
+	public static function setQuestion($question): ?array
 	{
-
 		$id = $question['ID'];
 		$newValues = array(
 			'QUESTION_TEXT' => $question['QUESTION_TEXT'],
@@ -80,4 +79,6 @@ class QuestionRepository
 
 		return $result->getId();
 	}
+
+
 }

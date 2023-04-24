@@ -94,6 +94,7 @@ this.Up = this.Up || {};
 	    key: "saveQuestion",
 	    value: function saveQuestion() {
 	      var _this3 = this;
+	      console.log(this.question);
 	      BX.ajax.runAction('up:quiz.question.setQuestion', {
 	        data: {
 	          question: this.question

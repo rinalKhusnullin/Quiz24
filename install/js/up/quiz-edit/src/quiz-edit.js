@@ -105,6 +105,7 @@ export class QuizEdit
 
 	saveQuestion()
 	{
+		console.log(this.question);
 		BX.ajax.runAction(
 				'up:quiz.question.setQuestion',
 				{
