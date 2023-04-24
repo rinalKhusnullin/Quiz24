@@ -22,12 +22,18 @@ class Quiz extends Engine\Controller
 		);
 	}
 
-	public function createQuizAction(string $title, int $userId)
+	public function createQuizAction(string $title)
 	{
 		global $USER;
 		if (empty(trim($title)))
 		{
-			$this->addError(new Error('Quiz title must not be empty', 'invalid_quiz_title'));
+			$this->addError(new Error('Название опроса не может быть пустым', 'invalid_quiz_title'));
+			return null;
+		}
+
+		if (mb_strlen($title) > 256)
+		{
+			$this->addError(new Error('Название опроса не может превышать 256 символов', 'invalid_quiz_title'));
 			return null;
 		}
 
