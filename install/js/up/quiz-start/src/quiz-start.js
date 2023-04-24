@@ -34,10 +34,10 @@ export class QuizStart
 				<h1 class="title is-4">Укажите код опроса, в котором хотите принять участие</h1>
 					<div class="field has-addons has-addons-centered">
 						<div class="control">
-							<input class="input is-dark" type="text" placeholder="Введите quiz-code">
+							<input class="input is-dark" type="text" id="quiz-code-input" placeholder="Введите quiz-code">
 						</div>
 						<div class="control">
-							<a class="button is-dark">
+							<a class="button is-dark" id="take-button">
 								Пройти опрос
 							</a>
 						</div>
@@ -48,6 +48,15 @@ export class QuizStart
 				</div>
 			</div>
 		`;
+
+		const codeInput = StartContainerNode.querySelector('#quiz-code-input');
+		const takeButton = StartContainerNode.querySelector('#take-button');
+		codeInput.oninput = () => {
+			this.quizCode = codeInput.value;
+		}
+		takeButton.onclick = () => {
+			location.href = `/quiz/${this.quizCode}/take`;
+		}
 		this.rootNode.appendChild(StartContainerNode);
 	}
 }
