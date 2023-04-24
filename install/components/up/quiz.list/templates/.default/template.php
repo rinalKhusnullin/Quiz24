@@ -26,8 +26,6 @@
 		<p class="level-item"><strong>Все</strong></p>
 		<p class="level-item"><a>Открытые</a></p>
 		<p class="level-item"><a>Закрытые</a></p>
-		<p class="level-item"><a>Удаленные</a></p>
-		<p class="level-item"><a class="button is-success">Новые</a></p>
 	</div>
 </nav>
 
@@ -37,10 +35,8 @@
 
 <script>
 	BX.ready(function() {
-
 		window.ProjectorProjectList = new Up.Quiz.QuizList({
 			rootNodeId: 'quiz-container-root',
 		});
-
 	});
 </script>

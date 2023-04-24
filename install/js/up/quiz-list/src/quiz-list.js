@@ -1,5 +1,6 @@
 import {Type, Tag} from 'main.core';
 import './quiz-list.css';
+
 export class QuizList
 {
 	constructor(options = {})
@@ -35,7 +36,6 @@ export class QuizList
 	loadList()
 	{
 		this.renderLoading();
-		let UserId = 1;
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 					'up:quiz.quiz.getList',
@@ -54,6 +54,7 @@ export class QuizList
 
 	createQuiz(title)
 	{
+		return new Promise((resolve, reject) => {
 		BX.ajax.runAction(
 				'up:quiz.quiz.createQuiz',
 				{
@@ -62,21 +63,12 @@ export class QuizList
 					},
 				})
 			.then((response) => {
-				if (Number.isInteger(response.data)){
-					window.location.href = `/quiz/${response.data}/edit`;
-				}
+				resolve(response);
 			})
 			.catch((error) => {
-				let errors = error.errors;
-				errors.forEach(error => {
-					if (error.code === 'invalid_user_id'){
-						alert('TODO:НЕПРАВИЛЬНЫЙ USER_ID');
-					}
-				});
-
-				console.log(error);
-			})
-		;
+				reject(error);
+			});
+		});
 	}
 
 	deleteQuiz(id){
@@ -111,6 +103,32 @@ export class QuizList
 			this.rootNode.innerHTML = `<div class="donut"></div>`;
 	}
 
+	changeState(id)
+	{
+		BX.ajax.runAction(
+				'up:quiz.quiz.changeState',
+				{
+					data: {
+						id : id
+					},
+				})
+			.then((response) => {
+				if (response.data.quizId === null)
+				{
+					//check response
+					console.error('errors:', response.data);
+				}
+				else
+				{
+					this.reload();
+				}
+			})
+			.catch((error) => {
+				console.error(error);
+			})
+		;
+	}
+
 	render()
 	{
 		this.rootNode.innerHTML = ``;
@@ -132,9 +150,9 @@ export class QuizList
 								<div class="field">
 									<label class="label">Название опроса</label>
 									<div class="control">
-										<input id="quizTitle" class="input" type="text" placeholder="Введите название опроса">
+										<input id="quiz_title_input" class="input" type="text" placeholder="Введите название опроса">
 									</div>
-									<p class="help" id="creating-quiz-helper"></p>
+									<p class="help is-danger" id="quiz_title_helper"></p>
 								</div>
 							</section>
 							<footer class="modal-card-foot">
@@ -148,42 +166,31 @@ export class QuizList
 		`;
 
 		this.quizList.forEach(QuizData => {
-			let isActive = (+QuizData.IS_ACTIVE === 1) ? 'Включен' : 'Выключен';
+
 			const QuizCard = Tag.render`
 				<div class="quiz-card" data-quiz-id="${QuizData.ID}">
-					<div class="quiz-card__header"></div>
+					<div class="quiz-card__header">
+						${this.getHiddenActions(QuizData)}
+					</div>
 						<div class="quiz-card__content">
 							<div class="quiz-card__title">
 								<strong class="quiz-card__subtitle is-family-monospace">Название:</strong>
 								<div class="quiz-card__title-text has-text-weight-light">
-									${QuizData.TITLE}
+									${BX.util.htmlspecialchars(QuizData.TITLE)}
 								</div>
 							</div>
 						<div class="quiz-card__title">
 							<strong class="quiz-card__subtitle is-family-monospace">linkcode:</strong>
 							<div class="quiz-card__title-text has-text-weight-light">
-								${QuizData.CODE}
+								${BX.util.htmlspecialchars(QuizData.CODE)}
 							</div>
 						</div>
 						<div class="quiz-card__title">
 							<strong class="quiz-card__subtitle is-family-monospace">Состояние:</strong>
 							<div class="quiz-card__title-text has-text-weight-light">
-								${isActive}
+								${(+QuizData.IS_ACTIVE === 1) ? 'Активный' : 'Не активный'}
 							</div>
 						</div>
-					</div>
-					<div class="quiz-card__hidden-btns">
-						${this.getStateButton(QuizData)}
-						<a href="/quiz/${QuizData.ID}/edit" title="Редактировать опрос">
-							<i class="fa-solid fa-pen fa-fw"></i>
-						</a>
-						<a href="/quiz/${QuizData.ID}/show" title="Показать результаты">
-							<i class="fa-sharp fa-solid fa-chart-column fa-fw"></i>
-						</a>
-						${this.getShareNode(QuizData)}
-						<a class="delete-quiz-button" title="Удалить опрос">
-							<i class="fa-sharp fa-solid fa-trash fa-fw"></i>
-						</a>
 					</div>
 				</div>
 			`;
@@ -193,89 +200,55 @@ export class QuizList
 
 		const openModalButton = document.getElementById('open_creating_modal_btn');
 		openModalButton.addEventListener('click', () =>{
-			this.openCreatingQuizModal();
+			this.openCreateQuizModal();
 		});
 
 		const closeModalElems = document.querySelectorAll('.close-modal');
 		closeModalElems.forEach((closeModalElem)=>{
 				closeModalElem.addEventListener('click', () => {
-					this.closeCreatingQuizModal();
+					this.closeCreateQuizModal()
 			});
 		});
 
 		const addButton = document.getElementById('creating_quiz_btn');
 		addButton.addEventListener('click', () => {
-			let quizTitle = document.getElementById('quizTitle').value;
-			if (quizTitle !== '') this.createQuiz(quizTitle);
-		});
 
-		const QuizTitleInput = document.getElementById('quizTitle');
-		QuizTitleInput.addEventListener('input', () => {
-			const QuizTitleInputHelper = document.getElementById('creating-quiz-helper');
-			if (QuizTitleInput.value === ''){ //todo Я знаю, что это ужасно! Думаю вынести в отдельную функцию
-				QuizTitleInput.classList.add('is-danger');
-				QuizTitleInput.classList.remove('is-success');
-				QuizTitleInputHelper.textContent = 'Название опроса не может быть пустым!'
-				QuizTitleInputHelper.classList.add('is-danger');
-				QuizTitleInputHelper.classList.remove('is-success');
-			}
-			else
-			{
-				QuizTitleInput.classList.add('is-success');
-				QuizTitleInput.classList.remove('is-danger');
-				QuizTitleInputHelper.textContent = 'Все кул!'
-				QuizTitleInputHelper.classList.remove('is-danger');
-				QuizTitleInputHelper.classList.add('is-success');
-			}
-		});
+			let quizTitleHelper = document.getElementById('quiz_title_helper');
+			let quizTitleInput = document.getElementById('quiz_title_input');
 
-		const deleteButtons = document.querySelectorAll('.delete-quiz-button');
-		deleteButtons.forEach(button => {
-			button.addEventListener('click', () => {
-				let quizId = parseInt(button.closest('.quiz-card').getAttribute('data-quiz-id'));
-				if (!isNaN(quizId))
-				{
-					this.deleteQuiz(quizId);
-				}
-				else
-				{
-					console.error('Attribute data-quiz-id of this element is not a number ');
-				}
+			addButton.classList.add('is-loading');
+
+			this.createQuiz(quizTitleInput.value).then(result => {
+				addButton.classList.remove('is-loading');
+
+				window.open(`/quiz/${result.data}/edit`, '_blank');
+
+				this.closeCreateQuizModal();
+
+				quizTitleInput.value = '';
+				quizTitleHelper.textContent = '';
+
+			}, reject => {
+				addButton.classList.remove('is-loading');
+				quizTitleHelper.textContent = reject.errors[0].message;
+				quizTitleInput.oninput = () => {
+					quizTitleHelper.textContent = '';
+				};
 			});
 		});
 	}
 
-	openCreatingQuizModal()
+	openCreateQuizModal()
 	{
+		document.getElementById('quiz_title_helper').textContent = '';
 		const modal = document.getElementById('new_quiz_modal');
 		modal.classList.add("is-active");
 	}
 
-	closeCreatingQuizModal()
+	closeCreateQuizModal()
 	{
 		const modal = document.getElementById('new_quiz_modal');
 		modal.classList.remove("is-active");
-	}
-
-	getStateButton(quiz)
-	{
-		const button = Tag.render`<a></a>`;
-		if (+quiz.IS_ACTIVE === 0)
-		{
-			button.title = 'Запустить опрос';
-			button.appendChild(Tag.render`<i class="fa-sharp fa-regular fa-circle-play fa-fw"></i>`);
-		}
-		else
-		{
-			button.title = 'Выключить опрос';
-			button.appendChild(Tag.render`<i class="fa-sharp fa-regular fa-circle-stop fa-fw"></i>`);
-		}
-
-		button.onclick = () => {
-			this.changeState(quiz.ID);
-		};
-
-		return button;
 	}
 
 	getShareNode(quiz)
@@ -283,17 +256,19 @@ export class QuizList
 		let quizTakeLink = `${location.hostname}/quiz/${quiz.CODE}/take`;
 
 		const shareButton = Tag.render`
-			<a title="Поделиться">
-				<i class="fa-solid fa-link fa-fw"></i>
+			<a class="button hidden-action" >
+				<i class="fa-solid fa-link"></i>
+				Поделиться
 			</a>
 		`;
+
 		const shareModal = Tag.render`
 			<div class="modal">
 				<div class="modal-background to-close"></div>
 				<div class="modal-content box">
 					<div class="qr mb-4"></div>
 					<div>
-						<input type="text" class="input mb-2" value="${quizTakeLink}" readonly>
+						<input type="text" class="input mb-2" value="${BX.util.htmlspecialchars(quizTakeLink)}" readonly>
 						<button class="button is-success copy">Скопировать</button>
 					</div>
 				</div>
@@ -333,29 +308,69 @@ export class QuizList
 		`;
 	}
 
-	changeState(id)
+	getHiddenActions(quiz)
 	{
-		BX.ajax.runAction(
-				'up:quiz.quiz.changeState',
-				{
-					data: {
-						id : id
-					},
-				})
-			.then((response) => {
-				if (response.data.quizId === null)
-				{
-					//check response
-					console.error('errors:', response.data);
-				}
-				else
-				{
-					this.reload();
-				}
-			})
-			.catch((error) => {
-				console.error(error);
-			})
-		;
+		const showHiddenActions = Tag.render`
+			<a class="button quiz-card__more-action-btn">
+				<i class="fa-solid fa-bars"></i>
+			</a>
+		`;
+
+		const stateQuizButton = Tag.render`
+			<a class="hidden-action button">
+				<i class="fa-solid fa-${(+quiz.IS_ACTIVE === 1) ? 'stop' : 'play'} fa-fw"></i>
+				${(+quiz.IS_ACTIVE === 1) ? 'Деактивировать' : 'Активировать'}
+			</a>`;
+		stateQuizButton.onclick = () => {
+			this.changeState(quiz.ID);
+		};
+
+		const editQuizButton = Tag.render`
+			<a href="/quiz/${quiz.ID}/edit" class="button hidden-action">
+				<i class="fa-solid fa-pen fa-fw"></i>
+				Редактировать
+			</a>`;
+
+		const deleteQuizButton = Tag.render`
+			<a class="button delete-quiz-button hidden-action" >
+				<i class="fa-sharp fa-solid fa-trash fa-fw"></i>
+				Удалить
+			</a>`;
+		deleteQuizButton.onclick = () => {
+			this.deleteQuiz(+quiz.ID);
+		};
+
+		const showResultButton = Tag.render`
+			<a href="/quiz/${quiz.ID}/show" class="button hidden-action">
+				<i class="fa-sharp fa-solid fa-chart-column fa-fw"></i>
+				Показать результаты
+			</a>`;
+
+		const hiddenActions = Tag.render`
+			<div class="quiz-card__hidden-actions hidden">
+				${stateQuizButton}
+				${editQuizButton}
+				${showResultButton}
+				${this.getShareNode(quiz)}
+				${deleteQuizButton}
+			</div>
+		`;
+
+		showHiddenActions.onclick = () => {
+			hiddenActions.classList.toggle('hidden')
+			const icon = showHiddenActions.querySelector('i');
+			if (icon.classList.contains('fa-bars'))
+			{
+				icon.classList.remove('fa-bars');
+				icon.classList.add('fa-circle-xmark');
+			}
+			else
+			{
+				icon.classList.remove('fa-circle-xmark');
+				icon.classList.add('fa-bars');
+			}
+		};
+
+		return Tag.render`${showHiddenActions}${hiddenActions}`;
 	}
 }
