@@ -135,8 +135,7 @@ export class QuizLogin
 			</div>`);
 		}
 
-		let inputs = [loginInput, passwordInput];
-		inputs.forEach(input => {
+		[loginInput, passwordInput].forEach(input => {
 			input.classList.add('is-danger');
 			input.oninput = () => {
 				inputs.forEach(input => {

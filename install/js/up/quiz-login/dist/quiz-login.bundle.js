@@ -81,8 +81,7 @@ this.Up = this.Up || {};
 	      if (!errorContainer.hasChildNodes()) {
 	        errorContainer.appendChild(main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["<div class=\"message-body\">\n\t\t\t\t\u041D\u0435\u0432\u0435\u0440\u043D\u044B\u0439 <strong>\u041B\u043E\u0433\u0438\u043D</strong> \u0438\u043B\u0438 <strong>\u041F\u0430\u0440\u043E\u043B\u044C</strong>\n\t\t\t</div>"]))));
 	      }
-	      var inputs = [loginInput, passwordInput];
-	      inputs.forEach(function (input) {
+	      [loginInput, passwordInput].forEach(function (input) {
 	        input.classList.add('is-danger');
 	        input.oninput = function () {
 	          inputs.forEach(function (input) {
