@@ -1,6 +1,6 @@
 <?php
 
-class QuizNotAuthComponent extends CBitrixComponent
+class QuizStartComponent extends CBitrixComponent
 {
 	public function executeComponent()
 	{

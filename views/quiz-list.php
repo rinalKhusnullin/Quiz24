@@ -1,4 +1,4 @@
-<?php 
+<?php
   if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 /**
@@ -6,13 +6,13 @@
  * @var CUser $USER
  */
 
-  require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 
-  $APPLICATION->SetTitle("Quiz");
+$APPLICATION->SetTitle("Quiz");
 
-  if ($USER->IsAuthorized())
-	  $APPLICATION->includeComponent('up:quiz.list', '', []);
-  else
-	  $APPLICATION->includeComponent('up:quiz.not-auth', '', []);
+if ($USER->IsAuthorized())
+  $APPLICATION->includeComponent('up:quiz.list', '', []);
+else
+  $APPLICATION->includeComponent('up:quiz.start', '', []);
 
-  require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");
