@@ -14,7 +14,7 @@ $APPLICATION->SetTitle("QuizEdit");
 if ($USER->IsAuthorized())
 	$APPLICATION->includeComponent('up:quiz.edit', '', []);
 else
-	$APPLICATION->includeComponent('up:quiz.not-auth', '', []);
+	$APPLICATION->includeComponent('up:quiz.start', '', []);
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");
 

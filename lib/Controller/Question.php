@@ -80,4 +80,20 @@ class Question extends Engine\Controller
 
 		return QuestionRepository::deleteQuestion($id);
 	}
+
+	public function configureActions()
+	{
+		return [
+			'getQuestions' => [
+				'-prefilters' => [
+					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
+				],
+			],
+			'getQuestion' => [
+				'-prefilters' => [
+					\Bitrix\Main\Engine\ActionFilter\Authentication::class,
+				],
+			],
+		];
+	}
 }
