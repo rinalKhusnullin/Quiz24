@@ -9,6 +9,9 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 
 $APPLICATION->SetTitle("Registration");
 
-$APPLICATION->includeComponent('up:quiz.registration', '', []);
+if ($USER->IsAuthorized())
+	LocalRedirect('/');
+else
+	$APPLICATION->includeComponent('up:quiz.registration', '', []);
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");

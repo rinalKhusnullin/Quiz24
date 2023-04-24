@@ -9,7 +9,10 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 
 $APPLICATION->SetTitle("Login");
 
-$APPLICATION->includeComponent('up:quiz.login', '', []);
+if ($USER->IsAuthorized())
+	LocalRedirect('/');
+else
+	$APPLICATION->includeComponent('up:quiz.login', '', []);
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");
 ?>

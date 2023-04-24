@@ -114,13 +114,10 @@ export class QuizEdit
 				}
 			)
 			.then((response) => {
-				console.log(this.currentQuestionId);
-				console.log(this.questions);
 				const curr = this.questions.find(item => item.ID == this.currentQuestionId);
 				if (curr) {
 					curr.QUESTION_TEXT = this.question.QUESTION_TEXT;
 				}
-				console.log(this.questions);
 				this.render();
 				alert('Данные о вопросе успешно сохранены!');
 			})
@@ -140,7 +137,6 @@ export class QuizEdit
 				}
 			)
 			.then((response) => {
-				console.log(response.data);
 				this.currentQuestionId = response.data.newQuestion.ID;
 				this.questions.push(response.data.newQuestion);
 				this.getQuestion(this.currentQuestionId);
