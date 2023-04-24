@@ -99,15 +99,12 @@ this.Up = this.Up || {};
 	          question: this.question
 	        }
 	      }).then(function (response) {
-	        console.log(_this3.currentQuestionId);
-	        console.log(_this3.questions);
 	        var curr = _this3.questions.find(function (item) {
 	          return item.ID == _this3.currentQuestionId;
 	        });
 	        if (curr) {
 	          curr.QUESTION_TEXT = _this3.question.QUESTION_TEXT;
 	        }
-	        console.log(_this3.questions);
 	        _this3.render();
 	        alert('Данные о вопросе успешно сохранены!');
 	      })["catch"](function (error) {
@@ -123,7 +120,6 @@ this.Up = this.Up || {};
 	          quizId: this.quizId
 	        }
 	      }).then(function (response) {
-	        console.log(response.data);
 	        _this4.currentQuestionId = response.data.newQuestion.ID;
 	        _this4.questions.push(response.data.newQuestion);
 	        _this4.getQuestion(_this4.currentQuestionId);

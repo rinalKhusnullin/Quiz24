@@ -34,7 +34,11 @@ class Answer extends Engine\Controller
 			$this->addError(new Error('Answer should be not empty', 'invalid_answer'));
 			return null;
 		}
-		return AnswerRepository::createAnswer($questionId, $answer);
+		if (strlen(trim($answer)) > 128){
+			$this->addError(new Error('Answer length should be not more 128', 'invalid_answer'));
+			return null;
+		}
+		return AnswerRepository::createAnswer($questionId, trim($answer));
 	}
 
 	public function getAnswersAction(int $questionId): ?array
