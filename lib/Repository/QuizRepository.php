@@ -83,4 +83,13 @@ class QuizRepository
 
 		return $result->getId();
 	}
+
+	public static function checkUserHasQuiz(int $userId, int $quizId)
+	{
+		$result = QuizzesTable::getByPrimary($quizId)->fetch();
+		if (($result === false) || ((int)$result['USER_ID'] !== $userId)) return false;
+		return true;
+	}
+
+
 }

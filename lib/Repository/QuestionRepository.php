@@ -46,9 +46,8 @@ class QuestionRepository
 		return $result->getErrors();
 	}
 
-	public static function setQuestions($question): ?array
+	public static function setQuestion($question): ?array
 	{
-
 		$id = $question['ID'];
 		$newValues = array(
 			'QUESTION_TEXT' => $question['QUESTION_TEXT'],
@@ -80,4 +79,12 @@ class QuestionRepository
 
 		return $result->getId();
 	}
+
+	public static function checkQuizHasQuestion(int $quizId, int $questionId) : bool //вопрос существует и принадлежит к переданному квизу
+	{
+		$result = QuestionsTable::getByPrimary($questionId)->fetch();
+		if (($result === false) || ((int)$result['QUIZ_ID'] !== $quizId)) return false;
+		return true;
+	}
+
 }

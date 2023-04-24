@@ -105,6 +105,7 @@ export class QuizEdit
 
 	saveQuestion()
 	{
+		console.log(this.question);
 		BX.ajax.runAction(
 				'up:quiz.question.setQuestion',
 				{
@@ -153,7 +154,8 @@ export class QuizEdit
 		BX.ajax.runAction(
 				'up:quiz.question.deleteQuestion', {
 					data: {
-						id: id
+						id: id,
+						quizId: this.quizId
 					}
 				}
 			)
