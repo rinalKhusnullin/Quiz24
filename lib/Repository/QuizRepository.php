@@ -90,4 +90,6 @@ class QuizRepository
 		if (($result === false) || ((int)$result['USER_ID'] !== $userId)) return false;
 		return true;
 	}
+
+
 }

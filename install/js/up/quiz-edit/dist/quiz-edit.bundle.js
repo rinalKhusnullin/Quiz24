@@ -135,7 +135,8 @@ this.Up = this.Up || {};
 	      var _this5 = this;
 	      BX.ajax.runAction('up:quiz.question.deleteQuestion', {
 	        data: {
-	          id: id
+	          id: id,
+	          quizId: this.quizId
 	        }
 	      }).then(function (response) {
 	        if (response.data != null) {

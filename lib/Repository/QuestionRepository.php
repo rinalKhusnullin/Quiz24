@@ -80,5 +80,11 @@ class QuestionRepository
 		return $result->getId();
 	}
 
+	public static function checkQuizHasQuestion(int $quizId, int $questionId) : bool //вопрос существует и принадлежит к переданному квизу
+	{
+		$result = QuestionsTable::getByPrimary($questionId)->fetch();
+		if (($result === false) || ((int)$result['QUIZ_ID'] !== $quizId)) return false;
+		return true;
+	}
 
 }

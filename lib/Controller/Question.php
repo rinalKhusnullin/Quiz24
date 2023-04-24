@@ -13,13 +13,13 @@ class Question extends Engine\Controller
 	{
 		return array_merge(
 			parent::getDefaultPreFilters(), [
-											  new \Bitrix\Main\Engine\ActionFilter\HttpMethod(
-												  [\Bitrix\Main\Engine\ActionFilter\HttpMethod::METHOD_POST]
-											  ),
-											  new \Bitrix\Main\Engine\ActionFilter\Scope(
-												  \Bitrix\Main\Engine\ActionFilter\Scope::AJAX
-											  ),
-										  ]
+				new \Bitrix\Main\Engine\ActionFilter\HttpMethod(
+					[\Bitrix\Main\Engine\ActionFilter\HttpMethod::METHOD_POST]
+				),
+				new \Bitrix\Main\Engine\ActionFilter\Scope(
+					\Bitrix\Main\Engine\ActionFilter\Scope::AJAX
+				),
+			]
 		);
 	}
 
@@ -107,14 +107,20 @@ class Question extends Engine\Controller
 			return null;
 		}
 
-		if (!QuizRepository::checkUserHasQuiz($userId, (int)$question["QUIZ_ID"]))//принадлежит ли он текущему пользователю и существует
+		if (!QuizRepository::checkUserHasQuiz($userId, (int)$question["QUIZ_ID"]))//принадлежит ли quiz текущему пользователю и существует
 		{
 			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
 			return null;
 		}
 
-		if ($question["ID"]){//Проверка что вопрос принадлежит именно к этому квизу
+		if (!is_numeric($question["ID"])){
+			$this->addError(new Error('Question ID must be numeric', 'invalid_questionId'));
+			return null;
+		}
 
+		if (!QuestionRepository::checkQuizHasQuestion((int)$question["QUIZ_ID"], (int)$question["ID"])){//Проверка что вопрос принадлежит именно к этому квизу
+			$this->addError(new Error('Question not found in current Quiz', 'invalid_questionId'));
+			return null;
 		}
 
 		return QuestionRepository::setQuestion($question);
@@ -122,10 +128,18 @@ class Question extends Engine\Controller
 
 	public function createQuestionAction(int $quizId): ?array
 	{
+
 		if ($quizId <= 0)
 		{
 			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
+			return null;
+		}
 
+		global $USER;
+		$userId = $USER->GetID();
+		if (!QuizRepository::checkUserHasQuiz($userId, $quizId))//принадлежит ли quiz текущему пользователю и существует
+		{
+			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
 			return null;
 		}
 
@@ -136,12 +150,24 @@ class Question extends Engine\Controller
 		];
 	}
 
-	public function deleteQuestionAction(int $id): ?array
+	public function deleteQuestionAction(int $id, int $quizId): ?array
 	{
 		if ($id <= 0)
 		{
 			$this->addError(new Error('Question id should be greater than 0', 'invalid_quiz_id'));
+			return null;
+		}
 
+		global $USER;
+		$userId = $USER->GetID();
+		if (!QuizRepository::checkUserHasQuiz($userId, $quizId))//quiz принадлежит текущему пользователю и существует
+		{
+			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			return null;
+		}
+
+		if (!QuestionRepository::checkQuizHasQuestion($quizId, $id)){//вопрос принадлежит именно к этому квизу и существует
+			$this->addError(new Error('Question not found in current Quiz', 'invalid_questionId'));
 			return null;
 		}
 
