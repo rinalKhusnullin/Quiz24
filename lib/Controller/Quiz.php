@@ -45,6 +45,13 @@ class Quiz extends Engine\Controller
 
 		$userId = $USER->GetID();
 
+		$quizCount = QuizRepository::getQuizCount($userId);
+		if ($quizCount >= 11)
+		{
+			$this->addError(new Error('Максимальное количество опросов - 11.','max_count_quizzes'));
+			return null;
+		}
+
 		return QuizRepository::createQuiz($title, $userId);
 	}
 
