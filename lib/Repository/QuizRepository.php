@@ -53,6 +53,8 @@ class QuizRepository
 			    'filter' => ['=CODE' => $code]])->fetch();
 		}
 
+		$sqlHelper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+		$title = $sqlHelper->forSql($title);
 		$result = QuizzesTable::add(['TITLE' => $title, 'CODE'=>$code, 'USER_ID'=>$userId]);
 
 		if ($result->isSuccess())
@@ -85,6 +87,9 @@ class QuizRepository
 
 	public static function getQuizByCode(string $code)
 	{
+		$sqlHelper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+		$code = $sqlHelper->forSql($code);
+
 		$result = QuizzesTable::getList([
 			'select' => ['ID', 'TITLE', 'CODE', 'IS_ACTIVE'],
 			'filter' => ['=CODE' => $code],

@@ -18,18 +18,6 @@ class QuestionRepository
 		return $questionList;
 	}
 
-	// public static function createQuestion(int $quizId): ?array
-	// {
-	// 	$permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	// 	$code = substr(str_shuffle($permitted_chars), 0, 4);
-	// 	$result = QuizzesTable::add(['QUIZ_ID' => $quizId, 'CODE'=>$code]);
-	// 	if ($result->isSuccess())
-	// 	{
-	// 		return null;
-	// 	}
-	// 	return $result->getErrors();
-	// }
-
 	public static function getQuestion(int $id)
 	{
 		return QuestionsTable::getById($id)->fetch();
@@ -49,15 +37,22 @@ class QuestionRepository
 	public static function setQuestion($question): ?array
 	{
 		$id = $question['ID'];
+
+		$sqlHelper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+
+		$question['QUESTION_TEXT'] = $sqlHelper->forSql($question['QUESTION_TEXT']);
+		$question['QUESTION_TYPE_ID'] = $sqlHelper->forSql($question['QUESTION_TYPE_ID']);
+		$question['QUESTION_DISPLAY_ID'] = $sqlHelper->forSql($question['QUESTION_DISPLAY_ID']);
+		$question['OPTIONS'] = $sqlHelper->forSql($question['OPTIONS']);
+
 		$newValues = array(
 			'QUESTION_TEXT' => $question['QUESTION_TEXT'],
 			'QUESTION_TYPE_ID' => $question['QUESTION_TYPE_ID'],
 			'QUESTION_DISPLAY_ID' => $question['QUESTION_DISPLAY_ID'],
 			'OPTIONS' => $question['OPTIONS'],
 		);
-		$result = QuestionsTable::update($id,$newValues);
 
-		return $result->getData();
+		return QuestionsTable::update($id,$newValues)->getData();
 	}
 
 	public static function createQuestion(int $quizId) : ?int
