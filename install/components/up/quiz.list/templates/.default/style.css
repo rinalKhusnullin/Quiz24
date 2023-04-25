@@ -244,13 +244,6 @@
 		padding: 0 20px;
 	}
 
-	.navbar > .container {
-		display: flex!important;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0 20px;
-	}
-
 	.quiz-card{
 		min-width: 49%;
 	}
@@ -270,7 +263,7 @@
 		flex: 0 0 auto;
 	}
 
-	.level{
+	.level {
 		display: flex;
 		flex-direction: column-reverse;
 		gap: 20px;
