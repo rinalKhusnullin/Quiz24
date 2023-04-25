@@ -2,9 +2,10 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19;
 	var QuizList = /*#__PURE__*/function () {
 	  function QuizList() {
+	    var _this = this;
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, QuizList);
 	    babelHelpers.defineProperty(this, "config", {
@@ -24,7 +25,6 @@ this.Up = this.Up || {};
 	      stack: this.BalloonStack,
 	      content: 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
 	      autoHide: true,
-	      color: '#FFD700',
 	      autoHideDelay: 10000
 	    }));
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
@@ -32,21 +32,38 @@ this.Up = this.Up || {};
 	    } else {
 	      throw new Error('QuizList: options.rootNodeId required');
 	    }
+	    if (main_core.Type.isStringFilled(options.filterNodeId)) {
+	      this.filterNodeId = options.filterNodeId;
+	    } else {
+	      throw new Error('QuizList: options.filterNodeId required');
+	    }
 	    this.rootNode = document.getElementById(this.rootNodeId);
 	    if (!this.rootNode) {
 	      throw new Error("QuizList: element with id \"".concat(this.rootNodeId, "\" not found"));
 	    }
+	    this.filterNode = document.getElementById(this.filterNodeId);
+	    if (!this.filterNode) {
+	      throw new Error("QuizList: element with id \"".concat(this.filterNodeId, "\" not found"));
+	    }
 	    this.LinkIsCopyNotify = null;
+	    this.getFilterNode().forEach(function (node) {
+	      _this.filterNode.appendChild(node);
+	    });
+	    this.query = '';
+	    this.quizState = 'all';
 	    this.quizList = [];
 	    this.reload();
 	  }
 	  babelHelpers.createClass(QuizList, [{
 	    key: "reload",
 	    value: function reload() {
-	      var _this = this;
-	      this.loadList().then(function (quizList) {
-	        _this.quizList = quizList;
-	        _this.render();
+	      var _this2 = this;
+	      if (this.query === '' && this.quizState === 'all') this.loadList().then(function (quizList) {
+	        _this2.quizList = quizList;
+	        _this2.render();
+	      });else this.loadQuizzesByFilters().then(function (quizList) {
+	        _this2.quizList = quizList;
+	        _this2.render();
 	      });
 	    }
 	  }, {
@@ -81,7 +98,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "deleteQuiz",
 	    value: function deleteQuiz(id) {
-	      var _this2 = this;
+	      var _this3 = this;
 	      this.renderLoading();
 	      BX.ajax.runAction('up:quiz.quiz.deleteQuiz', {
 	        data: {
@@ -91,10 +108,28 @@ this.Up = this.Up || {};
 	        if (response.data != null) {
 	          console.error('errors:', response.data);
 	        } else {
-	          _this2.reload();
+	          _this3.reload();
 	        }
 	      })["catch"](function (error) {
 	        console.error(error);
+	      });
+	    }
+	  }, {
+	    key: "loadQuizzesByFilters",
+	    value: function loadQuizzesByFilters() {
+	      var _this4 = this;
+	      this.renderLoading();
+	      return new Promise(function (resolve, reject) {
+	        BX.ajax.runAction('up:quiz.quiz.getQuizzesByFilters', {
+	          data: {
+	            query: _this4.query,
+	            state: _this4.quizState
+	          }
+	        }).then(function (response) {
+	          resolve(response.data.quizList);
+	        })["catch"](function (error) {
+	          reject(error);
+	        });
 	      });
 	    }
 	  }, {
@@ -105,7 +140,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "changeState",
 	    value: function changeState(id) {
-	      var _this3 = this;
+	      var _this5 = this;
 	      BX.ajax.runAction('up:quiz.quiz.changeState', {
 	        data: {
 	          id: id
@@ -115,7 +150,7 @@ this.Up = this.Up || {};
 	          //check response
 	          console.error('errors:', response.data);
 	        } else {
-	          _this3.reload();
+	          _this5.reload();
 	        }
 	      })["catch"](function (error) {
 	        console.error(error);
@@ -124,23 +159,23 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var _this4 = this;
+	      var _this6 = this;
 	      this.rootNode.innerHTML = "";
 	      var QuizContainerNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"quiz-container\">\n\t\t\t\t<div class=\"quiz-card quiz-card__add-new\">\n\t\t\t\t\t<a class=\"is-success is-button quiz-card__new-quiz-btn\" id=\"open_creating_modal_btn\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-plus\"></i>\n\t\t\t\t\t\t<span class=\"quiz-card__add-new-title mobile\">\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u043E\u043F\u0440\u043E\u0441</span>\n\t\t\t\t\t</a>\n\t\t\t\t\t<div class=\"modal\" id=\"new_quiz_modal\">\n\t\t\t\t\t\t<div class=\"modal-background close-modal\"></div>\n\t\t\t\t\t\t<div class=\"modal-card\">\n\t\t\t\t\t\t\t<header class=\"modal-card-head\">\n\t\t\t\t\t\t\t\t<p class=\"modal-card-title\">\u0421\u043E\u0437\u0434\u0430\u043D\u0438\u0435 \u043E\u043F\u0440\u043E\u0441\u0430</p>\n\t\t\t\t\t\t\t\t<button class=\"delete close-modal\" aria-label=\"close\"></button>\n\t\t\t\t\t\t\t</header>\n\t\t\t\t\t\t\t<section class=\"modal-card-body is-dark\">\n\t\t\t\t\t\t\t\t<div class=\"field\">\n\t\t\t\t\t\t\t\t\t<label class=\"label\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u043E\u043F\u0440\u043E\u0441\u0430</label>\n\t\t\t\t\t\t\t\t\t<div class=\"control\">\n\t\t\t\t\t\t\t\t\t\t<input id=\"quiz_title_input\" class=\"input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u043E\u043F\u0440\u043E\u0441\u0430\">\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<p class=\"help is-danger\" id=\"quiz_title_helper\"></p>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t<footer class=\"modal-card-foot\">\n\t\t\t\t\t\t\t\t<button class=\"button is-dark\" id=\"creating_quiz_btn\">\u0421\u043E\u0437\u0434\u0430\u0442\u044C</button>\n\t\t\t\t\t\t\t\t<button class=\"button close-modal\">\u041D\u0430\u0437\u0430\u0434</button>\n\t\t\t\t\t\t\t</footer>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])));
 	      this.quizList.forEach(function (QuizData) {
-	        var shortQuizTitle = _this4.truncateText(QuizData.TITLE, _this4.config.MAX_QUIZ_TITLE_LENGTH);
-	        var QuizCard = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"quiz-card\" data-quiz-id=\"", "\">\n\t\t\t\t\t<div class=\"quiz-card__header\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__content\">\n\t\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">linkcode:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), QuizData.ID, _this4.getHiddenActions(QuizData), BX.util.htmlspecialchars(shortQuizTitle), QuizData.TITLE.length > 50 ? "<div class=\"quiz-card__title-show-more\">".concat(BX.util.htmlspecialchars(QuizData.TITLE), "</div>") : '', BX.util.htmlspecialchars(QuizData.CODE), +QuizData.IS_ACTIVE === 1 ? 'Активный' : 'Неактивный');
+	        var shortQuizTitle = _this6.truncateText(QuizData.TITLE, _this6.config.MAX_QUIZ_TITLE_LENGTH);
+	        var QuizCard = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"quiz-card\" data-quiz-id=\"", "\">\n\t\t\t\t\t<div class=\"quiz-card__header\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__content\">\n\t\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">linkcode:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"quiz-card__title\">\n\t\t\t\t\t\t\t<strong class=\"quiz-card__subtitle is-family-monospace\">\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435:</strong>\n\t\t\t\t\t\t\t<div class=\"quiz-card__title-text has-text-weight-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), QuizData.ID, _this6.getHiddenActions(QuizData), BX.util.htmlspecialchars(shortQuizTitle), QuizData.TITLE.length > 50 ? "<div class=\"quiz-card__title-show-more\">".concat(BX.util.htmlspecialchars(QuizData.TITLE), "</div>") : '', BX.util.htmlspecialchars(QuizData.CODE), +QuizData.IS_ACTIVE === 1 ? 'Активный' : 'Неактивный');
 	        QuizContainerNode.appendChild(QuizCard);
 	      });
 	      this.rootNode.appendChild(QuizContainerNode);
 	      var openModalButton = document.getElementById('open_creating_modal_btn');
 	      openModalButton.addEventListener('click', function () {
-	        _this4.openCreateQuizModal();
+	        _this6.openCreateQuizModal();
 	      });
 	      var closeModalElems = document.querySelectorAll('.close-modal');
 	      closeModalElems.forEach(function (closeModalElem) {
 	        closeModalElem.addEventListener('click', function () {
-	          _this4.closeCreateQuizModal();
+	          _this6.closeCreateQuizModal();
 	        });
 	      });
 	      var addButton = document.getElementById('creating_quiz_btn');
@@ -148,14 +183,14 @@ this.Up = this.Up || {};
 	        var quizTitleHelper = document.getElementById('quiz_title_helper');
 	        var quizTitleInput = document.getElementById('quiz_title_input');
 	        addButton.classList.add('is-loading');
-	        _this4.createQuiz(quizTitleInput.value).then(function (result) {
+	        _this6.createQuiz(quizTitleInput.value).then(function (result) {
 	          addButton.classList.remove('is-loading');
 	          window.location.replace("/quiz/".concat(result.data, "/edit"));
 	        }, function (reject) {
 	          if (reject.errors[0].code === 'max_count_quizzes') {
 	            addButton.classList.remove('is-loading');
-	            _this4.closeCreateQuizModal();
-	            _this4.MaxCountQuizzesNotify.show();
+	            _this6.closeCreateQuizModal();
+	            _this6.MaxCountQuizzesNotify.show();
 	            return;
 	          }
 	          addButton.classList.remove('is-loading');
@@ -182,7 +217,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getShareNode",
 	    value: function getShareNode(quiz) {
-	      var _this5 = this;
+	      var _this7 = this;
 	      var quizTakeLink = "".concat(location.hostname, "/quiz/").concat(quiz.CODE, "/take");
 	      var shareButton = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"button hidden-action\" >\n\t\t\t\t<i class=\"fa-solid fa-link\"></i>\n\t\t\t\t\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F\n\t\t\t</a>\n\t\t"])));
 	      var shareModal = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box qr-modal\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-dark copy\">\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), BX.util.htmlspecialchars(quizTakeLink));
@@ -199,7 +234,7 @@ this.Up = this.Up || {};
 	      copyButton.onclick = function () {
 	        shareModal.querySelector('.input').select();
 	        document.execCommand("copy");
-	        _this5.CopyLinkIsSuccess.show();
+	        _this7.CopyLinkIsSuccess.show();
 	      };
 	      new QRCode(shareModal.querySelector(".qr"), {
 	        text: quizTakeLink,
@@ -214,16 +249,16 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getHiddenActions",
 	    value: function getHiddenActions(quiz) {
-	      var _this6 = this;
+	      var _this8 = this;
 	      var showHiddenActionsButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"button quiz-card__more-action-btn\">\n\t\t\t\t<i class=\"fa-solid fa-bars\"></i>\n\t\t\t</a>\n\t\t"])));
 	      var stateQuizButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"hidden-action button\">\n\t\t\t\t<i class=\"fa-solid fa-", " fa-fw\"></i>\n\t\t\t\t", "\n\t\t\t</a>"])), +quiz.IS_ACTIVE === 1 ? 'stop' : 'play', +quiz.IS_ACTIVE === 1 ? 'Деактивировать' : 'Активировать');
 	      stateQuizButton.onclick = function () {
-	        _this6.changeState(quiz.ID);
+	        _this8.changeState(quiz.ID);
 	      };
 	      var editQuizButton = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/edit\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-solid fa-pen fa-fw\"></i>\n\t\t\t\t\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C\n\t\t\t</a>"])), quiz.ID);
 	      var deleteQuizButton = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"button delete-quiz-button hidden-action\" >\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-trash fa-fw\"></i>\n\t\t\t\t\u0423\u0434\u0430\u043B\u0438\u0442\u044C\n\t\t\t</a>"])));
 	      deleteQuizButton.onclick = function () {
-	        _this6.deleteQuiz(+quiz.ID);
+	        _this8.deleteQuiz(+quiz.ID);
 	      };
 	      var showResultButton = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/show\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-chart-column fa-fw\"></i>\n\t\t\t\t\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B\n\t\t\t</a>"])), quiz.ID);
 	      var goToTakeQuizButton = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/take\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-arrow-up-right-from-square fa-fw\"></i>\n\t\t\t\t\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043A \u043F\u0440\u043E\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044E \u043E\u043F\u0440\u043E\u0441\u0430\n\t\t\t</a>"])), quiz.CODE);
@@ -240,6 +275,44 @@ this.Up = this.Up || {};
 	        }
 	      };
 	      return main_core.Tag.render(_templateObject13 || (_templateObject13 = babelHelpers.taggedTemplateLiteral(["", "", ""])), showHiddenActionsButton, hiddenActionsNode);
+	    }
+	  }, {
+	    key: "getFilterNode",
+	    value: function getFilterNode() {
+	      var _this9 = this;
+	      var ShowAllQuizzesButton = main_core.Tag.render(_templateObject14 || (_templateObject14 = babelHelpers.taggedTemplateLiteral(["<button class=\"button is-dark is-selected\" value=\"all\"><span>\u0412\u0441\u0435</span></button>"])));
+	      var ShowActiveQuizzesButton = main_core.Tag.render(_templateObject15 || (_templateObject15 = babelHelpers.taggedTemplateLiteral(["<button class=\"button\" value=\"active\"><span>\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0435</span></button>"])));
+	      var ShowNotActiveQuizzesButton = main_core.Tag.render(_templateObject16 || (_templateObject16 = babelHelpers.taggedTemplateLiteral(["<button class=\"button\" value=\"notActive\"><span>\u041D\u0435\u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0435</span></button>"])));
+	      var filterButtons = [ShowNotActiveQuizzesButton, ShowAllQuizzesButton, ShowActiveQuizzesButton];
+	      filterButtons.forEach(function (button) {
+	        button.onclick = function () {
+	          if (button.classList.contains('is-dark') && button.classList.contains('is-selected')) return;
+	          button.classList.add('is-dark', 'is-selected');
+	          _this9.quizState = button.value;
+	          filterButtons.forEach(function (otherButton) {
+	            if (button !== otherButton) {
+	              otherButton.classList.remove('is-dark', 'is-selected');
+	            }
+	          });
+	          _this9.loadQuizzesByFilters().then(function (quizList) {
+	            _this9.quizList = quizList;
+	            _this9.render();
+	          });
+	        };
+	      });
+	      var SearchInput = main_core.Tag.render(_templateObject17 || (_templateObject17 = babelHelpers.taggedTemplateLiteral(["<input class=\"input\" type=\"text\" placeholder=\"\u041D\u0430\u0439\u0442\u0438 \u043E\u043F\u0440\u043E\u0441\" id=\"search-input\">"])));
+	      var SearchButton = main_core.Tag.render(_templateObject18 || (_templateObject18 = babelHelpers.taggedTemplateLiteral(["<button class=\"button\" id=\"search-button\">\u041F\u043E\u0438\u0441\u043A</button>"])));
+	      SearchInput.oninput = function () {
+	        _this9.query = SearchInput.value;
+	      };
+	      SearchButton.onclick = function () {
+	        _this9.loadQuizzesByFilters().then(function (quizList) {
+	          _this9.quizList = quizList;
+	          _this9.render();
+	        });
+	      };
+	      var FilterNode = main_core.Tag.render(_templateObject19 || (_templateObject19 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"level-left\">\n\t\t\t\t<div class=\"level-item\">\n\t\t\t\t\t<div class=\"field has-addons\">\n\t\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</p>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t<!-- Right side -->\n\t\t\t<div class=\"level-right\">\n\t\t\t\t<div class=\"field has-addons\">\n\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</div>"])), SearchInput, SearchButton, ShowAllQuizzesButton, ShowActiveQuizzesButton, ShowNotActiveQuizzesButton);
+	      return FilterNode;
 	    }
 	  }, {
 	    key: "truncateText",

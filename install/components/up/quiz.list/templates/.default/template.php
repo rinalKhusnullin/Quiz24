@@ -10,43 +10,8 @@ use Bitrix\Main\Page\Asset;
 Asset::getInstance()->addCss('/bitrix/js/ui/notify/css/notify.css');
 ?>
 <!-- Main container -->
-<nav class="level">
-	<!-- Left side -->
-	<div class="level-left">
-		<div class="level-item">
-			<div class="field has-addons">
-				<p class="control">
-					<input class="input" type="text" placeholder="Найти опрос">
-				</p>
-				<p class="control">
-					<button class="button">
-						Поиск
-					</button>
-				</p>
-			</div>
-		</div>
-	</div>
+<nav class="level" id="filter">
 
-	<!-- Right side -->
-	<div class="level-right">
-		<div class="field has-addons">
-			<p class="control">
-				<button class="button">
-					<span>Все</span>
-				</button>
-			</p>
-			<p class="control">
-				<button class="button">
-					<span>Активные</span>
-				</button>
-			</p>
-			<p class="control">
-				<button class="button">
-					<span>Неактивные</span>
-				</button>
-			</p>
-		</div>
-	</div>
 </nav>
 
 
@@ -57,6 +22,7 @@ Asset::getInstance()->addCss('/bitrix/js/ui/notify/css/notify.css');
 	BX.ready(function() {
 		window.ProjectorProjectList = new Up.Quiz.QuizList({
 			rootNodeId: 'quiz-container-root',
+			filterNodeId : 'filter',
 		});
 	});
 </script>

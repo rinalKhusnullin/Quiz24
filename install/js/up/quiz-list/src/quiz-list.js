@@ -25,7 +25,6 @@ export class QuizList
 		stack : this.BalloonStack,
 		content : 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
 		autoHide: true,
-		color: '#FFD700',
 		autoHideDelay: 10000,
 	});
 
@@ -40,25 +39,52 @@ export class QuizList
 			throw new Error('QuizList: options.rootNodeId required');
 		}
 
+		if (Type.isStringFilled(options.filterNodeId))
+		{
+			this.filterNodeId = options.filterNodeId;
+		}
+		else
+		{
+			throw new Error('QuizList: options.filterNodeId required');
+		}
+
 		this.rootNode = document.getElementById(this.rootNodeId);
 		if (!this.rootNode)
 		{
 			throw new Error(`QuizList: element with id "${this.rootNodeId}" not found`);
 		}
+		this.filterNode = document.getElementById(this.filterNodeId);
+		if (!this.filterNode)
+		{
+			throw new Error(`QuizList: element with id "${this.filterNodeId}" not found`);
+		}
 
 		this.LinkIsCopyNotify = null;
 
+		this.getFilterNode().forEach(node => {
+			this.filterNode.appendChild(node);
+		});
+
+		this.query = '';
+		this.quizState = 'all';
 		this.quizList = [];
 		this.reload();
 	}
 
 	reload()
 	{
-		this.loadList()
-			.then(quizList => {
-				this.quizList = quizList;
-				this.render();
-			});
+		if (this.query === '' && this.quizState === 'all')
+			this.loadList()
+				.then(quizList => {
+					this.quizList = quizList;
+					this.render();
+				});
+		else
+			this.loadQuizzesByFilters()
+				.then(quizList => {
+					this.quizList = quizList;
+					this.render();
+				});
 	}
 
 	loadList()
@@ -123,6 +149,28 @@ export class QuizList
 				console.error(error);
 			})
 		;
+	}
+
+	loadQuizzesByFilters()
+	{
+		this.renderLoading();
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.quiz.getQuizzesByFilters',{
+						data: {
+							query : this.query,
+							state : this.quizState,
+						}
+					}
+				)
+				.then((response) => {
+					resolve(response.data.quizList);
+				})
+				.catch((error) => {
+					reject(error);
+				})
+			;
+		});
 	}
 
 	renderLoading()
@@ -413,6 +461,75 @@ export class QuizList
 		};
 
 		return Tag.render`${showHiddenActionsButton}${hiddenActionsNode}`;
+	}
+
+	getFilterNode()
+	{
+		let ShowAllQuizzesButton = Tag.render`<button class="button is-dark is-selected" value="all"><span>Все</span></button>`;
+		let ShowActiveQuizzesButton = Tag.render`<button class="button" value="active"><span>Активные</span></button>`;
+		let ShowNotActiveQuizzesButton = Tag.render`<button class="button" value="notActive"><span>Неактивные</span></button>`;
+
+		let filterButtons = [ShowNotActiveQuizzesButton, ShowAllQuizzesButton, ShowActiveQuizzesButton];
+
+		filterButtons.forEach(button => {
+			button.onclick = () => {
+				if (button.classList.contains('is-dark') && button.classList.contains('is-selected')) return;
+				button.classList.add('is-dark', 'is-selected');
+				this.quizState = button.value;
+				filterButtons.forEach(otherButton => {
+					if (button !== otherButton)
+					{
+						otherButton.classList.remove('is-dark', 'is-selected');
+					}
+				});
+				this.loadQuizzesByFilters().then(quizList => {
+					this.quizList = quizList;
+					this.render();
+				})
+			};
+		});
+
+		let SearchInput = Tag.render`<input class="input" type="text" placeholder="Найти опрос" id="search-input">`;
+		let SearchButton = Tag.render`<button class="button" id="search-button">Поиск</button>`;
+
+		SearchInput.oninput = () => {this.query = SearchInput.value;}
+		SearchButton.onclick = () => {
+			this.loadQuizzesByFilters().then(quizList => {
+				this.quizList = quizList;
+				this.render();
+			})
+		}
+
+		const FilterNode = Tag.render`
+			<div class="level-left">
+				<div class="level-item">
+					<div class="field has-addons">
+						<p class="control">
+							${SearchInput}
+						</p>
+						<p class="control">
+							${SearchButton}
+						</p>
+					</div>
+				</div>
+			</div>
+
+	<!-- Right side -->
+			<div class="level-right">
+				<div class="field has-addons">
+					<p class="control">
+						${ShowAllQuizzesButton}
+					</p>
+					<p class="control">
+						${ShowActiveQuizzesButton}
+					</p>
+					<p class="control">
+						${ShowNotActiveQuizzesButton}
+					</p>
+				</div>
+			</div>`;
+
+		return FilterNode;
 	}
 
 	truncateText(text, length)

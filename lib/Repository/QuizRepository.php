@@ -16,6 +16,31 @@ class QuizRepository
 		return $quizList;
 	}
 
+	public static function getQuizzesByFilters(string $query, string $state, int $userId) : ?array
+	{
+		$quizQuery = QuizzesTable::query()
+	 		->addSelect('ID')
+	  		->addSelect('TITLE')
+		  	->addSelect('CODE')
+		  	->addSelect('IS_ACTIVE')
+		  	->whereLike('USER_ID', $userId);
+
+
+		if ($query !== '')
+		{
+			$sqlHelper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+			$query = $sqlHelper->forSql($query);
+
+			$quizQuery = $quizQuery->whereLike('TITLE', "%$query%");
+		}
+
+		if ($state === 'active') $quizQuery = $quizQuery->whereLike('IS_ACTIVE', 1);
+
+		if ($state === 'notActive') $quizQuery = $quizQuery->whereLike('IS_ACTIVE', 0);
+
+		return $quizQuery->exec()->fetchAll();
+	}
+
 	public static function createQuiz(string $title, int $userId)
 	{
 		$permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';

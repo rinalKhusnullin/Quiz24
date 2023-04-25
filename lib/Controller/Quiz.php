@@ -123,6 +123,26 @@ class Quiz extends Engine\Controller
 		];
 	}
 
+	public function getQuizzesByFiltersAction(string $query, string $state) : ?array
+	{
+		if (!in_array($state, ['all', 'active', 'notActive']))
+		{
+			$this->addError(new Error("quiz state must be 'all' | 'active' | 'notActive'", 'invalid_quiz_state'));
+			return null;
+		}
+
+		global $USER;
+		if (!$USER->IsAuthorized())
+		{
+			$this->addError(new Error('user must be authorized', 'unauthorized_user'));
+			return null;
+		}
+
+		$userId = $USER->GetID();
+
+		return ['quizList' => QuizRepository::getQuizzesByFilters($query, $state, $userId)];
+	}
+
 	public function configureActions()
 	{
 		return [
