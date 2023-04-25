@@ -18,5 +18,5 @@ $MESS['UP_QUIZ_EDIT_BAR_CHART'] = 'Столбчатая диаграмма';
 $MESS['UP_QUIZ_EDIT_RAW_OUT'] = 'Сырой вывод';
 $MESS['UP_QUIZ_EDIT_SAVE'] = 'Сохранить';
 $MESS['UP_QUIZ_EDIT_OPTION'] = 'Вариант';
-
+$MESS['UP_QUIZ_EDIT_QUESTIONS'] = 'Вопросы';
 $MESS['UP_QUIZ_EDIT_'] = '';

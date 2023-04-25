@@ -1,5 +1,5 @@
-import {Type, Tag, Loc} from 'main.core';
-
+import {Type, Tag, Loc, Text} from 'main.core';
+//${Text.encode(taskData.NAME)}
 export class QuizEdit
 {
 	DISPLAY_TYPES = {
@@ -236,8 +236,8 @@ export class QuizEdit
 				<div class="question-list__question-container"></div>
 			`;
 			const questionButton = Tag.render`
-				<div class="question-list__question button" data-id="${questionData.ID}">
-					${questionData.QUESTION_TEXT}
+				<div class="question-list__question button" data-id="${Text.encode(questionData.ID)}">
+					${Text.encode(questionData.QUESTION_TEXT)}
 				</div>
 			`;
 			const questionDeleteButton = Tag.render`
@@ -265,7 +265,7 @@ export class QuizEdit
 
 		return Tag.render`
 			<div class="column is-one-fifth question-list">
-				<div class="question-list__title">Вопросы</div>
+				<div class="question-list__title">${Loc.getMessage('UP_QUIZ_EDIT_QUESTIONS')}</div>
 				${QuestionsContainer}
 			</div>
 		`;
@@ -277,7 +277,7 @@ export class QuizEdit
 			<div class="column is-three-fifths question-preview" id="preview">
 				<div class="question-preview__title">${Loc.getMessage('UP_QUIZ_EDIT_PREVIEW')}</div>
 				<div class="box">
-					<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.QUESTION_TEXT}</h3>
+					<h3 class="title question-preview__question-text" id="questionTextPreview">${Text.encode(this.question.QUESTION_TEXT)}</h3>
 						<div id="questionPreviewContainer"></div>
 					<a class="button is-success">${Loc.getMessage('UP_QUIZ_EDIT_SEND')}</a>
 				</div>
@@ -296,7 +296,7 @@ export class QuizEdit
 			{
 				const AnswerPreview = Tag.render`
 					<label class="radio"><input type="radio">
-						${options[i]}
+						${Text.encode(options[i])}
 					</label>
 				`;
 				AnswerPreviewContainer.appendChild(AnswerPreview);
@@ -313,7 +313,7 @@ export class QuizEdit
 		let question_display_id = this.question.QUESTION_DISPLAY_ID;
 		let DisplayPreviewNode = Tag.render`
 			<div id="">
-				${this.DISPLAY_TYPES[question_display_id]}
+				${Text.encode(this.DISPLAY_TYPES[question_display_id])}
 			</div>
 		`;
 
@@ -330,15 +330,15 @@ export class QuizEdit
 				<div class="question-settings__title">${Loc.getMessage('UP_QUIZ_EDIT_SETTINGS')}</div>
 				
 				<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_QUESTION_TEXT')}:</div>
-				<input value="${this.question.QUESTION_TEXT}" class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_EDIT_ENTER_QUESTION')}" name="questionText" id="questionText">
+				<input value="${Text.encode(this.question.QUESTION_TEXT)}" class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_EDIT_ENTER_QUESTION')}" name="questionText" id="questionText">
 				
 				<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_ANSWER_TYPE')}:</div>
 				<select class="select" name="questionType" id="questionType">
-					<option value="0" ${this.question.QUESTION_TYPE_ID == 0 ? 'selected' : ''}>${Loc.getMessage('UP_QUIZ_EDIT_OPEN_ANSWER')}</option>
-					<option value="1" ${this.question.QUESTION_TYPE_ID == 1 ? 'selected' : ''}>${Loc.getMessage('UP_QUIZ_EDIT_SELECT_OPTION')}</option>
+					<option value="0" ${+this.question.QUESTION_TYPE_ID === 0 ? 'selected' : ''}>${Loc.getMessage('UP_QUIZ_EDIT_OPEN_ANSWER')}</option>
+					<option value="1" ${+this.question.QUESTION_TYPE_ID === 1 ? 'selected' : ''}>${Loc.getMessage('UP_QUIZ_EDIT_SELECT_OPTION')}</option>
 				</select>
 				
-				<div class="question-settings__selectable-answers ${this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : ''}" id="selectableAnswers">
+				<div class="question-settings__selectable-answers ${+this.question.QUESTION_TYPE_ID !== 1 ? 'hidden' : ''}" id="selectableAnswers">
 					<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_ANSWER_OPTIONS')}:</div>
 					<div class="question-settings__answers-container" id="answersContainer">
 					</div>
@@ -349,10 +349,10 @@ export class QuizEdit
 				
 				<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_TYPE_OF_VIEW_TYPE')}:</div>
 				<select name="displayType" id="displayType">
-					<option value="0" ${this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : ''}>${this.DISPLAY_TYPES[0]}</option>
-					<option value="1" ${this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : ''}>${this.DISPLAY_TYPES[1]}</option>
-					<option value="2" ${this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : ''}>${this.DISPLAY_TYPES[2]}</option>
-					<option value="3" ${this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : ''}>${this.DISPLAY_TYPES[3]}</option>
+					<option value="0" ${this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : ''}>${Text.encode(this.DISPLAY_TYPES[0])}</option>
+					<option value="1" ${this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : ''}>${Text.encode(this.DISPLAY_TYPES[1])}</option>
+					<option value="2" ${this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : ''}>${Text.encode(this.DISPLAY_TYPES[2])}</option>
+					<option value="3" ${this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : ''}>${Text.encode(this.DISPLAY_TYPES[3])}</option>
 				</select>
 				<button type="submit" class="button is-success" id="save-question-button">${Loc.getMessage('UP_QUIZ_EDIT_SAVE')}</button>
 			</div>
@@ -364,7 +364,7 @@ export class QuizEdit
 			for (let i = 0; i < options.length; i++)
 			{
 				let answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
-				const AnswerInput = Tag.render`<input type="text" class="question-settings__answer input" name="selectableAnswer" value="${options[i]}">`;
+				const AnswerInput = Tag.render`<input type="text" class="question-settings__answer input" name="selectableAnswer" value="${Text.encode(options[i])}">`;
 				const AnswerDelete = Tag.render`<a class="button is-danger"><i class="fa-solid fa-trash"></i></a>`;
 				AnswerDelete.onclick = () => { this.deleteAnswer(i) };
 				const AnswerInputNode = Tag.render`<div class="question-settings__answer-inputs">
@@ -413,7 +413,7 @@ export class QuizEdit
 		this.question.QUESTION_TYPE_ID = questionTypeInput.value;
 
 		const selectableAnswers = document.getElementById('selectableAnswers');
-		if (this.question.QUESTION_TYPE_ID == 1)
+		if (+this.question.QUESTION_TYPE_ID === 1)
 		{
 			selectableAnswers.classList.remove("hidden");
 			let answerInputs = document.querySelectorAll('.question-settings__answer');
