@@ -1,12 +1,33 @@
 import {Type, Tag} from 'main.core';
 import './quiz-list.css';
 
+
 export class QuizList
 {
 
 	config = {
 		MAX_QUIZ_TITLE_LENGTH : 38,
 	}
+
+	BalloonStack = new BX.UI.Notification.Stack({
+		position: 'bottom-center',
+	});
+
+	CopyLinkIsSuccess = new BX.UI.Notification.Balloon({
+		stack : this.BalloonStack,
+		content : 'Ссылка на опрос успешно скопирована!',
+		autoHide: true,
+		autoHideDelay: 1000,
+		blinkOnUpdate: true,
+	});
+
+	MaxCountQuizzesNotify = new BX.UI.Notification.Balloon({
+		stack : this.BalloonStack,
+		content : 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
+		autoHide: true,
+		color: '#FFD700',
+		autoHideDelay: 10000,
+	});
 
 	constructor(options = {})
 	{
@@ -24,6 +45,8 @@ export class QuizList
 		{
 			throw new Error(`QuizList: element with id "${this.rootNodeId}" not found`);
 		}
+
+		this.LinkIsCopyNotify = null;
 
 		this.quizList = [];
 		this.reload();
@@ -162,7 +185,7 @@ export class QuizList
 								</div>
 							</section>
 							<footer class="modal-card-foot">
-								<button class="button is-success" id="creating_quiz_btn">Создать</button>
+								<button class="button is-dark" id="creating_quiz_btn">Создать</button>
 								<button class="button close-modal">Назад</button>
 							</footer>
 						</div>
@@ -230,6 +253,13 @@ export class QuizList
 				window.location.replace(`/quiz/${result.data}/edit`);
 
 			}, reject => {
+				if (reject.errors[0].code === 'max_count_quizzes')
+				{
+					addButton.classList.remove('is-loading');
+					this.closeCreateQuizModal();
+					this.MaxCountQuizzesNotify.show();
+					return;
+				}
 				addButton.classList.remove('is-loading');
 				quizTitleHelper.textContent = reject.errors[0].message;
 				quizTitleInput.oninput = () => {
@@ -290,15 +320,9 @@ export class QuizList
 
 		let copyButton = shareModal.querySelector('.copy');
 		copyButton.onclick = () => {
-			copyButton.classList.remove('is-loading');
-			copyButton.classList.add('is-success');
-			copyButton.innerHTML = `<i class="fa-solid fa-check"></i>`;
-			setTimeout(() => {
-				copyButton.classList.remove('is-success');
-				copyButton.textContent = `Скопировать`;
-			}, 400);
 			shareModal.querySelector('.input').select();
 			document.execCommand("copy");
+			this.CopyLinkIsSuccess.show();
 		};
 
 		new QRCode(shareModal.querySelector(`.qr`), {
@@ -308,10 +332,6 @@ export class QuizList
 			colorDark : "#000000",
 			colorLight : "#ffffff",
 			correctLevel : QRCode.CorrectLevel.H
-		});
-
-		window.addEventListener('resize', (e) => {
-			console.log(e);
 		});
 
 		return Tag.render`
