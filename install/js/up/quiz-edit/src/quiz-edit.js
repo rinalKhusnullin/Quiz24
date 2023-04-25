@@ -1,17 +1,12 @@
-import {Type, Tag} from 'main.core';
+import {Type, Tag, Loc} from 'main.core';
 
 export class QuizEdit
 {
-	QUESTION_TYPES = {
-		0 : 'Свободный ответ',//0
-		1 : 'Выбираемый ответ'//1
-	};
-
 	DISPLAY_TYPES = {
-		0 : 'Круговая диаграмма',//0
-		1 : 'Облако тэгов',//1
-		2 : 'Столбчатая диаграмма',//2
-		3 : 'Сырой вывод'//3
+		0 : Loc.getMessage('UP_QUIZ_EDIT_PIE_CHART'),
+		1 : Loc.getMessage('UP_QUIZ_EDIT_TAG_CLOUD'),
+		2 : Loc.getMessage('UP_QUIZ_EDIT_BAR_CHART'),
+		3 : Loc.getMessage('UP_QUIZ_EDIT_RAW_OUT'),
 	};
 
 	constructor(options = {})
@@ -280,14 +275,14 @@ export class QuizEdit
 	{
 		const PreviewContainerNode =  Tag.render`
 			<div class="column is-three-fifths question-preview" id="preview">
-				<div class="question-preview__title">Превью</div>
+				<div class="question-preview__title">${Loc.getMessage('UP_QUIZ_EDIT_PREVIEW')}</div>
 				<div class="box">
 					<h3 class="title question-preview__question-text" id="questionTextPreview">${this.question.QUESTION_TEXT}</h3>
 						<div id="questionPreviewContainer"></div>
-					<a class="button is-success">Отправить</a>
+					<a class="button is-success">${Loc.getMessage('UP_QUIZ_EDIT_SEND')}</a>
 				</div>
 				<div class="box" id="displayTypePreview">
-					<h3 class="title">Результаты опроса:</h3>
+					<h3 class="title">${Loc.getMessage('UP_QUIZ_EDIT_QUIZ_RESULT')}:</h3>
 					<div id="chartPreviewContainer">
 					</div>
 				</div>
@@ -310,14 +305,14 @@ export class QuizEdit
 		else
 		{
 			AnswerPreviewContainer.appendChild(Tag.render`
-				<input type="text" class="input" placeholder="Введите ответ" id="freePreview">
+				<input type="text" class="input" placeholder="${Loc.getMessage('UP_QUIZ_EDIT_ENTER_ANSWER')}" id="freePreview">
 			`);
 		}
 
 		let DisplayPreviewContainer = PreviewContainerNode.querySelector('#chartPreviewContainer');
 		let question_display_id = this.question.QUESTION_DISPLAY_ID;
 		let DisplayPreviewNode = Tag.render`
-			<div id="tagCloudPreview">
+			<div id="">
 				${this.DISPLAY_TYPES[question_display_id]}
 			</div>
 		`;
@@ -332,19 +327,19 @@ export class QuizEdit
 		console.log(this.question);
 		const SettingsContainerNode =  Tag.render`
 			<div class="column question-settings" id="settings">
-				<div class="question-settings__title">Настройки</div>
+				<div class="question-settings__title">${Loc.getMessage('UP_QUIZ_EDIT_SETTINGS')}</div>
 				
-				<div class="question-settings__input-title">Текст вопроса:</div>
-				<input value="${this.question.QUESTION_TEXT}" class="input" type="text" placeholder="Введите вопрос" name="questionText" id="questionText">
+				<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_QUESTION_TEXT')}:</div>
+				<input value="${this.question.QUESTION_TEXT}" class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_EDIT_ENTER_QUESTION')}" name="questionText" id="questionText">
 				
-				<div class="question-settings__input-title">Тип ответа:</div>
+				<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_ANSWER_TYPE')}:</div>
 				<select class="select" name="questionType" id="questionType">
-					<option value="0" ${this.question.QUESTION_TYPE_ID == 0 ? 'selected' : ''}>Свободный ответ</option>
-					<option value="1" ${this.question.QUESTION_TYPE_ID == 1 ? 'selected' : ''}>Выбор варианта</option>
+					<option value="0" ${this.question.QUESTION_TYPE_ID == 0 ? 'selected' : ''}>${Loc.getMessage('UP_QUIZ_EDIT_OPEN_ANSWER')}</option>
+					<option value="1" ${this.question.QUESTION_TYPE_ID == 1 ? 'selected' : ''}>${Loc.getMessage('UP_QUIZ_EDIT_SELECT_OPTION')}</option>
 				</select>
 				
 				<div class="question-settings__selectable-answers ${this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : ''}" id="selectableAnswers">
-					<div class="question-settings__input-title">Вариаты ответа:</div>
+					<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_ANSWER_OPTIONS')}:</div>
 					<div class="question-settings__answers-container" id="answersContainer">
 					</div>
 					<a class="button" id="addAnswerButton">
@@ -352,14 +347,14 @@ export class QuizEdit
 					</a>
 				</div>
 				
-				<div class="question-settings__input-title">Тип отображения результатов:</div>
+				<div class="question-settings__input-title">${Loc.getMessage('UP_QUIZ_EDIT_TYPE_OF_VIEW_TYPE')}:</div>
 				<select name="displayType" id="displayType">
-					<option value="0" ${this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : ''}>Круговая диаграмма</option>
-					<option value="1" ${this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : ''}>Облако тэгов</option>
-					<option value="2" ${this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : ''}>Столбчатая диаграмма</option>
-					<option value="3" ${this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : ''}>Текстовый формат</option>
+					<option value="0" ${this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : ''}>${this.DISPLAY_TYPES[0]}</option>
+					<option value="1" ${this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : ''}>${this.DISPLAY_TYPES[1]}</option>
+					<option value="2" ${this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : ''}>${this.DISPLAY_TYPES[2]}</option>
+					<option value="3" ${this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : ''}>${this.DISPLAY_TYPES[3]}</option>
 				</select>
-				<button type="submit" class="button is-success" id="save-question-button">Сохранить</button>
+				<button type="submit" class="button is-success" id="save-question-button">${Loc.getMessage('UP_QUIZ_EDIT_SAVE')}</button>
 			</div>
 		`;
 
@@ -386,7 +381,7 @@ export class QuizEdit
 			let currentAnswerCount = answerInputsContainer.childElementCount;
 
 			const AnswerInput = Tag.render`
-				<input type="text" class="question-settings__answer input" name="selectableAnswer" value="Вариант ${currentAnswerCount+1}">
+				<input type="text" class="question-settings__answer input" name="selectableAnswer" value="${Loc.getMessage('UP_QUIZ_EDIT_OPTION')} ${currentAnswerCount+1}">
 			`;
 
 			const AnswerDelete = Tag.render`<a class="button is-danger"><i class="fa-solid fa-trash"></i></a>`;

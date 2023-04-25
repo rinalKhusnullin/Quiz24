@@ -7,21 +7,12 @@ this.Up = this.Up || {};
 	  function QuizEdit() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, QuizEdit);
-	    babelHelpers.defineProperty(this, "QUESTION_TYPES", {
-	      0: 'Свободный ответ',
-	      //0
-	      1: 'Выбираемый ответ' //1
-	    });
 	    babelHelpers.defineProperty(this, "DISPLAY_TYPES", {
-	      0: 'Круговая диаграмма',
-	      //0
-	      1: 'Облако тэгов',
-	      //1
-	      2: 'Столбчатая диаграмма',
-	      //2
-	      3: 'Сырой вывод' //3
+	      0: main_core.Loc.getMessage('UP_QUIZ_EDIT_PIE_CHART'),
+	      1: main_core.Loc.getMessage('UP_QUIZ_EDIT_TAG_CLOUD'),
+	      2: main_core.Loc.getMessage('UP_QUIZ_EDIT_BAR_CHART'),
+	      3: main_core.Loc.getMessage('UP_QUIZ_EDIT_RAW_OUT')
 	    });
-
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -231,7 +222,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getQuestionPreviewNode",
 	    value: function getQuestionPreviewNode() {
-	      var PreviewContainerNode = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-three-fifths question-preview\" id=\"preview\">\n\t\t\t\t<div class=\"question-preview__title\">\u041F\u0440\u0435\u0432\u044C\u044E</div>\n\t\t\t\t<div class=\"box\">\n\t\t\t\t\t<h3 class=\"title question-preview__question-text\" id=\"questionTextPreview\">", "</h3>\n\t\t\t\t\t\t<div id=\"questionPreviewContainer\"></div>\n\t\t\t\t\t<a class=\"button is-success\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C</a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"box\" id=\"displayTypePreview\">\n\t\t\t\t\t<h3 class=\"title\">\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u043E\u043F\u0440\u043E\u0441\u0430:</h3>\n\t\t\t\t\t<div id=\"chartPreviewContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT);
+	      var PreviewContainerNode = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-three-fifths question-preview\" id=\"preview\">\n\t\t\t\t<div class=\"question-preview__title\">", "</div>\n\t\t\t\t<div class=\"box\">\n\t\t\t\t\t<h3 class=\"title question-preview__question-text\" id=\"questionTextPreview\">", "</h3>\n\t\t\t\t\t\t<div id=\"questionPreviewContainer\"></div>\n\t\t\t\t\t<a class=\"button is-success\">", "</a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"box\" id=\"displayTypePreview\">\n\t\t\t\t\t<h3 class=\"title\">", ":</h3>\n\t\t\t\t\t<div id=\"chartPreviewContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_PREVIEW'), this.question.QUESTION_TEXT, main_core.Loc.getMessage('UP_QUIZ_EDIT_SEND'), main_core.Loc.getMessage('UP_QUIZ_EDIT_QUIZ_RESULT'));
 	      var AnswerPreviewContainer = PreviewContainerNode.querySelector('#questionPreviewContainer');
 	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
 	        var options = JSON.parse(this.question.OPTIONS);
@@ -240,11 +231,11 @@ this.Up = this.Up || {};
 	          AnswerPreviewContainer.appendChild(AnswerPreview);
 	        }
 	      } else {
-	        AnswerPreviewContainer.appendChild(main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"input\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043E\u0442\u0432\u0435\u0442\" id=\"freePreview\">\n\t\t\t"]))));
+	        AnswerPreviewContainer.appendChild(main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"input\" placeholder=\"", "\" id=\"freePreview\">\n\t\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_ENTER_ANSWER')));
 	      }
 	      var DisplayPreviewContainer = PreviewContainerNode.querySelector('#chartPreviewContainer');
 	      var question_display_id = this.question.QUESTION_DISPLAY_ID;
-	      var DisplayPreviewNode = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div id=\"tagCloudPreview\">\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), this.DISPLAY_TYPES[question_display_id]);
+	      var DisplayPreviewNode = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div id=\"\">\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), this.DISPLAY_TYPES[question_display_id]);
 	      DisplayPreviewContainer.appendChild(DisplayPreviewNode);
 	      return PreviewContainerNode;
 	    }
@@ -253,7 +244,7 @@ this.Up = this.Up || {};
 	    value: function getQuestionSettingsNode() {
 	      var _this9 = this;
 	      console.log(this.question);
-	      var SettingsContainerNode = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column question-settings\" id=\"settings\">\n\t\t\t\t<div class=\"question-settings__title\">\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0435\u043A\u0441\u0442 \u0432\u043E\u043F\u0440\u043E\u0441\u0430:</div>\n\t\t\t\t<input value=\"", "\" class=\"input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\" name=\"questionText\" id=\"questionText\">\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t<select class=\"select\" name=\"questionType\" id=\"questionType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u0421\u0432\u043E\u0431\u043E\u0434\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u0412\u044B\u0431\u043E\u0440 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u0430</option>\n\t\t\t\t</select>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__selectable-answers ", "\" id=\"selectableAnswers\">\n\t\t\t\t\t<div class=\"question-settings__input-title\">\u0412\u0430\u0440\u0438\u0430\u0442\u044B \u043E\u0442\u0432\u0435\u0442\u0430:</div>\n\t\t\t\t\t<div class=\"question-settings__answers-container\" id=\"answersContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<a class=\"button\" id=\"addAnswerButton\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-plus \"></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">\u0422\u0438\u043F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432:</div>\n\t\t\t\t<select name=\"displayType\" id=\"displayType\">\n\t\t\t\t\t<option value=\"0\" ", ">\u041A\u0440\u0443\u0433\u043E\u0432\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"1\" ", ">\u041E\u0431\u043B\u0430\u043A\u043E \u0442\u044D\u0433\u043E\u0432</option>\n\t\t\t\t\t<option value=\"2\" ", ">\u0421\u0442\u043E\u043B\u0431\u0447\u0430\u0442\u0430\u044F \u0434\u0438\u0430\u0433\u0440\u0430\u043C\u043C\u0430</option>\n\t\t\t\t\t<option value=\"3\" ", ">\u0422\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0439 \u0444\u043E\u0440\u043C\u0430\u0442</option>\n\t\t\t\t</select>\n\t\t\t\t<button type=\"submit\" class=\"button is-success\" id=\"save-question-button\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n\t\t\t</div>\n\t\t"])), this.question.QUESTION_TEXT, this.question.QUESTION_TYPE_ID == 0 ? 'selected' : '', this.question.QUESTION_TYPE_ID == 1 ? 'selected' : '', this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : '', this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : '', this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : '');
+	      var SettingsContainerNode = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column question-settings\" id=\"settings\">\n\t\t\t\t<div class=\"question-settings__title\">", "</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">", ":</div>\n\t\t\t\t<input value=\"", "\" class=\"input\" type=\"text\" placeholder=\"", "\" name=\"questionText\" id=\"questionText\">\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">", ":</div>\n\t\t\t\t<select class=\"select\" name=\"questionType\" id=\"questionType\">\n\t\t\t\t\t<option value=\"0\" ", ">", "</option>\n\t\t\t\t\t<option value=\"1\" ", ">", "</option>\n\t\t\t\t</select>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__selectable-answers ", "\" id=\"selectableAnswers\">\n\t\t\t\t\t<div class=\"question-settings__input-title\">", ":</div>\n\t\t\t\t\t<div class=\"question-settings__answers-container\" id=\"answersContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<a class=\"button\" id=\"addAnswerButton\">\n\t\t\t\t\t\t<i class=\"fa-solid fa-plus \"></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"question-settings__input-title\">", ":</div>\n\t\t\t\t<select name=\"displayType\" id=\"displayType\">\n\t\t\t\t\t<option value=\"0\" ", ">", "</option>\n\t\t\t\t\t<option value=\"1\" ", ">", "</option>\n\t\t\t\t\t<option value=\"2\" ", ">", "</option>\n\t\t\t\t\t<option value=\"3\" ", ">", "</option>\n\t\t\t\t</select>\n\t\t\t\t<button type=\"submit\" class=\"button is-success\" id=\"save-question-button\">", "</button>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_SETTINGS'), main_core.Loc.getMessage('UP_QUIZ_EDIT_QUESTION_TEXT'), this.question.QUESTION_TEXT, main_core.Loc.getMessage('UP_QUIZ_EDIT_ENTER_QUESTION'), main_core.Loc.getMessage('UP_QUIZ_EDIT_ANSWER_TYPE'), this.question.QUESTION_TYPE_ID == 0 ? 'selected' : '', main_core.Loc.getMessage('UP_QUIZ_EDIT_OPEN_ANSWER'), this.question.QUESTION_TYPE_ID == 1 ? 'selected' : '', main_core.Loc.getMessage('UP_QUIZ_EDIT_SELECT_OPTION'), this.question.QUESTION_TYPE_ID != 1 ? 'hidden' : '', main_core.Loc.getMessage('UP_QUIZ_EDIT_ANSWER_OPTIONS'), main_core.Loc.getMessage('UP_QUIZ_EDIT_TYPE_OF_VIEW_TYPE'), this.question.QUESTION_DISPLAY_ID == 0 ? 'selected' : '', this.DISPLAY_TYPES[0], this.question.QUESTION_DISPLAY_ID == 1 ? 'selected' : '', this.DISPLAY_TYPES[1], this.question.QUESTION_DISPLAY_ID == 2 ? 'selected' : '', this.DISPLAY_TYPES[2], this.question.QUESTION_DISPLAY_ID == 3 ? 'selected' : '', this.DISPLAY_TYPES[3], main_core.Loc.getMessage('UP_QUIZ_EDIT_SAVE'));
 	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
 	        var options = JSON.parse(this.question.OPTIONS);
 	        var _loop = function _loop(i) {
@@ -273,7 +264,7 @@ this.Up = this.Up || {};
 	      SettingsContainerNode.querySelector('#addAnswerButton').onclick = function () {
 	        var answerInputsContainer = SettingsContainerNode.querySelector('#answersContainer');
 	        var currentAnswerCount = answerInputsContainer.childElementCount;
-	        var AnswerInput = main_core.Tag.render(_templateObject15 || (_templateObject15 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"\u0412\u0430\u0440\u0438\u0430\u043D\u0442 ", "\">\n\t\t\t"])), currentAnswerCount + 1);
+	        var AnswerInput = main_core.Tag.render(_templateObject15 || (_templateObject15 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"question-settings__answer input\" name=\"selectableAnswer\" value=\"", " ", "\">\n\t\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_OPTION'), currentAnswerCount + 1);
 	        var AnswerDelete = main_core.Tag.render(_templateObject16 || (_templateObject16 = babelHelpers.taggedTemplateLiteral(["<a class=\"button is-danger\"><i class=\"fa-solid fa-trash\"></i></a>"])));
 	        var options = JSON.parse(_this9.question.OPTIONS);
 	        AnswerDelete.onclick = function () {
