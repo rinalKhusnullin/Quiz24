@@ -91,5 +91,10 @@ class QuizRepository
 		return true;
 	}
 
+	public static function getQuizCount(int $userId) : int
+	{
+		return QuizzesTable::getCount(['=USER_ID' => $userId]);
+	}
+
 
 }
