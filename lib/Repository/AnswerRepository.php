@@ -6,6 +6,8 @@ class AnswerRepository
 {
 	public static function createAnswer(int $questionId, string $answer) : ?array
 	{
+		$sqlHelper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+		$answer = $sqlHelper->forSql($answer);
 		$answerValues = [
 			'QUESTION_ID' => $questionId,
 			'ANSWER' => $answer,
