@@ -25,7 +25,6 @@ class QuizRepository
 		  	->addSelect('IS_ACTIVE')
 		  	->whereLike('USER_ID', $userId);
 
-
 		if ($query !== '')
 		{
 			$sqlHelper = \Bitrix\Main\Application::getConnection()->getSqlHelper();

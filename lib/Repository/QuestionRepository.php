@@ -20,7 +20,12 @@ class QuestionRepository
 
 	public static function getQuestion(int $id)
 	{
-		return QuestionsTable::getById($id)->fetch();
+		$question = QuestionsTable::getById($id)->fetch();
+		$question['QUESTION_TEXT'] =stripslashes($question['QUESTION_TEXT']);
+		$question['QUESTION_TYPE_ID'] = stripslashes($question['QUESTION_TYPE_ID']);
+		$question['QUESTION_DISPLAY_ID'] = stripslashes($question['QUESTION_DISPLAY_ID']);
+		$question['OPTIONS'] = stripslashes($question['OPTIONS']);
+		return $question;
 	}
 
 	public static function deleteQuestion(int $id): ?array
