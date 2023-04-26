@@ -1,4 +1,4 @@
-import {Type, Tag} from 'main.core';
+import {Type, Tag, Text, Loc} from 'main.core';
 import './quiz-list.css';
 
 
@@ -8,10 +8,6 @@ export class QuizList
 	config = {
 		MAX_QUIZ_TITLE_LENGTH : 38,
 	}
-
-
-
-
 
 	constructor(options = {})
 	{
@@ -199,27 +195,27 @@ export class QuizList
 				<div class="quiz-card quiz-card__add-new">
 					<a class="is-success is-button quiz-card__new-quiz-btn" id="open_creating_modal_btn">
 						<i class="fa-solid fa-plus"></i>
-						<span class="quiz-card__add-new-title mobile">Создать опрос</span>
+						<span class="quiz-card__add-new-title mobile">${Loc.getMessage('UP_QUIZ_LIST_CREATE_QUIZ')}</span>
 					</a>
 					<div class="modal" id="new_quiz_modal">
 						<div class="modal-background close-modal"></div>
 						<div class="modal-card">
 							<header class="modal-card-head">
-								<p class="modal-card-title">Создание опроса</p>
+								<p class="modal-card-title">${Loc.getMessage('UP_QUIZ_LIST_CREATING_QUIZ')}</p>
 								<button class="delete close-modal" aria-label="close"></button>
 							</header>
 							<section class="modal-card-body is-dark">
 								<div class="field">
-									<label class="label">Название опроса</label>
+									<label class="label">${Loc.getMessage('UP_QUIZ_LIST_QUIZ_NAME')}</label>
 									<div class="control">
-										<input id="quiz_title_input" class="input" type="text" placeholder="Введите название опроса">
+										<input id="quiz_title_input" class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_LIST_ENTER_QUIZ_NAME')}">
 									</div>
 									<p class="help is-danger" id="quiz_title_helper"></p>
 								</div>
 							</section>
 							<footer class="modal-card-foot">
-								<button class="button is-dark" id="creating_quiz_btn">Создать</button>
-								<button class="button close-modal">Назад</button>
+								<button class="button is-dark" id="creating_quiz_btn">${Loc.getMessage('UP_QUIZ_LIST_CREATE')}</button>
+								<button class="button close-modal">${Loc.getMessage('UP_QUIZ_LIST_BACK')}</button>
 							</footer>
 						</div>
 					</div>
@@ -236,22 +232,22 @@ export class QuizList
 					</div>
 						<div class="quiz-card__content">
 							<div class="quiz-card__title">
-								<strong class="quiz-card__subtitle is-family-monospace">Название:</strong>
+								<strong class="quiz-card__subtitle is-family-monospace">${Loc.getMessage('UP_QUIZ_LIST_NAME')}:</strong>
 								<div class="quiz-card__title-text has-text-weight-light">
-									${BX.util.htmlspecialchars(shortQuizTitle)}
-									${(QuizData.TITLE.length > 50) ? `<div class="quiz-card__title-show-more">${BX.util.htmlspecialchars(QuizData.TITLE)}</div>` : ''}
+									${Text.encode(shortQuizTitle)}
+									${(QuizData.TITLE.length > 50) ? `<div class="quiz-card__title-show-more">${Text.encode(QuizData.TITLE)}</div>` : ''}
 								</div>
 							</div>
 						<div class="quiz-card__title">
-							<strong class="quiz-card__subtitle is-family-monospace">linkcode:</strong>
+							<strong class="quiz-card__subtitle is-family-monospace">${Loc.getMessage('UP_QUIZ_LIST_LINK_CODE')}:</strong>
 							<div class="quiz-card__title-text has-text-weight-light">
-								${BX.util.htmlspecialchars(QuizData.CODE)}
+								${Text.encode(QuizData.CODE)}
 							</div>
 						</div>
 						<div class="quiz-card__title">
-							<strong class="quiz-card__subtitle is-family-monospace">Состояние:</strong>
+							<strong class="quiz-card__subtitle is-family-monospace">${Loc.getMessage('UP_QUIZ_LIST_STATE')}:</strong>
 							<div class="quiz-card__title-text has-text-weight-light">
-								${(+QuizData.IS_ACTIVE === 1) ? 'Активный' : 'Неактивный'}
+								${(+QuizData.IS_ACTIVE === 1) ? Loc.getMessage('UP_QUIZ_LIST_ACTIVE') : Loc.getMessage('UP_QUIZ_LIST_NOT_ACTIVE')}
 							</div>
 						</div>
 					</div>
@@ -276,7 +272,7 @@ export class QuizList
 		const addButton = document.getElementById('creating_quiz_btn');
 		let MaxCountQuizzesNotify = new BX.UI.Notification.Balloon({
 			stack : new BX.UI.Notification.Stack({position: 'bottom-center'}),
-			content : 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
+			content : Loc.getMessage('UP_QUIZ_LIST_STOP_CREATE_QUIZZES'),
 			autoHide: true,
 			autoHideDelay: 5000,
 		});
@@ -328,7 +324,7 @@ export class QuizList
 		const shareButton = Tag.render`
 			<a class="button hidden-action" >
 				<i class="fa-solid fa-link"></i>
-				Поделиться
+				${Loc.getMessage('UP_QUIZ_LIST_SHARE')}
 			</a>
 		`;
 
@@ -338,8 +334,8 @@ export class QuizList
 				<div class="modal-content box qr-modal">
 					<div class="qr mb-4"></div>
 					<div>
-						<input type="text" class="input mb-2" value="${BX.util.htmlspecialchars(quizTakeLink)}" readonly>
-						<button class="button is-dark copy">Скопировать</button>
+						<input type="text" class="input mb-2" value="${Text.encode(quizTakeLink)}" readonly>
+						<button class="button is-dark copy">${Loc.getMessage('UP_QUIZ_LIST_COPY')}</button>
 					</div>
 				</div>
 				<button class="modal-close is-large to-close" aria-label="close"></button>
@@ -360,7 +356,7 @@ export class QuizList
 		let copyButton = shareModal.querySelector('.copy');
 		let CopyLinkIsSuccess = new BX.UI.Notification.Balloon({
 			stack : new BX.UI.Notification.Stack({position: 'bottom-center'}),
-			content : 'Ссылка на опрос успешно скопирована!',
+			content : Loc.getMessage('UP_QUIZ_LIST_LINK_COPY_SUCCESS'),
 			autoHide: true,
 			autoHideDelay: 1000,
 			blinkOnUpdate: true,
@@ -397,7 +393,7 @@ export class QuizList
 		const stateQuizButton = Tag.render`
 			<a class="hidden-action button">
 				<i class="fa-solid fa-${(+quiz.IS_ACTIVE === 1) ? 'stop' : 'play'} fa-fw"></i>
-				${(+quiz.IS_ACTIVE === 1) ? 'Деактивировать' : 'Активировать'}
+				${(+quiz.IS_ACTIVE === 1) ? Loc.getMessage('UP_QUIZ_LIST_DEACTIVATE') : Loc.getMessage('UP_QUIZ_LIST_ACTIVATE')}
 			</a>`;
 		stateQuizButton.onclick = () => {
 			this.changeState(quiz.ID);
@@ -406,13 +402,13 @@ export class QuizList
 		const editQuizButton = Tag.render`
 			<a href="/quiz/${quiz.ID}/edit" class="button hidden-action">
 				<i class="fa-solid fa-pen fa-fw"></i>
-				Редактировать
+				${Loc.getMessage('UP_QUIZ_LIST_EDIT')}
 			</a>`;
 
 		const deleteQuizButton = Tag.render`
 			<a class="button delete-quiz-button hidden-action" >
 				<i class="fa-sharp fa-solid fa-trash fa-fw"></i>
-				Удалить
+				${Loc.getMessage('UP_QUIZ_LIST_DELETE')}
 			</a>`;
 		deleteQuizButton.onclick = () => {
 			this.deleteQuiz(+quiz.ID);
@@ -421,13 +417,13 @@ export class QuizList
 		const showResultButton = Tag.render`
 			<a href="/quiz/${quiz.ID}/show" class="button hidden-action">
 				<i class="fa-sharp fa-solid fa-chart-column fa-fw"></i>
-				Показать результаты
+				${Loc.getMessage('UP_QUIZ_LIST_SHOW_RESULT')}
 			</a>`;
 
 		const goToTakeQuizButton = Tag.render`
 			<a href="/quiz/${quiz.CODE}/take" class="button hidden-action">
 				<i class="fa-sharp fa-solid fa-arrow-up-right-from-square fa-fw"></i>
-				Перейти к прохождению опроса
+				${Loc.getMessage('UP_QUIZ_LIST_GO_TO_TAKE_QUIZ')}
 			</a>`;
 
 		const hiddenActionsNode = Tag.render`
@@ -463,9 +459,9 @@ export class QuizList
 
 	getFilterNode()
 	{
-		let ShowAllQuizzesButton = Tag.render`<button class="button is-dark is-selected" value="all"><span>Все</span></button>`;
-		let ShowActiveQuizzesButton = Tag.render`<button class="button" value="active"><span>Активные</span></button>`;
-		let ShowNotActiveQuizzesButton = Tag.render`<button class="button" value="notActive"><span>Неактивные</span></button>`;
+		let ShowAllQuizzesButton = Tag.render`<button class="button is-dark is-selected" value="all"><span>${Loc.getMessage('UP_QUIZ_LIST_ALL')}</span></button>`;
+		let ShowActiveQuizzesButton = Tag.render`<button class="button" value="active"><span>${Loc.getMessage('UP_QUIZ_LIST_ACTIVES')}</span></button>`;
+		let ShowNotActiveQuizzesButton = Tag.render`<button class="button" value="notActive"><span>${Loc.getMessage('UP_QUIZ_LIST_NOT_ACTIVES')}</span></button>`;
 
 		let filterButtons = [ShowNotActiveQuizzesButton, ShowAllQuizzesButton, ShowActiveQuizzesButton];
 
@@ -488,7 +484,7 @@ export class QuizList
 		});
 
 		let SearchInput = Tag.render`<input class="input" type="text" placeholder="Найти опрос" id="search-input">`;
-		let SearchButton = Tag.render`<button class="button" id="search-button">Поиск</button>`;
+		let SearchButton = Tag.render`<button class="button" id="search-button">${Loc.getMessage('UP_QUIZ_LIST_FIND_QUIZ')}</button>`;
 
 		SearchInput.oninput = () => {this.query = SearchInput.value;}
 		SearchButton.onclick = () => {
