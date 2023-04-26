@@ -9,24 +9,9 @@ export class QuizList
 		MAX_QUIZ_TITLE_LENGTH : 38,
 	}
 
-	BalloonStack = new BX.UI.Notification.Stack({
-		position: 'bottom-center',
-	});
 
-	CopyLinkIsSuccess = new BX.UI.Notification.Balloon({
-		stack : this.BalloonStack,
-		content : 'Ссылка на опрос успешно скопирована!',
-		autoHide: true,
-		autoHideDelay: 1000,
-		blinkOnUpdate: true,
-	});
 
-	MaxCountQuizzesNotify = new BX.UI.Notification.Balloon({
-		stack : this.BalloonStack,
-		content : 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
-		autoHide: true,
-		autoHideDelay: 10000,
-	});
+
 
 	constructor(options = {})
 	{
@@ -289,6 +274,12 @@ export class QuizList
 		});
 
 		const addButton = document.getElementById('creating_quiz_btn');
+		let MaxCountQuizzesNotify = new BX.UI.Notification.Balloon({
+			stack : new BX.UI.Notification.Stack({position: 'bottom-center'}),
+			content : 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
+			autoHide: true,
+			autoHideDelay: 5000,
+		});
 		addButton.addEventListener('click', () => {
 
 			let quizTitleHelper = document.getElementById('quiz_title_helper');
@@ -305,7 +296,7 @@ export class QuizList
 				{
 					addButton.classList.remove('is-loading');
 					this.closeCreateQuizModal();
-					this.MaxCountQuizzesNotify.show();
+					MaxCountQuizzesNotify.show();
 					return;
 				}
 				addButton.classList.remove('is-loading');
@@ -367,10 +358,17 @@ export class QuizList
 		});
 
 		let copyButton = shareModal.querySelector('.copy');
+		let CopyLinkIsSuccess = new BX.UI.Notification.Balloon({
+			stack : new BX.UI.Notification.Stack({position: 'bottom-center'}),
+			content : 'Ссылка на опрос успешно скопирована!',
+			autoHide: true,
+			autoHideDelay: 1000,
+			blinkOnUpdate: true,
+		});
 		copyButton.onclick = () => {
 			shareModal.querySelector('.input').select();
 			document.execCommand("copy");
-			this.CopyLinkIsSuccess.show();
+			CopyLinkIsSuccess.show();
 		};
 
 		new QRCode(shareModal.querySelector(`.qr`), {

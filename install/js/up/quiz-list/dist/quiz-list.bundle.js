@@ -11,22 +11,6 @@ this.Up = this.Up || {};
 	    babelHelpers.defineProperty(this, "config", {
 	      MAX_QUIZ_TITLE_LENGTH: 38
 	    });
-	    babelHelpers.defineProperty(this, "BalloonStack", new BX.UI.Notification.Stack({
-	      position: 'bottom-center'
-	    }));
-	    babelHelpers.defineProperty(this, "CopyLinkIsSuccess", new BX.UI.Notification.Balloon({
-	      stack: this.BalloonStack,
-	      content: 'Ссылка на опрос успешно скопирована!',
-	      autoHide: true,
-	      autoHideDelay: 1000,
-	      blinkOnUpdate: true
-	    }));
-	    babelHelpers.defineProperty(this, "MaxCountQuizzesNotify", new BX.UI.Notification.Balloon({
-	      stack: this.BalloonStack,
-	      content: 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
-	      autoHide: true,
-	      autoHideDelay: 10000
-	    }));
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -179,6 +163,14 @@ this.Up = this.Up || {};
 	        });
 	      });
 	      var addButton = document.getElementById('creating_quiz_btn');
+	      var MaxCountQuizzesNotify = new BX.UI.Notification.Balloon({
+	        stack: new BX.UI.Notification.Stack({
+	          position: 'bottom-center'
+	        }),
+	        content: 'Количество создаваемых опросов - 11. Купите Premium и забудьте об ограничениях!',
+	        autoHide: true,
+	        autoHideDelay: 5000
+	      });
 	      addButton.addEventListener('click', function () {
 	        var quizTitleHelper = document.getElementById('quiz_title_helper');
 	        var quizTitleInput = document.getElementById('quiz_title_input');
@@ -190,7 +182,7 @@ this.Up = this.Up || {};
 	          if (reject.errors[0].code === 'max_count_quizzes') {
 	            addButton.classList.remove('is-loading');
 	            _this6.closeCreateQuizModal();
-	            _this6.MaxCountQuizzesNotify.show();
+	            MaxCountQuizzesNotify.show();
 	            return;
 	          }
 	          addButton.classList.remove('is-loading');
@@ -217,7 +209,6 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getShareNode",
 	    value: function getShareNode(quiz) {
-	      var _this7 = this;
 	      var quizTakeLink = "".concat(location.hostname, "/quiz/").concat(quiz.CODE, "/take");
 	      var shareButton = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"button hidden-action\" >\n\t\t\t\t<i class=\"fa-solid fa-link\"></i>\n\t\t\t\t\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F\n\t\t\t</a>\n\t\t"])));
 	      var shareModal = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box qr-modal\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-dark copy\">\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), BX.util.htmlspecialchars(quizTakeLink));
@@ -231,10 +222,19 @@ this.Up = this.Up || {};
 	        };
 	      });
 	      var copyButton = shareModal.querySelector('.copy');
+	      var CopyLinkIsSuccess = new BX.UI.Notification.Balloon({
+	        stack: new BX.UI.Notification.Stack({
+	          position: 'bottom-center'
+	        }),
+	        content: 'Ссылка на опрос успешно скопирована!',
+	        autoHide: true,
+	        autoHideDelay: 1000,
+	        blinkOnUpdate: true
+	      });
 	      copyButton.onclick = function () {
 	        shareModal.querySelector('.input').select();
 	        document.execCommand("copy");
-	        _this7.CopyLinkIsSuccess.show();
+	        CopyLinkIsSuccess.show();
 	      };
 	      new QRCode(shareModal.querySelector(".qr"), {
 	        text: quizTakeLink,
@@ -249,16 +249,16 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getHiddenActions",
 	    value: function getHiddenActions(quiz) {
-	      var _this8 = this;
+	      var _this7 = this;
 	      var showHiddenActionsButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"button quiz-card__more-action-btn\">\n\t\t\t\t<i class=\"fa-solid fa-bars\"></i>\n\t\t\t</a>\n\t\t"])));
 	      var stateQuizButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"hidden-action button\">\n\t\t\t\t<i class=\"fa-solid fa-", " fa-fw\"></i>\n\t\t\t\t", "\n\t\t\t</a>"])), +quiz.IS_ACTIVE === 1 ? 'stop' : 'play', +quiz.IS_ACTIVE === 1 ? 'Деактивировать' : 'Активировать');
 	      stateQuizButton.onclick = function () {
-	        _this8.changeState(quiz.ID);
+	        _this7.changeState(quiz.ID);
 	      };
 	      var editQuizButton = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/edit\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-solid fa-pen fa-fw\"></i>\n\t\t\t\t\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C\n\t\t\t</a>"])), quiz.ID);
 	      var deleteQuizButton = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"button delete-quiz-button hidden-action\" >\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-trash fa-fw\"></i>\n\t\t\t\t\u0423\u0434\u0430\u043B\u0438\u0442\u044C\n\t\t\t</a>"])));
 	      deleteQuizButton.onclick = function () {
-	        _this8.deleteQuiz(+quiz.ID);
+	        _this7.deleteQuiz(+quiz.ID);
 	      };
 	      var showResultButton = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/show\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-chart-column fa-fw\"></i>\n\t\t\t\t\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B\n\t\t\t</a>"])), quiz.ID);
 	      var goToTakeQuizButton = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/take\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-arrow-up-right-from-square fa-fw\"></i>\n\t\t\t\t\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043A \u043F\u0440\u043E\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044E \u043E\u043F\u0440\u043E\u0441\u0430\n\t\t\t</a>"])), quiz.CODE);
@@ -279,7 +279,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getFilterNode",
 	    value: function getFilterNode() {
-	      var _this9 = this;
+	      var _this8 = this;
 	      var ShowAllQuizzesButton = main_core.Tag.render(_templateObject14 || (_templateObject14 = babelHelpers.taggedTemplateLiteral(["<button class=\"button is-dark is-selected\" value=\"all\"><span>\u0412\u0441\u0435</span></button>"])));
 	      var ShowActiveQuizzesButton = main_core.Tag.render(_templateObject15 || (_templateObject15 = babelHelpers.taggedTemplateLiteral(["<button class=\"button\" value=\"active\"><span>\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0435</span></button>"])));
 	      var ShowNotActiveQuizzesButton = main_core.Tag.render(_templateObject16 || (_templateObject16 = babelHelpers.taggedTemplateLiteral(["<button class=\"button\" value=\"notActive\"><span>\u041D\u0435\u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0435</span></button>"])));
@@ -288,27 +288,27 @@ this.Up = this.Up || {};
 	        button.onclick = function () {
 	          if (button.classList.contains('is-dark') && button.classList.contains('is-selected')) return;
 	          button.classList.add('is-dark', 'is-selected');
-	          _this9.quizState = button.value;
+	          _this8.quizState = button.value;
 	          filterButtons.forEach(function (otherButton) {
 	            if (button !== otherButton) {
 	              otherButton.classList.remove('is-dark', 'is-selected');
 	            }
 	          });
-	          _this9.loadQuizzesByFilters().then(function (quizList) {
-	            _this9.quizList = quizList;
-	            _this9.render();
+	          _this8.loadQuizzesByFilters().then(function (quizList) {
+	            _this8.quizList = quizList;
+	            _this8.render();
 	          });
 	        };
 	      });
 	      var SearchInput = main_core.Tag.render(_templateObject17 || (_templateObject17 = babelHelpers.taggedTemplateLiteral(["<input class=\"input\" type=\"text\" placeholder=\"\u041D\u0430\u0439\u0442\u0438 \u043E\u043F\u0440\u043E\u0441\" id=\"search-input\">"])));
 	      var SearchButton = main_core.Tag.render(_templateObject18 || (_templateObject18 = babelHelpers.taggedTemplateLiteral(["<button class=\"button\" id=\"search-button\">\u041F\u043E\u0438\u0441\u043A</button>"])));
 	      SearchInput.oninput = function () {
-	        _this9.query = SearchInput.value;
+	        _this8.query = SearchInput.value;
 	      };
 	      SearchButton.onclick = function () {
-	        _this9.loadQuizzesByFilters().then(function (quizList) {
-	          _this9.quizList = quizList;
-	          _this9.render();
+	        _this8.loadQuizzesByFilters().then(function (quizList) {
+	          _this8.quizList = quizList;
+	          _this8.render();
 	        });
 	      };
 	      var FilterNode = main_core.Tag.render(_templateObject19 || (_templateObject19 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"level-left\">\n\t\t\t\t<div class=\"level-item\">\n\t\t\t\t\t<div class=\"field has-addons\">\n\t\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</p>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t<!-- Right side -->\n\t\t\t<div class=\"level-right\">\n\t\t\t\t<div class=\"field has-addons\">\n\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<p class=\"control\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</div>"])), SearchInput, SearchButton, ShowAllQuizzesButton, ShowActiveQuizzesButton, ShowNotActiveQuizzesButton);
