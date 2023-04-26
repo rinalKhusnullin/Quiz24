@@ -86,7 +86,6 @@ class Question extends Engine\Controller
 		if (count($question["OPTIONS"]) > 20)
 		{
 			$this->addError(new Error('Question option must be less then 20', 'invalid_options'));
-
 			return null;
 		}
 
