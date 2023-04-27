@@ -125,5 +125,18 @@ class QuizRepository
 		return QuizzesTable::getCount(['=USER_ID' => $userId]);
 	}
 
+	public static function updateTitle(int $quizId, string $title) : ?array
+	{
+		$result = QuizzesTable::update($quizId, [
+			'TITLE' => $title,
+		]);
+
+		if ($result->isSuccess())
+		{
+			return null;
+		}
+		return $result->getErrors();
+	}
+
 
 }
