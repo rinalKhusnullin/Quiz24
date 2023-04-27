@@ -1,14 +1,14 @@
 @import 'bulma/css/bulma.css';
 @import 'fontawesome/css/all.css';
 @import 'fontawesome/css/v4-shims.css';
-@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
 
 
 
 html,
 body {
 	height: 100%;
-	font-family: 'Alegreya Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;
 }
 
 .wrapper{
