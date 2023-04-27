@@ -3,6 +3,7 @@ namespace Up\Quiz\Controller;
 
 use Bitrix\Main\Engine;
 use Bitrix\Main\Error;
+use Up\Quiz\Model\QuizzesTable;
 use Up\Quiz\Repository\QuizRepository;
 
 class Quiz extends Engine\Controller
@@ -116,6 +117,7 @@ class Quiz extends Engine\Controller
 	{
 		if ($id <= 0)
 		{
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
 			return null;
 		}
 		return [
@@ -141,6 +143,45 @@ class Quiz extends Engine\Controller
 		$userId = $USER->GetID();
 
 		return ['quizList' => QuizRepository::getQuizzesByFilters($query, $state, $userId)];
+	}
+
+	public function updateTitleAction(int $quizId, string $title) : ?array
+	{
+		global $USER;
+
+		if ($quizId <= 0)
+		{
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
+			return null;
+		}
+
+		if (empty(trim($title)))
+		{
+			$this->addError(new Error('Название опроса не может быть пустым', 'invalid_quiz_title'));
+			return null;
+		}
+
+		if (mb_strlen($title) > 256)
+		{
+			$this->addError(new Error('Название опроса не может превышать 256 символов', 'invalid_quiz_title'));
+			return null;
+		}
+
+		if (!$USER->IsAuthorized())
+		{
+			$this->addError(new Error('User must be authorized', 'unauthorized_user'));
+			return null;
+		}
+
+		$userId = $USER->GetID();
+
+		if (!QuizRepository::checkUserHasQuiz($userId, $quizId))
+		{
+			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			return null;
+		}
+
+		return QuizRepository::updateTitle($quizId, $title);
 	}
 
 	public function configureActions()
