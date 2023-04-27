@@ -226,7 +226,7 @@ export class QuizList
 		this.quizList.forEach(QuizData => {
 			let shortQuizTitle = this.truncateText(QuizData.TITLE, this.config.MAX_QUIZ_TITLE_LENGTH);
 			const QuizCard = Tag.render`
-				<div class="quiz-card" data-quiz-id="${QuizData.ID}">
+				<div class="quiz-card" data-quiz-id="${Text.encode(QuizData.ID)}">
 					<div class="quiz-card__header">
 						${this.getHiddenActions(QuizData)}
 					</div>
