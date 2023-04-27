@@ -61,11 +61,39 @@ class Question extends Engine\Controller
 		if (empty($question))
 		{
 			$this->addError(new Error('Question is null or empty', 'invalid_question'));
-
 			return null;
 		}
 
-		if ($question["OPTIONS"] !== null)
+		$question["QUESTION_TEXT"] = trim($question["QUESTION_TEXT"]);
+		if (empty($question["QUESTION_TEXT"]))
+		{
+			$this->addError(new Error('Текст вопроса не может быть пустым', 'invalid_text'));
+		}
+		if (mb_strlen($question["QUESTION_TEXT"]) > 256)
+		{
+			$this->addError(new Error('Длина вопроса не может быть больше 256', 'invalid_text'));
+		}
+
+		if (!is_numeric($question["ID"])){
+			$this->addError(new Error('Question ID must be numeric', 'invalid_questionID'));
+		}
+
+		if (!in_array($question["QUESTION_TYPE_ID"], ['0', '1'], true))
+		{
+			$this->addError(new Error('Неверное значение для типа вопроса', 'invalid_question_type_id'));
+		}
+
+		if (!in_array($question["QUESTION_DISPLAY_ID"], ['0', '1', '2', '3'], true))
+		{
+			$this->addError(new Error('Неверное значение для типа отображения результатов вопроса', 'invalid_display_type_id'));
+		}
+
+		if ($question['QUESTION_TYPE_ID'] === '1' && empty($question["OPTIONS"]))
+		{
+			$this->addError(new Error('У вопроса с выбором ответов обязан быть хотя бы один вариант ответа', 'invalid_options'));
+		}
+
+		if (!empty($question["OPTIONS"]))
 		{
 			$options = json_decode($question["OPTIONS"]);
 			if ($options === null && json_last_error() !== JSON_ERROR_NONE)
@@ -73,29 +101,30 @@ class Question extends Engine\Controller
 				$this->addError(new Error('Question options parse error', 'invalid_options'));
 				return null;
 			}
+			if (count($options) > 20)
+			{
+				$this->addError(new Error('Максимальное количество вариантов ответа - 20', 'invalid_options'));
+				return null;
+			}
 			$options = array_map('trim', $options);
 			foreach ($options as $option)
 			{
-				if ($option === '')
+				if (empty($option))
 				{
-					$this->addError(new Error('Question option must be not empty', 'invalid_options'));
-					return null;
+					$this->addError(new Error('Варианты ответа не могут быть пустыми', 'invalid_options'));
+					break;
+				}
+				if (mb_strlen($option) > 40)
+				{
+					$this->addError(new Error('Варианты ответа не могут превышать 40 символов', 'invalid_options'));
+					break;
 				}
 			}
 		}
-		if (count($question["OPTIONS"]) > 20)
+
+		if (!empty($this->getErrors()))
 		{
-			$this->addError(new Error('Question option must be less then 20', 'invalid_options'));
-
-			return null;
-		}
-
-		$question["QUESTION_TEXT"] = trim($question["QUESTION_TEXT"]);
-		if ($question["QUESTION_TEXT"] === '')
-		{
-			$this->addError(new Error('Question text be not empty', 'invalid_text'));
-
-			return null;
+			return null; // Собираем все ошибки и отдаем клиенту
 		}
 
 		global $USER;
@@ -110,11 +139,6 @@ class Question extends Engine\Controller
 		if (!QuizRepository::checkUserHasQuiz($userId, (int)$question["QUIZ_ID"]))//принадлежит ли quiz текущему пользователю и существует
 		{
 			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
-			return null;
-		}
-
-		if (!is_numeric($question["ID"])){
-			$this->addError(new Error('Question ID must be numeric', 'invalid_questionId'));
 			return null;
 		}
 
