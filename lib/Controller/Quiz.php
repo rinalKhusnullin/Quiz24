@@ -108,6 +108,14 @@ class Quiz extends Engine\Controller
 			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
 			return null;
 		}
+
+		global $USER;
+		$userId = $USER->GetID();
+		if (!QuizRepository::checkUserHasQuiz($userId, $id))//принадлежит ли quiz текущему пользователю и существует
+		{
+			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			return null;
+		}
 		return [
 			'quiz' => QuizRepository::getQuiz($id),
 		];
