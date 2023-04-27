@@ -19,4 +19,6 @@ $MESS['UP_QUIZ_EDIT_RAW_OUT'] = 'Сырой вывод';
 $MESS['UP_QUIZ_EDIT_SAVE'] = 'Сохранить';
 $MESS['UP_QUIZ_EDIT_OPTION'] = 'Вариант';
 $MESS['UP_QUIZ_EDIT_QUESTIONS'] = 'Вопросы';
-$MESS['UP_QUIZ_EDIT_'] = '';
+$MESS['UP_QUIZ_EDIT_QUIZ_TITLE'] = 'Название опроса';
+$MESS['UP_QUIZ_EDIT_SAVE_QUIZ_TITLE_NOTIFY'] = 'Данные о названии опроса успешно изменены.';
+$MESS['UP_QUIZ_EDIT_DELETE_QUESTION_NOTIFY'] = 'Вопрос успешно удален';
