@@ -244,8 +244,6 @@ this.Up = this.Up || {};
 	          _this10.notify.content = main_core.Loc.getMessage('UP_QUIZ_EDIT_SAVE_QUIZ_TITLE_NOTIFY');
 	          _this10.notify.show();
 	        }, function (error) {
-	          _this10.notify.content = 'Исправьте все представленные ошибки и попробуйте заново';
-	          _this10.notify.show();
 	          if (error.errors[0].code === 'invalid_quiz_title') {
 	            quizTitleHelper.textContent = error.errors[0].message;
 	          }
@@ -352,6 +350,8 @@ this.Up = this.Up || {};
 	          _this12.notify.show();
 	          SettingsContainerNode.querySelector('#save-question-button').classList.remove('is-loading');
 	        }, function (reject) {
+	          _this12.notify.content = 'Исправьте все представленные ошибки и попробуйте заново';
+	          _this12.notify.show();
 	          reject.errors.forEach(function (error) {
 	            var errorCode = error.code;
 	            var errorMessage = error.message;
@@ -377,9 +377,9 @@ this.Up = this.Up || {};
 	    key: "resetHelpers",
 	    value: function resetHelpers() {
 	      if (document.querySelector('#question-text-helper')) document.querySelector('#question-text-helper').textContent = '';
-	      if (document.querySelector('#question-type-helper')) document.querySelector('#question-text-helper').textContent = '';
-	      if (document.querySelector('#question-display-type-helper')) document.querySelector('#question-text-helper').textContent = '';
-	      if (document.querySelector('#question-options-helper')) document.querySelector('#question-text-helper').textContent = '';
+	      if (document.querySelector('#question-type-helper')) document.querySelector('#question-type-helper').textContent = '';
+	      if (document.querySelector('#question-display-type-helper')) document.querySelector('#question-display-type-helper').textContent = '';
+	      if (document.querySelector('#question-options-helper')) document.querySelector('#question-options-helper').textContent = '';
 	    }
 	  }, {
 	    key: "changeQuestion",

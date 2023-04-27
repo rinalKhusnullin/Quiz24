@@ -274,8 +274,6 @@ export class QuizEdit
 				this.notify.content = Loc.getMessage('UP_QUIZ_EDIT_SAVE_QUIZ_TITLE_NOTIFY');
 				this.notify.show();
 			}, error => {
-				this.notify.content = 'Исправьте все представленные ошибки и попробуйте заново';
-				this.notify.show();
 				if (error.errors[0].code === 'invalid_quiz_title')
 				{
 					quizTitleHelper.textContent = error.errors[0].message;
@@ -516,6 +514,8 @@ export class QuizEdit
 				this.notify.show();
 				SettingsContainerNode.querySelector('#save-question-button').classList.remove('is-loading');
 			}, reject => {
+				this.notify.content = 'Исправьте все представленные ошибки и попробуйте заново';
+				this.notify.show();
 				reject.errors.forEach(error => {
 					let errorCode = error.code;
 					let errorMessage = error.message;
@@ -547,13 +547,13 @@ export class QuizEdit
 			document.querySelector('#question-text-helper').textContent = '';
 
 		if (document.querySelector('#question-type-helper'))
-			document.querySelector('#question-text-helper').textContent = '';
+			document.querySelector('#question-type-helper').textContent = '';
 
 		if (document.querySelector('#question-display-type-helper'))
-			document.querySelector('#question-text-helper').textContent = '';
+			document.querySelector('#question-display-type-helper').textContent = '';
 
 		if (document.querySelector('#question-options-helper'))
-			document.querySelector('#question-text-helper').textContent = '';
+			document.querySelector('#question-options-helper').textContent = '';
 	}
 
 	changeQuestion()
