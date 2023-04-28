@@ -1,4 +1,4 @@
-import {Type, Tag} from 'main.core';
+import {Type, Tag, Text, Loc} from 'main.core';
 
 export class QuizTake
 {
@@ -128,7 +128,7 @@ export class QuizTake
 			<section class="hero is-small is-primary">
 				<div class="hero-body">
 					<p class="title mb-0">
-						${this.quiz.TITLE}#${this.quiz.CODE}
+						${Text.encode(this.quiz.TITLE)}#${Text.encode(this.quiz.CODE)}
 					</p>
 				</div>
 			</section>
@@ -143,12 +143,12 @@ export class QuizTake
 	{
 		const QuestionFormNode = Tag.render`
 			<div class="question-form__container box" id="question-form">
-				<h1 class="subtitle is-4">${this.question.QUESTION_TEXT}</h1>
+				<h1 class="subtitle is-4">${Text.encode(this.question.QUESTION_TEXT)}</h1>
 			</div>`;
 
 		if (+this.question.QUESTION_TYPE_ID === 0)
 		{
-			const QuestionTypeInput = Tag.render`<input type="text" class="input question-form__input" placeholder="Свободный ответ">`;
+			const QuestionTypeInput = Tag.render`<input type="text" class="input question-form__input" placeholder="${Loc.getMessage('UP_QUIZ_TAKE_OPEN_ANSWER')}">`;
 			QuestionFormNode.appendChild(QuestionTypeInput);
 		}
 		else if (+this.question.QUESTION_TYPE_ID === 1)
@@ -160,8 +160,8 @@ export class QuizTake
 				{
 					const Answer = Tag.render`
 					<label class="radio">
-						<input type="radio" name="questionAnswer" value="${options[i]}">
-						${options[i]}
+						<input type="radio" name="questionAnswer" value="${Text.encode(options[i])}">
+						${Text.encode(options[i])}
 					</label>
 				`;
 					AnswerContainer.appendChild(Answer);
@@ -170,7 +170,7 @@ export class QuizTake
 			QuestionFormNode.appendChild(Tag.render`<div class="field">${AnswerContainer}</div>`);
 		}
 
-		const SendButton = Tag.render`<button class="button question-form__button">Отправить</button>`;
+		const SendButton = Tag.render`<button class="button question-form__button">${Loc.getMessage('UP_QUIZ_TAKE_SEND')}</button>`;
 
 		SendButton.onclick = () => {
 			let answer = '';
@@ -233,6 +233,6 @@ export class QuizTake
 
 	renderCompletely(){
 		this.rootNode.innerHTML = ``;
-		this.rootNode.textContent = "Вы ответили на все вопросы!";
+		this.rootNode.textContent = `${Loc.getMessage('UP_QUIZ_TAKE_YOU_ANSWERED_ALL_THE_QUESTIONS')}`;
 	}
 }

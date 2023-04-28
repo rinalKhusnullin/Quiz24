@@ -103,7 +103,7 @@ this.Up = this.Up || {};
 	    key: "render",
 	    value: function render() {
 	      this.rootNode.innerHTML = "";
-	      var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), this.quiz.TITLE, this.quiz.CODE);
+	      var QuizHeroSection = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), main_core.Text.encode(this.quiz.TITLE), main_core.Text.encode(this.quiz.CODE));
 	      this.rootNode.appendChild(QuizHeroSection);
 	      var QuestionForm = this.getQuestionForm();
 	      this.rootNode.appendChild(QuestionForm);
@@ -112,22 +112,22 @@ this.Up = this.Up || {};
 	    key: "getQuestionForm",
 	    value: function getQuestionForm() {
 	      var _this4 = this;
-	      var QuestionFormNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-form__container box\" id=\"question-form\">\n\t\t\t\t<h1 class=\"subtitle is-4\">", "</h1>\n\t\t\t</div>"])), this.question.QUESTION_TEXT);
+	      var QuestionFormNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-form__container box\" id=\"question-form\">\n\t\t\t\t<h1 class=\"subtitle is-4\">", "</h1>\n\t\t\t</div>"])), main_core.Text.encode(this.question.QUESTION_TEXT));
 	      if (+this.question.QUESTION_TYPE_ID === 0) {
-	        var QuestionTypeInput = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"input question-form__input\" placeholder=\"\u0421\u0432\u043E\u0431\u043E\u0434\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442\">"])));
+	        var QuestionTypeInput = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"input question-form__input\" placeholder=\"", "\">"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_OPEN_ANSWER'));
 	        QuestionFormNode.appendChild(QuestionTypeInput);
 	      } else if (+this.question.QUESTION_TYPE_ID === 1) {
 	        var AnswerContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
 	        if (this.question.OPTIONS != null && this.question.OPTIONS !== 'undefined' && this.question.OPTIONS !== '') {
 	          var options = JSON.parse(this.question.OPTIONS);
 	          for (var i = 0; i < options.length; i++) {
-	            var Answer = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input type=\"radio\" name=\"questionAnswer\" value=\"", "\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), options[i], options[i]);
+	            var Answer = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input type=\"radio\" name=\"questionAnswer\" value=\"", "\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), main_core.Text.encode(options[i]), main_core.Text.encode(options[i]));
 	            AnswerContainer.appendChild(Answer);
 	          }
 	        }
 	        QuestionFormNode.appendChild(main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"field\">", "</div>"])), AnswerContainer));
 	      }
-	      var SendButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C</button>"])));
+	      var SendButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
 	      SendButton.onclick = function () {
 	        var answer = '';
 	        if (+_this4.question.QUESTION_TYPE_ID === 0) {
@@ -180,7 +180,7 @@ this.Up = this.Up || {};
 	    key: "renderCompletely",
 	    value: function renderCompletely() {
 	      this.rootNode.innerHTML = "";
-	      this.rootNode.textContent = "Вы ответили на все вопросы!";
+	      this.rootNode.textContent = "".concat(main_core.Loc.getMessage('UP_QUIZ_TAKE_YOU_ANSWERED_ALL_THE_QUESTIONS'));
 	    }
 	  }]);
 	  return QuizTake;
