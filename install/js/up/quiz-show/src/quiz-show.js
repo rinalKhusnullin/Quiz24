@@ -1,4 +1,4 @@
-import {Type, Tag, } from 'main.core';
+import {Type, Tag, Text, Loc} from 'main.core';
 window.am4core.useTheme(am4themes_animated);
 window.am4core.useTheme(am4themes_material);
 
@@ -162,7 +162,7 @@ export class QuizShow
 			<section class="hero is-small is-primary">
 				<div class="hero-body">
 					<p class="title mb-0">
-						${this.quiz.TITLE}#${this.quiz.CODE}
+						${Text.encode(this.quiz.TITLE)}#${Text.encode(this.quiz.CODE)}
 					</p>
 					${this.getShareNode(this.quiz)}
 				</div>
@@ -174,7 +174,7 @@ export class QuizShow
 			<div class="box">
 				<div class="columns">
 					<div class="column is-one-quarter question-list">
-						<div class="question-list__title has-text-weight-semibold has-text-centered is-uppercase">Вопрос</div>
+						<div class="question-list__title has-text-weight-semibold has-text-centered is-uppercase">${Loc.getMessage('UP_QUIZ_SHOW_QUESTION')}</div>
 						${this.getQuestionsListNode()}
 					</div>
 						${this.getQuestionResultNode()}
@@ -190,9 +190,9 @@ export class QuizShow
 	{
 		const QuestionListNode = Tag.render`<div class="question-list__questions"></div>`;
 		this.questions.forEach(question => {
-			const QuestionNode = Tag.render`<a class="question-list__question button">${question.QUESTION_TEXT}</a>`;
+			const QuestionNode = Tag.render`<a class="question-list__question button">${Text.encode(question.QUESTION_TEXT)}</a>`;
 			QuestionNode.onclick = () => {
-				this.renderQuestionResult(+question.ID);
+				this.renderQuestionResult(+Text.encode(question.ID));
 			}
 			QuestionListNode.appendChild(QuestionNode);
 		})
@@ -209,10 +209,10 @@ export class QuizShow
 
 		return Tag.render`
 			<div class=" column is-three-quarters statistics" id="questionResult">
-				<div class="statistics__title has-text-weight-semibold has-text-centered is-uppercase">Статистика</div>
+				<div class="statistics__title has-text-weight-semibold has-text-centered is-uppercase">${Loc.getMessage('UP_QUIZ_SHOW_STATISTIC')}</div>
 				<div class="statistics__question-title">
-					<strong>Вопрос : </strong>
-					${this.question.QUESTION_TEXT}
+					<strong>${Loc.getMessage('UP_QUIZ_SHOW_QUESTION')} : </strong>
+					${Text.encode(this.question.QUESTION_TEXT)}
 					${updateButton}
 				</div>
 				<div>
@@ -255,7 +255,7 @@ export class QuizShow
 			// настройка свойств серии
 			series.minFontSize = 18;
 			series.maxFontSize = 60;
-			series.labels.template.tooltipText = "Вариант ответа: {answer}\nКоличество ответов: {count}";
+			series.labels.template.tooltipText = `${Loc.getMessage('UP_QUIZ_SHOW_ANSWER_OPTION')}: {answer}\n${Loc.getMessage('UP_QUIZ_SHOW_ANSWERS_COUNT')}: {count}`;
 			series.labels.template.fillOpacity = 0.9;
 			series.angles = [0, -90];
 
@@ -295,7 +295,7 @@ export class QuizShow
 			let series = chart.series.push(new am4charts.ColumnSeries());
 			series.dataFields.categoryX = 'answer';
 			series.dataFields.valueY = 'count';
-			series.columns.template.tooltipText = 'Вариант ответа: {categoryX}\nКоличество ответов: {valueY}';
+			series.columns.template.tooltipText = `${Loc.getMessage('UP_QUIZ_SHOW_ANSWER_OPTION')}: {categoryX}\n${Loc.getMessage('UP_QUIZ_SHOW_ANSWERS_COUNT')}: {valueY}`;
 			let colorSet = new am4core.ColorSet();
 			colorSet.colors = [
 				am4core.color("#FFC300"),
@@ -368,7 +368,7 @@ export class QuizShow
 
 	getShareNode(quiz)
 	{
-		let quizTakeLink = `${location.hostname}/quiz/${quiz.CODE}/take`;
+		let quizTakeLink = `${location.hostname}/quiz/${Text.encode(quiz.CODE)}/take`;
 
 		const shareButton = Tag.render`
 			<button class="button">
@@ -382,7 +382,7 @@ export class QuizShow
 					<div class="qr mb-4"></div>
 					<div>
 						<input type="text" class="input mb-2" value="${quizTakeLink}" readonly>
-						<button class="button is-success copy">Скопировать</button>
+						<button class="button is-success copy">${Loc.getMessage('UP_QUIZ_SHOW_COPY')}</button>
 					</div>
 				</div>
 				<button class="modal-close is-large to-close" aria-label="close"></button>
