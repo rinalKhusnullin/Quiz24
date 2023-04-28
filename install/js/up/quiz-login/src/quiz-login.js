@@ -1,4 +1,4 @@
-import {Type, Tag} from 'main.core';
+import {Type, Tag, Loc} from 'main.core';
 
 export class QuizLogin
 {
@@ -69,12 +69,12 @@ export class QuizLogin
 	{
 		const LoginContainerNode = Tag.render`
 			<div class="login-container-node">
-				<h1 class="title">Войти</h1>
+				<h1 class="title">${Loc.getMessage('UP_QUIZ_LOGIN_COME_IN')}</h1>
 				<form action="##">
 					<div class="field">
-						<label class="label">Логин</label>
+						<label class="label">${Loc.getMessage('UP_QUIZ_LOGIN_LOGIN')}</label>
 						<div class="control has-icons-left has-icons-right">
-							<input id="login-input" class="input" type="text" placeholder="Введите логин" value="">
+							<input id="login-input" class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_LOGIN_ENTER_LOGIN')}" value="">
 							<span class="icon is-small is-left">
 								<i class="fas fa-user"></i>
 							</span>
@@ -84,7 +84,7 @@ export class QuizLogin
 					<div class="field">
 						<label class="label">Пароль</label>
 						<p class="control has-icons-left">
-							<input id="password-input" class="input" type="password" placeholder="Введите пароль">
+							<input id="password-input" class="input" type="password" placeholder="${Loc.getMessage('UP_QUIZ_LOGIN_ENTER_PASSWORD')}">
 							<span class="icon is-small is-left">
 								<i class="fas fa-lock"></i>
 							</span>
@@ -93,12 +93,12 @@ export class QuizLogin
 					
 					<article class="message is-danger" id="error-container"></article>
 		
-					<div class="mb-2"><a href="/registration" class="is-underlined">Создать аккаунт</a> если у Вас его нет.
+					<div class="mb-2"><a href="/registration" class="is-underlined">${Loc.getMessage('UP_QUIZ_LOGIN_CREATE_ACCOUNT')}</a> ${Loc.getMessage('UP_QUIZ_LOGIN_IF_NOT_EXISTS')}.
 					</div>
 		
 					<div class="field is-grouped">
 						<div class="control login-button">
-							<button type="submit" id="submit-button" class="button is-link">Войти</button>
+							<button type="submit" id="submit-button" class="button is-link">${Loc.getMessage('UP_QUIZ_LOGIN_COME_IN')}</button>
 						</div>
 					</div>
 				</form>
@@ -131,7 +131,7 @@ export class QuizLogin
 		if (!errorContainer.hasChildNodes())
 		{
 			errorContainer.appendChild(Tag.render`<div class="message-body">
-				Неверный <strong>Логин</strong> или <strong>Пароль</strong>
+				${Loc.getMessage('UP_QUIZ_LOGIN_INVALID')} <strong>${Loc.getMessage('UP_QUIZ_LOGIN_LOGIN')}</strong> ${Loc.getMessage('UP_QUIZ_LOGIN_OR')} <strong>${Loc.getMessage('UP_QUIZ_LOGIN_PASSWORD')}</strong>
 			</div>`);
 		}
 
