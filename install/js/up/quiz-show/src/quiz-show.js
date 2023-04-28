@@ -1,7 +1,7 @@
 import {Type, Tag, } from 'main.core';
 window.am4core.useTheme(am4themes_animated);
 window.am4core.useTheme(am4themes_material);
-// import Chart from 'chart.js/auto';
+
 
 export class QuizShow
 {
@@ -216,7 +216,7 @@ export class QuizShow
 					${updateButton}
 				</div>
 				<div>
-					<div id="chart" style="width: 900px; height: 800px;"></div>
+					<div id="chart" style="width: 900px; height: 600px;"></div>
 				</div>
 			</div>
 		`;
@@ -225,62 +225,111 @@ export class QuizShow
 	renderChart()
 	{
 		// Create chart instance
-		let chartType = (this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) ?? 'PieChart'; //PieChart - Default chart series
-
+		let chartType = (this.DISPLAY_TYPES[this.question.QUESTION_DISPLAY_ID]) ?? 'BarChart'; //BarChart - Default chart series
 		let data = this.getAnswersData();
-
-		let chart;
-		let series;
-
 
 		if (chartType === 'PieChart')
 		{
-			chart = am4core.create('chart', 'PieChart')
-
-			series = chart.series.push(new am4charts.PieSeries());
-
+			let chart = am4core.create('chart', 'PieChart')
+			let series = chart.series.push(new am4charts.PieSeries());
 			series.dataFields.value = "count";
 			series.dataFields.category = "answer";
 			chart.data = data;
+
+			chart.animated = true;
+			chart.legend = new am4charts.Legend();
+			this.chart = chart;
 		}
 		else if (chartType === 'WordCloud')
 		{
-			chart = am4core.create('chart', am4plugins_wordCloud.WordCloud);
+			// установка данных для диаграммы
+			let chart = am4core.create('chart', am4plugins_wordCloud.WordCloud);
+			chart.data = data;
 
-			series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
-			//series.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim ex neque repellendus tempore? Architecto atque beatae, eius excepturi, incidunt laudantium maiores neque nesciunt nisi reiciendis reprehenderit vel. At, possimus voluptatum.';
-			series.data = data;
+			// настройка серии Word Cloud
+			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
 			series.dataFields.word = "answer";
 			series.dataFields.value = "count";
-
 			series.colors = new am4core.ColorSet();
-			series.colors.passOptions = {};
 
+			// настройка свойств серии
+			series.minFontSize = 18;
+			series.maxFontSize = 60;
+			series.labels.template.tooltipText = "Вариант ответа: {answer}\nКоличество ответов: {count}";
+			series.labels.template.fillOpacity = 0.9;
+			series.angles = [0, -90];
+
+			// настройка свойств диаграммы
+			//chart.fontSize = 20;
+			//chart.fontFamily = 'Courier New';
+			//chart.background.fill = am4core.color('#F5F5F5');
+			//chart.background.stroke = am4core.color('#D3D3D3');
+			//chart.background.strokeWidth = 2;
+			//chart.background.cornerRadius = 10;
+			//chart.padding(40, 40, 40, 40);
+			chart.legend = null;
+			this.chart = chart;
 		}
 		else if (chartType === 'BarChart' || 1)
 		{
-			chart = am4core.create('chart', am4charts.XYChart);
-
-			let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-			categoryAxis.dataFields.category = "answer";
-			let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
-			series = chart.series.push(new am4charts.ColumnSeries());
-
-			series.columns.template.tooltipText = "Вариант ответа: {categoryX}\nКоличество ответов: {valueY}";
-			series.dataFields.valueY = "count";
-			series.dataFields.categoryX = "answer";
-
+			// установка данных для диаграммы
+			let chart = am4core.create('chart', am4charts.XYChart);
 			chart.data = data;
+			let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+			categoryAxis.dataFields.category = 'answer';
+			categoryAxis.renderer.grid.template.location = 0;
+
+			// создание оси Y
+			let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+			valueAxis.renderer.grid.template.location = 0;
+
+			valueAxis.renderer.labels.template.step = 2;
+			valueAxis.min = 0;
+			valueAxis.renderer.minGridDistance = 50;
+
+			let label = valueAxis.renderer.labels.template;
+			label.numberFormatter = new am4core.NumberFormatter();
+			label.numberFormatter.numberFormat = "#";
+
+			// создание серии колонок
+			let series = chart.series.push(new am4charts.ColumnSeries());
+			series.dataFields.categoryX = 'answer';
+			series.dataFields.valueY = 'count';
+			series.columns.template.tooltipText = 'Вариант ответа: {categoryX}\nКоличество ответов: {valueY}';
+			let colorSet = new am4core.ColorSet();
+			colorSet.colors = [
+				am4core.color("#FFC300"),
+				am4core.color("#FF5733"),
+				am4core.color("#C70039"),
+				am4core.color("#900C3F"),
+				am4core.color("#581845"),
+				am4core.color("#0074D9"),
+				am4core.color("#7FDBFF"),
+				am4core.color("#39CCCC"),
+				am4core.color("#3D9970"),
+				am4core.color("#2ECC40"),
+				am4core.color("#01FF70"),
+				am4core.color("#FFDC00"),
+				am4core.color("#FF851B"),
+				am4core.color("#FF4136"),
+				am4core.color("#B10DC9")
+			];
+			series.columns.template.adapter.add("fill", function(fill, target) {
+				return colorSet.next();
+			});
+			// убрать границу у колонок
+			series.columns.template.strokeOpacity = 0;
+
+
+			// настройка свойств диаграммы
+			chart.padding(40, 40, 40, 40);
+			//chart.background.fill = am4core.color('#F5F5F5');
+			//chart.background.stroke = am4core.color('#D3D3D3');
+			//chart.background.strokeWidth = 2;
+			//chart.background.cornerRadius = 10;
+
+			this.chart = chart;
 		}
-
-		series.interpolationDuration = 1500;
-		series.defaultState.transitionDuration = 1500;
-
-		chart.animated = true;
-
-		chart.legend = new am4charts.Legend();
-		this.chart = chart;
 	}
 
 	updateChart()
@@ -307,7 +356,6 @@ export class QuizShow
 
 	getAnswersData(){
 		let result = [];
-
 		for (let i = 0; i < this.answers.length; i++)
 		{
 			result.push({
@@ -315,7 +363,6 @@ export class QuizShow
 				'count' : this.answers[i].COUNT,
 			});
 		}
-
 		return result;
 	}
 
