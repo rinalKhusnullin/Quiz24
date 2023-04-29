@@ -167,6 +167,13 @@ class Question extends Engine\Controller
 			return null;
 		}
 
+		$questionCount = QuestionRepository::getQuestionCount($quizId);
+		if ($questionCount > 20)
+		{
+			$this->addError(new Error('Quiz cannot have more than 20 questions', 'max_count_questions'));
+			return null;
+		}
+
 		$newQuestionId = QuestionRepository::createQuestion($quizId);
 
 		return [
