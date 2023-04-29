@@ -1,4 +1,4 @@
-import {Type, Tag} from 'main.core';
+import {Type, Tag, Loc, Text} from 'main.core';
 
 export class QuizRegistration
 {
@@ -58,11 +58,11 @@ export class QuizRegistration
 
 		const RegistrationFormNode = Tag.render`
 			<div class="reg box">
-				<h1 class="title">Создать аккаунт</h1>
+				<h1 class="title">${Loc.getMessage('UP_QUIZ_REGISTRATION_CREATE_ACCOUNT')}</h1>
 				<div class="field">
-					<label class="label">Логин</label>
+					<label class="label">${Loc.getMessage('UP_QUIZ_REGISTRATION_LOGIN')}</label>
 					<div class="control has-icons-left has-icons-right">
-						<input class="input" type="text" placeholder="Введите логин" value="" id="login-input">
+						<input class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_REGISTRATION_ENTER')} ${Loc.getMessage('UP_QUIZ_REGISTRATION_LOGIN')}" value="" id="login-input">
 						<span class="icon is-small is-left">
 							<i class="fas fa-user"></i>
 						</span>
@@ -70,9 +70,9 @@ export class QuizRegistration
 					<p class="help is-danger" id="login-helper"></p>
 				</div>
 				<div class="field">
-				<label class="label">Email</label>
+				<label class="label">${Loc.getMessage('UP_QUIZ_REGISTRATION_EMAIL')}</label>
 					<p class="control is-expanded has-icons-left has-icons-right">
-						<input class="input" type="email" placeholder="Введите Email" value="" id="email-input">
+						<input class="input" type="email" placeholder="${Loc.getMessage('UP_QUIZ_REGISTRATION_ENTER')} ${Loc.getMessage('UP_QUIZ_REGISTRATION_EMAIL')}" value="" id="email-input">
 						<span class="icon is-small is-left">
 					  		<i class="fas fa-envelope"></i>
 						</span>
@@ -80,9 +80,9 @@ export class QuizRegistration
 				  	<p class="help is-danger" id="email-helper"></p>
 				</div>
 				<div class="field">
-					<label class="label">Пароль</label>
+					<label class="label">${Loc.getMessage('UP_QUIZ_REGISTRATION_PASSWORD')}</label>
 					<p class="control has-icons-left">
-						<input class="input" type="password" placeholder="Введите пароль" id="password-input">
+						<input class="input" type="password" placeholder="${Loc.getMessage('UP_QUIZ_REGISTRATION_ENTER')} ${Loc.getMessage('UP_QUIZ_REGISTRATION_PASSWORD')}" id="password-input">
 						<span class="icon is-small is-left">
 							<i class="fas fa-lock"></i>
 						</span>
@@ -90,19 +90,19 @@ export class QuizRegistration
 					<p class="help is-danger" id="password-helper"></p>
 				</div>
 				<div class="field">
-					<label class="label">Подтверждение пароля</label>
+					<label class="label">${Loc.getMessage('UP_QUIZ_REGISTRATION_CHECK_PASSWORD')}</label>
 					<p class="control has-icons-left">
-						<input class="input" type="password" placeholder="Повторите пароль" id="confirm-password-input">
+						<input class="input" type="password" placeholder="${Loc.getMessage('UP_QUIZ_REGISTRATION_REPEAT')} ${Loc.getMessage('UP_QUIZ_REGISTRATION_PASSWORD')}" id="confirm-password-input">
 						<span class="icon is-small is-left">
 							<i class="fas fa-lock"></i>
 						</span>
 					</p>
 					<p class="help is-danger" id="confirm-password-helper"></p>
 				</div>
-				<div class="mb-2"><a href="/login" class="is-underlined">Войдите</a>, если у вас уже есть аккаунт</div>
+				<div class="mb-2"><a href="/login" class="is-underlined">${Loc.getMessage('UP_QUIZ_REGISTRATION_COME_IN')}</a>, ${Loc.getMessage('UP_QUIZ_REGISTRATION_IF_ACCOUNT_EXISTS')}</div>
 				<div class="field is-grouped">
 					<div class="control reg-button">
-						<button class="button is-link" id="registration-button">Создать аккаунт</button>
+						<button class="button is-link" id="registration-button">${Loc.getMessage('UP_QUIZ_REGISTRATION_CREATE_ACCOUNT')}</button>
 					</div>
 				</div>
 			</div>
@@ -170,22 +170,22 @@ export class QuizRegistration
 			if (errors[i].includes('логин'))
 			{
 				this.login.classList.add('is-danger');
-				this.loginHelper.textContent = errors[i];
+				this.loginHelper.textContent = Text.encode(errors[i]);
 			}
 			else if (errors[i].includes('пароль'))
 			{
 				this.password.classList.add('is-danger')
-				this.passwordHelper.textContent = errors[i];
+				this.passwordHelper.textContent = Text.encode(errors[i]);
 			}
 			else if (errors[i].includes('email'))
 			{
 				this.email.classList.add('is-danger');
-				this.emailHelper.textContent = errors[i];
+				this.emailHelper.textContent = Text.encode(errors[i]);
 			}
 			else if (errors[i].includes('подтверждение пароля'))
 			{
 				this.confirmPassword.classList.add('is-danger');
-				this.confirmPasswordHelper.textContent = errors[i];
+				this.confirmPasswordHelper.textContent = Text.encode(errors[i]);
 			}
 		}
 
