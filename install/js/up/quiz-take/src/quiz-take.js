@@ -30,7 +30,8 @@ export class QuizTake
 		this.loadQuiz().then(quiz => {
 			if (quiz === false)
 			{
-				alert ('TODO : ЕСЛИ QUIZ НЕ НАЙДЕН');//TODO:Сделать страницу с отображением, что не найден QUIZ введите другой linkCode
+				this.rootNode.innerHTML = ``;
+				this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
 			}
 			else if (+quiz.IS_ACTIVE === 0)
 			{
