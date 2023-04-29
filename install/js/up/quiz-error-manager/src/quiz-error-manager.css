@@ -1,0 +1,13 @@
+.error-content{
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.error-icon{
+	font-size: 2rem;
+}
+
+.error-title{
+	font-size: 2rem;
+}
