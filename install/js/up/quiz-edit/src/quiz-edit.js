@@ -11,7 +11,7 @@ export class QuizEdit
 
 	notify = new BX.UI.Notification.Balloon({
 		stack : new BX.UI.Notification.Stack({position: 'top-center'}),
-		content: 'привет',
+		content: '',
 		autoHide: true,
 		autoHideDelay: 1000,
 	});
@@ -40,7 +40,7 @@ export class QuizEdit
 		this.quiz = {};
 		this.question = {};
 
-		this.loadQuiz().then(quiz => { // Очевидно это костыль!
+		this.loadQuiz().then(quiz => {
 			this.quiz = quiz;
 			this.rootNode.parentNode.insertBefore(this.getQuizTitleNode(), this.rootNode); // Добавление редактирования опроса
 		});
@@ -122,7 +122,7 @@ export class QuizEdit
 						}
 					}
 				)
-				.then((response) => {
+					.then((response) => {
 					const curr = this.questions.find(item => item.ID == this.currentQuestionId);
 					if (curr) {
 						curr.QUESTION_TEXT = this.question.QUESTION_TEXT;
@@ -140,49 +140,43 @@ export class QuizEdit
 
 	createQuestion()
 	{
-		BX.ajax.runAction(
-				'up:quiz.question.createQuestion', {
-					data: {
-						quizId: this.quizId,
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.question.createQuestion', {
+						data: {
+							quizId: this.quizId,
+						}
 					}
-				}
-			)
-			.then((response) => {
-				this.currentQuestionId = response.data.newQuestion.ID;
-				this.questions.push(response.data.newQuestion);
-				this.getQuestion(this.currentQuestionId);
-				this.render();
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+				)
+				.then((response) => {
+					resolve(response);
+				})
+				.catch((error) => {
+					console.error(error);
+					reject(error);
+				});
+		})
 	}
 
 	deleteQuestion(id)
 	{
-		BX.ajax.runAction(
-				'up:quiz.question.deleteQuestion', {
-					data: {
-						id: id,
-						quizId: this.quizId
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.question.deleteQuestion', {
+						data: {
+							id: id,
+							quizId: this.quizId
+						}
 					}
-				}
-			)
-			.then((response) => {
-				if (response.data != null)
-				{
-					console.error('errors:', response.data);
-				}
-				else
-				{
-					this.reload();
-					this.notify.content = Loc.getMessage('UP_QUIZ_EDIT_DELETE_QUESTION_NOTIFY');
-					this.notify.show();
-				}
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+				)
+				.then((response) => {
+					resolve(response);
+				})
+				.catch((error) => {
+					console.error(error);
+					reject(error);
+				});
+		});
 	}
 
 	updateQuizTitle(title)
@@ -203,14 +197,6 @@ export class QuizEdit
 				})
 			}
 		);
-	}
-
-	getQuestion(id)
-	{
-		this.loadQuestion(id).then(question =>{
-			this.question = question;
-			this.render();
-		})
 	}
 
 	reload()
@@ -234,6 +220,8 @@ export class QuizEdit
 						});
 					}
 				});
+		}, error => {
+			this.renderErrorPage();
 		});
 	}
 
@@ -257,7 +245,13 @@ export class QuizEdit
 
 	renderQuestionList()
 	{
-		document.getElementById('questions').replaceWith(this.getQuestionListNode());
+		document.getElementById('questions-column').replaceWith(this.getQuestionListNode());
+	}
+
+	renderErrorPage()
+	{
+		this.rootNode.innerHTML = ``;
+		this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
 	}
 
 	getQuizTitleNode()
@@ -311,25 +305,50 @@ export class QuizEdit
 		`;
 
 		this.questions.forEach(questionData => {
-			let shortQuestionTitle = this.truncateText(questionData.QUESTION_TEXT, 17);
+			let shortQuestionTitle = this.truncateText(questionData.QUESTION_TEXT, 16);
 
 			const questionButton = Tag.render`
-				<div class="button question-button" data-id="${Text.encode(questionData.ID)}">
+				<div class="button question-button" data-id="${Text.encode(questionData.ID)}"
+					${(questionData.QUESTION_TEXT.length > 16) ? `title="${Text.encode(questionData.QUESTION_TEXT)}"` : ''}>
 					${Text.encode(shortQuestionTitle)}
-					${(questionData.QUESTION_TEXT.length > 17) ? `<div class="quiz-card__title-show-more">${Text.encode(questionData.QUESTION_TEXT)}</div>` : ''}
 				</div>
 			`;
+
 			const questionDeleteButton = Tag.render`
 				<a class="button delete-button">
 					<i class="fa-solid fa-trash"></i>
 				</a>
 			`;
+
 			questionButton.onclick = () => {
-				this.getQuestion(+questionData.ID);
-				this.currentQuestionId = +questionData.ID;
+				this.loadQuestion(+questionData.ID).then((question) => {
+					this.question = question;
+					this.currentQuestionId = questionData.ID;
+					this.render();
+				});
 			};
+
 			questionDeleteButton.onclick = () => {
-				this.deleteQuestion(+questionData.ID);
+				questionDeleteButton.classList.add('is-loading');
+				this.deleteQuestion(+questionData.ID)
+					.then(() =>
+					{
+						this.showNotify(this.notify, 1000, Loc.getMessage('UP_QUIZ_EDIT_DELETE_QUESTION_NOTIFY'))
+						if (this.currentQuestionId === questionData.ID)
+						{
+							this.reload();
+						}
+						else
+						{
+							this.loadQuestions().then(questions => {
+								this.questions = questions;
+								this.renderQuestionList();
+							});
+						}
+					}, (error) => {
+						questionDeleteButton.classList.remove('is-loading');
+						this.showNotify(this.notify, 3000, Loc.getMessage('UP_QUIZ_EDIT_WHATS_WRONG_NOTIFY'));
+					});
 			};
 
 			const questionCard = Tag.render`
@@ -353,12 +372,27 @@ export class QuizEdit
 
 		const AddNewQuestionButton = Tag.render`<a class="button question_list__add-btn">+</a>`;
 		AddNewQuestionButton.onclick = () => {
-			this.createQuestion();
+			AddNewQuestionButton.classList.add('is-loading');
+			this.createQuestion()
+				.then(() => {
+					this.loadQuestions().then(questions => {
+						this.questions = questions;
+						this.renderQuestionList();
+					})
+				}, (error) => {
+					AddNewQuestionButton.classList.remove('is-loading');
+					if (error.errors[0].code === 'max_count_questions')
+					{
+						this.showNotify(this.notify, 2000, Loc.getMessage('UP_QUIZ_EDIT_MAX_QUESTION_COUNT_NOTIFY'));
+						return;
+					}
+					this.showNotify(this.notify, 3000, Loc.getMessage('UP_QUIZ_EDIT_WHATS_WRONG_NOTIFY'));
+				});
 		}
 		QuestionsContainer.appendChild(AddNewQuestionButton);
 
 		return Tag.render`
-			<div class="column is-one-quarter question-list">
+			<div class="column is-one-quarter question-list" id="questions-column">
 				<div class="question-list__title has-text-weight-semibold has-text-centered is-uppercase">${Loc.getMessage('UP_QUIZ_EDIT_QUESTIONS')}</div>
 				${QuestionsContainer}
 			</div>
@@ -489,7 +523,16 @@ export class QuizEdit
 
 			const AnswerDelete = Tag.render`<a class="button delete-button"><i class="fa-solid fa-trash"></i></a>`;
 			let options = JSON.parse(this.question.OPTIONS);
-			AnswerDelete.onclick = () => { this.deleteAnswer(options.length) };
+			AnswerDelete.onclick = () => {
+				if (options === null)
+				{
+					this.deleteAnswer(0);
+				}
+				else
+				{
+					this.deleteAnswer(options.length)
+				}
+			};
 
 			const newAnswerInput = Tag.render`
 				<div class="question-settings__answer-inputs field has-addons">
@@ -504,18 +547,16 @@ export class QuizEdit
 			answerInputsContainer.appendChild(newAnswerInput);
 			this.changeQuestion();
 		}
+
 		SettingsContainerNode.oninput = () => { this.changeQuestion() };
 
 		SettingsContainerNode.querySelector('#save-question-button').onclick = () => {
 			SettingsContainerNode.querySelector('#save-question-button').classList.add('is-loading');
 			this.resetHelpers();
 			this.saveQuestion().then(() => {
-				this.notify.content = 'Данные о вопросе успешно сохранены';
-				this.notify.show();
+				this.showNotify(this.notify, 1000, Loc.getMessage('UP_QUIZ_EDIT_SAVE_QUIZ_DATA_NOTIFY'));
 				SettingsContainerNode.querySelector('#save-question-button').classList.remove('is-loading');
 			}, reject => {
-				this.notify.content = 'Исправьте все представленные ошибки и попробуйте заново';
-				this.notify.show();
 				reject.errors.forEach(error => {
 					let errorCode = error.code;
 					let errorMessage = error.message;
@@ -578,6 +619,7 @@ export class QuizEdit
 			{
 				this.question.OPTIONS = JSON.stringify(answerValues);
 			}
+			console.log(this.question.OPTIONS);
 		}
 		else
 		{
@@ -598,7 +640,6 @@ export class QuizEdit
 
 		if (options.length === 0)
 		{
-			console.log('yes');
 			this.question.OPTIONS = null;
 		}
 		else
@@ -617,5 +658,12 @@ export class QuizEdit
 			return text;
 		}
 		return text.slice(0, length - 3) + '...';
+	}
+
+	showNotify(notify, time = 3000, message = 'ЙОУ')
+	{
+		notify.content = message;
+		notify.autoHideDelay = time;
+		notify.show();
 	}
 }
