@@ -302,6 +302,68 @@ export class QuizList
 				};
 			});
 		});
+
+
+		let showActionsButton = document.querySelectorAll('.quiz-card__more-action-btn');
+		let hiddenActions = document.querySelectorAll('.quiz-card__hidden-actions');
+
+		showActionsButton.forEach(currentButton => {
+			currentButton.onclick = () => {
+
+				const currentIcon = currentButton.querySelector('i');
+				if (currentIcon.classList.contains('fa-bars'))
+				{
+					currentIcon.classList.remove('fa-bars');
+					currentIcon.classList.add('fa-circle-xmark');
+				}
+				else
+				{
+					currentIcon.classList.remove('fa-circle-xmark');
+					currentIcon.classList.add('fa-bars');
+				}
+
+				showActionsButton.forEach(otherButton => {
+					if (currentButton !== otherButton)
+					{
+						const otherButtonIcon = otherButton.querySelector('i');
+						if (!otherButtonIcon.classList.contains('fa-bars'))
+						{
+							otherButtonIcon.classList.remove('fa-circle-xmark');
+							otherButtonIcon.classList.add('fa-bars');
+						}
+					}
+				})
+
+				let currentHiddenAction = currentButton.nextElementSibling;
+				currentHiddenAction.classList.toggle('hidden');
+				hiddenActions.forEach(hiddenAction => {
+					if (currentHiddenAction !== hiddenAction)
+					{
+						if (!hiddenAction.classList.contains('hidden'))
+							hiddenAction.classList.add('hidden');
+					}
+				})
+			}
+		});
+
+		document.addEventListener('click', (e) => {
+			let target = e.target;
+			if (!target.closest('.quiz-card__more-action-btn') && !target.closest('.quiz-card__hidden-actions'))
+			{
+				hiddenActions.forEach(hiddenAction => {
+					if (!hiddenAction.classList.contains('hidden'))
+						hiddenAction.classList.add('hidden');
+					});
+				showActionsButton.forEach(button => {
+					let icon = button.querySelector('i');
+					if (!icon.classList.contains('fa-bars'))
+					{
+						icon.classList.remove('fa-circle-xmark');
+						icon.classList.add('fa-bars');
+					}
+				})
+			}
+		});
 	}
 
 	openCreateQuizModal()
@@ -436,23 +498,6 @@ export class QuizList
 				${deleteQuizButton}
 			</div>
 		`;
-
-
-
-		showHiddenActionsButton.onclick = () => {
-			hiddenActionsNode.classList.toggle('hidden')
-			const icon = showHiddenActionsButton.querySelector('i');
-			if (icon.classList.contains('fa-bars'))
-			{
-				icon.classList.remove('fa-bars');
-				icon.classList.add('fa-circle-xmark');
-			}
-			else
-			{
-				icon.classList.remove('fa-circle-xmark');
-				icon.classList.add('fa-bars');
-			}
-		};
 
 		return Tag.render`${showHiddenActionsButton}${hiddenActionsNode}`;
 	}

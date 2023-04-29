@@ -192,6 +192,51 @@ this.Up = this.Up || {};
 	          };
 	        });
 	      });
+	      var showActionsButton = document.querySelectorAll('.quiz-card__more-action-btn');
+	      var hiddenActions = document.querySelectorAll('.quiz-card__hidden-actions');
+	      showActionsButton.forEach(function (currentButton) {
+	        currentButton.onclick = function () {
+	          var currentIcon = currentButton.querySelector('i');
+	          if (currentIcon.classList.contains('fa-bars')) {
+	            currentIcon.classList.remove('fa-bars');
+	            currentIcon.classList.add('fa-circle-xmark');
+	          } else {
+	            currentIcon.classList.remove('fa-circle-xmark');
+	            currentIcon.classList.add('fa-bars');
+	          }
+	          showActionsButton.forEach(function (otherButton) {
+	            if (currentButton !== otherButton) {
+	              var otherButtonIcon = otherButton.querySelector('i');
+	              if (!otherButtonIcon.classList.contains('fa-bars')) {
+	                otherButtonIcon.classList.remove('fa-circle-xmark');
+	                otherButtonIcon.classList.add('fa-bars');
+	              }
+	            }
+	          });
+	          var currentHiddenAction = currentButton.nextElementSibling;
+	          currentHiddenAction.classList.toggle('hidden');
+	          hiddenActions.forEach(function (hiddenAction) {
+	            if (currentHiddenAction !== hiddenAction) {
+	              if (!hiddenAction.classList.contains('hidden')) hiddenAction.classList.add('hidden');
+	            }
+	          });
+	        };
+	      });
+	      document.addEventListener('click', function (e) {
+	        var target = e.target;
+	        if (!target.closest('.quiz-card__more-action-btn') && !target.closest('.quiz-card__hidden-actions')) {
+	          hiddenActions.forEach(function (hiddenAction) {
+	            if (!hiddenAction.classList.contains('hidden')) hiddenAction.classList.add('hidden');
+	          });
+	          showActionsButton.forEach(function (button) {
+	            var icon = button.querySelector('i');
+	            if (!icon.classList.contains('fa-bars')) {
+	              icon.classList.remove('fa-circle-xmark');
+	              icon.classList.add('fa-bars');
+	            }
+	          });
+	        }
+	      });
 	    }
 	  }, {
 	    key: "openCreateQuizModal",
@@ -263,17 +308,6 @@ this.Up = this.Up || {};
 	      var showResultButton = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/show\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-chart-column fa-fw\"></i>\n\t\t\t\t", "\n\t\t\t</a>"])), quiz.ID, main_core.Loc.getMessage('UP_QUIZ_LIST_SHOW_RESULT'));
 	      var goToTakeQuizButton = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a href=\"/quiz/", "/take\" class=\"button hidden-action\">\n\t\t\t\t<i class=\"fa-sharp fa-solid fa-arrow-up-right-from-square fa-fw\"></i>\n\t\t\t\t", "\n\t\t\t</a>"])), quiz.CODE, main_core.Loc.getMessage('UP_QUIZ_LIST_GO_TO_TAKE_QUIZ'));
 	      var hiddenActionsNode = main_core.Tag.render(_templateObject12 || (_templateObject12 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"quiz-card__hidden-actions hidden\">\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), stateQuizButton, editQuizButton, showResultButton, this.getShareNode(quiz), goToTakeQuizButton, deleteQuizButton);
-	      showHiddenActionsButton.onclick = function () {
-	        hiddenActionsNode.classList.toggle('hidden');
-	        var icon = showHiddenActionsButton.querySelector('i');
-	        if (icon.classList.contains('fa-bars')) {
-	          icon.classList.remove('fa-bars');
-	          icon.classList.add('fa-circle-xmark');
-	        } else {
-	          icon.classList.remove('fa-circle-xmark');
-	          icon.classList.add('fa-bars');
-	        }
-	      };
 	      return main_core.Tag.render(_templateObject13 || (_templateObject13 = babelHelpers.taggedTemplateLiteral(["", "", ""])), showHiddenActionsButton, hiddenActionsNode);
 	    }
 	  }, {
