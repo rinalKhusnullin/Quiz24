@@ -7,20 +7,15 @@ use Bitrix\Main\Page\Asset;
 \Bitrix\Main\UI\Extension::load('qrcode');
 \Bitrix\Main\UI\Extension::load("ui.notification");
 
-Asset::getInstance()->addCss('/bitrix/js/ui/notify/css/notify.css');
 ?>
 <!-- Main container -->
-<nav class="level" id="filter">
+<nav class="level" id="filter"></nav>
 
-</nav>
-
-
-<div id="quiz-container-root">
-</div>
+<div id="quiz-container-root"></div>
 
 <script>
 	BX.ready(function() {
-		window.ProjectorProjectList = new Up.Quiz.QuizList({
+		window.QuizList = new Up.Quiz.QuizList({
 			rootNodeId: 'quiz-container-root',
 			filterNodeId : 'filter',
 		});
