@@ -87,4 +87,9 @@ class QuestionRepository
 		return true;
 	}
 
+	public static function getQuestionCount(int $quizId) : int
+	{
+		return QuestionsTable::getCount(['=QUIZ_ID' => $quizId]);
+	}
+
 }
