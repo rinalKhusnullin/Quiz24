@@ -28,13 +28,13 @@ class Quiz extends Engine\Controller
 		global $USER;
 		if (empty(trim($title)))
 		{
-			$this->addError(new Error('Название опроса не может быть пустым', 'invalid_quiz_title'));
+			$this->addError(new Error('Quiz title cannot be empty', 'empty_quiz_title'));
 			return null;
 		}
 
 		if (mb_strlen($title) > 256)
 		{
-			$this->addError(new Error('Название опроса не может превышать 256 символов', 'invalid_quiz_title'));
+			$this->addError(new Error('Quiz title cannot exceed 256 characters', 'exceeding_quiz_title'));
 			return null;
 		}
 
@@ -49,7 +49,7 @@ class Quiz extends Engine\Controller
 		$quizCount = QuizRepository::getQuizCount($userId);
 		if ($quizCount >= 11)
 		{
-			$this->addError(new Error('Максимальное количество опросов - 11.','max_count_quizzes'));
+			$this->addError(new Error('Maximum number of quizzes : 11','exceeding_quiz_count'));
 			return null;
 		}
 
@@ -98,6 +98,14 @@ class Quiz extends Engine\Controller
 			return null;
 		}
 
+		global $USER;
+		$userId = $USER->GetID();
+		if (!QuizRepository::checkUserHasQuiz($userId, $id))//принадлежит ли quiz текущему пользователю и существует
+		{
+			$this->addError(new Error('Quiz not found in current User', 'quiz_not_found'));
+			return null;
+		}
+
 		return QuizRepository::deleteQuiz($id);
 	}
 
@@ -113,7 +121,7 @@ class Quiz extends Engine\Controller
 		$userId = $USER->GetID();
 		if (!QuizRepository::checkUserHasQuiz($userId, $id))//принадлежит ли quiz текущему пользователю и существует
 		{
-			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			$this->addError(new Error('Quiz not found in current User', 'quiz_not_found'));
 			return null;
 		}
 		return [
@@ -123,11 +131,21 @@ class Quiz extends Engine\Controller
 
 	public function changeStateAction(int $id) : ?array
 	{
+		global $USER;
+
 		if ($id <= 0)
 		{
 			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
 			return null;
 		}
+
+		$userId = $USER->GetID();
+		if (!QuizRepository::checkUserHasQuiz($userId, $id))//принадлежит ли quiz текущему пользователю и существует
+		{
+			$this->addError(new Error('Quiz not found in current User', 'quiz_not_found'));
+			return null;
+		}
+
 		return [
 			'quizId' => QuizRepository::changeState($id),
 		];
@@ -137,14 +155,14 @@ class Quiz extends Engine\Controller
 	{
 		if (!in_array($state, ['all', 'active', 'notActive']))
 		{
-			$this->addError(new Error("quiz state must be 'all' | 'active' | 'notActive'", 'invalid_quiz_state'));
+			$this->addError(new Error("Quiz state must be 'all' | 'active' | 'notActive'", 'invalid_quiz_state'));
 			return null;
 		}
 
 		global $USER;
 		if (!$USER->IsAuthorized())
 		{
-			$this->addError(new Error('user must be authorized', 'unauthorized_user'));
+			$this->addError(new Error('User must be authorized', 'unauthorized_user'));
 			return null;
 		}
 
@@ -165,13 +183,13 @@ class Quiz extends Engine\Controller
 
 		if (empty(trim($title)))
 		{
-			$this->addError(new Error('Название опроса не может быть пустым', 'invalid_quiz_title'));
+			$this->addError(new Error('Quiz title cannot be empty', 'empty_quiz_title'));
 			return null;
 		}
 
 		if (mb_strlen($title) > 256)
 		{
-			$this->addError(new Error('Название опроса не может превышать 256 символов', 'invalid_quiz_title'));
+			$this->addError(new Error('Quiz title cannot exceed 256 characters', 'exceeding_quiz_title'));
 			return null;
 		}
 
@@ -185,7 +203,7 @@ class Quiz extends Engine\Controller
 
 		if (!QuizRepository::checkUserHasQuiz($userId, $quizId))
 		{
-			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			$this->addError(new Error('Quiz not found in current User', 'quiz_not_found'));
 			return null;
 		}
 

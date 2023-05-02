@@ -39,7 +39,6 @@ export class QuizLogin
 					}
 				)
 				.then((response) => {
-					console.log(response);
 					if (response.status === "success")
 					{
 						if (response.data.status === "success")
