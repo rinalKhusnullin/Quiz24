@@ -90,7 +90,7 @@ class Question extends Engine\Controller
 
 		if ($question['QUESTION_TYPE_ID'] === '1' && empty($question["OPTIONS"]))
 		{
-			$this->addError(new Error('У вопроса с выбором ответов обязан быть хотя бы один вариант ответа', 'invalid_options'));
+			$this->addError(new Error('У вопроса с выбором варианта ответа должен быть хотя бы один вариант ответа', 'invalid_options'));
 		}
 
 		if (!empty($question["OPTIONS"]))
