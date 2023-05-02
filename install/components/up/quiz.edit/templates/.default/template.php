@@ -1,15 +1,20 @@
 <?php
-
 use Bitrix\Main\Application;
-
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
-\Bitrix\Main\UI\Extension::load('up.quiz-edit');
-\Bitrix\Main\UI\Extension::load('up.quiz-error-manager');
-\Bitrix\Main\UI\Extension::load("ui.notification");
-?>
-<div class="columns box" id="edit-container-root">
 
-</div>
+\Bitrix\Main\UI\Extension::load([
+	'up.quiz-edit',
+	'up.quiz-error-manager',
+	"ui.notification",
+	'amcharts4',
+	'amcharts4_theme_animated',
+]);
+\Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/amcharts/4.8.5/plugins/wordCloud.js');
+\Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/amcharts/4.8.5/themes/material.js');
+?>
+
+
+<div class="columns box" id="edit-container-root"></div>
 
 <script>
 	BX.ready(function() {

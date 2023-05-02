@@ -3,7 +3,7 @@ this.Up = this.Up || {};
 	'use strict';
 
 	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21;
-	//${Text.encode(taskData.NAME)}
+	am4core.useTheme(am4themes_animated);
 	var QuizEdit = /*#__PURE__*/function () {
 	  function QuizEdit() {
 	    var _this = this;
@@ -23,6 +23,7 @@ this.Up = this.Up || {};
 	      autoHide: true,
 	      autoHideDelay: 1000
 	    }));
+	    am4core.options.autoDispose = true;
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -39,9 +40,11 @@ this.Up = this.Up || {};
 	    this.loadQuiz().then(function (quiz) {
 	      _this.quiz = quiz;
 	      _this.rootNode.parentNode.insertBefore(_this.getQuizTitleNode(), _this.rootNode); // Добавление редактирования опроса
+	      _this.renderLoading();
+	      _this.reload();
+	    }, function (error) {
+	      _this.renderErrorPage();
 	    });
-
-	    this.reload();
 	  }
 	  babelHelpers.createClass(QuizEdit, [{
 	    key: "loadQuiz",
@@ -112,7 +115,6 @@ this.Up = this.Up || {};
 	          if (curr) {
 	            curr.QUESTION_TEXT = _this4.question.QUESTION_TEXT;
 	          }
-	          _this4.render();
 	          resolve(true);
 	        })["catch"](function (error) {
 	          console.error(error);
@@ -190,9 +192,9 @@ this.Up = this.Up || {};
 	              _this8.render();
 	            });
 	          }
+	        }, function (error) {
+	          _this8.renderErrorPage();
 	        });
-	      }, function (error) {
-	        _this8.renderErrorPage();
 	      });
 	    }
 	  }, {
@@ -201,12 +203,15 @@ this.Up = this.Up || {};
 	      this.rootNode.innerHTML = "";
 	      this.rootNode.appendChild(this.getQuestionListNode());
 	      this.rootNode.appendChild(this.getQuestionPreviewNode());
+	      if (!this.chart) this.renderChart();
 	      this.rootNode.appendChild(this.getQuestionSettingsNode());
 	    }
 	  }, {
 	    key: "renderPreview",
 	    value: function renderPreview() {
 	      document.getElementById('preview').replaceWith(this.getQuestionPreviewNode());
+	      if (this.chart) this.chart.dispose();
+	      this.renderChart();
 	    }
 	  }, {
 	    key: "renderSettings",
@@ -217,6 +222,104 @@ this.Up = this.Up || {};
 	    key: "renderQuestionList",
 	    value: function renderQuestionList() {
 	      document.getElementById('questions-column').replaceWith(this.getQuestionListNode());
+	    }
+	  }, {
+	    key: "renderLoading",
+	    value: function renderLoading() {
+	      if (!(this.rootNode.innerHTML === '<div class="donut"></div>')) this.rootNode.innerHTML = "<div class=\"donut\"></div>";
+	    }
+	  }, {
+	    key: "renderLoadingPreview",
+	    value: function renderLoadingPreview() {
+	      if (this.rootNode.querySelector('#preview')) this.rootNode.querySelector('#preview').innerHTML = "<div class=\"donut\"></div>";
+	    }
+	  }, {
+	    key: "renderLoadingSettings",
+	    value: function renderLoadingSettings() {
+	      if (this.rootNode.querySelector('#settings')) this.rootNode.querySelector('#settings').innerHTML = "<div class=\"donut\"></div>";
+	    }
+	  }, {
+	    key: "renderChart",
+	    value: function renderChart() {
+	      var data = [];
+	      if (this.question.QUESTION_TYPE_ID === '1' && this.question.OPTIONS != null) {
+	        var options = JSON.parse(this.question.OPTIONS);
+	        options.forEach(function (option) {
+	          data.push({
+	            "option": "".concat(main_core.Text.encode(option)),
+	            "weight": Math.floor(Math.random() * 100)
+	          });
+	        });
+	      } else {
+	        data = [{
+	          "option": "Lithuania",
+	          "weight": 501.9
+	        }, {
+	          "option": "Czech Republic",
+	          "weight": 301.9
+	        }, {
+	          "option": "Ireland",
+	          "weight": 201.1
+	        }, {
+	          "option": "Germany",
+	          "weight": 165.8
+	        }, {
+	          "option": "Australia",
+	          "weight": 139.9
+	        }, {
+	          "option": "Austria",
+	          "weight": 128.3
+	        }, {
+	          "option": "UK",
+	          "weight": 99
+	        }, {
+	          "option": "Belgium",
+	          "weight": 60
+	        }, {
+	          "option": "The Netherlands",
+	          "weight": 50
+	        }];
+	      }
+	      var chart;
+	      if (this.question.QUESTION_DISPLAY_ID === '0') {
+	        chart = am4core.create("resultPreview", am4charts.PieChart);
+	        chart.data = data;
+	        var pieSeries = chart.series.push(new am4charts.PieSeries());
+	        pieSeries.dataFields.value = "weight";
+	        pieSeries.dataFields.category = "option";
+	      } else if (this.question.QUESTION_DISPLAY_ID === '1') {
+	        chart = am4core.create("resultPreview", am4plugins_wordCloud.WordCloud);
+	        chart.fontFamily = "Courier New";
+	        var series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+	        series.randomness = 0.1;
+	        series.rotationThreshold = 0.5;
+	        series.data = data;
+	        series.dataFields.word = "option";
+	        series.dataFields.value = "weight";
+	        series.heatRules.push({
+	          "target": series.labels.template,
+	          "property": "fill",
+	          "min": am4core.color("#0000CC"),
+	          "max": am4core.color("#CC00CC"),
+	          "dataField": "value"
+	        });
+	        series.labels.template.tooltipText = "{option}:\n[bold]{weight}[/]";
+	      } else if (this.question.QUESTION_DISPLAY_ID === '2') {
+	        chart = am4core.create("resultPreview", am4charts.XYChart);
+	        chart.data = data;
+	        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+	        categoryAxis.dataFields.category = "option";
+	        categoryAxis.title.text = "Answer";
+	        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+	        valueAxis.title.text = "Answer Count";
+	        var _series = chart.series.push(new am4charts.ColumnSeries());
+	        _series.dataFields.valueY = "weight";
+	        _series.dataFields.categoryX = "option";
+	        _series.columns.template.tooltipText = "Answer: {categoryX}\nCount: {valueY}";
+	      } else if (this.question.QUESTION_DISPLAY_ID === '3') {
+	        document.getElementById('resultPreview').textContent = main_core.Loc.getMessage('UP_QUIZ_EDIT_RAW_OUTPUT_PREVIEW_TITLE');
+	      }
+	      this.chart = chart;
 	    }
 	  }, {
 	    key: "renderErrorPage",
@@ -261,10 +364,14 @@ this.Up = this.Up || {};
 	        var questionButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"button question-button\" data-id=\"", "\"\n\t\t\t\t\t", ">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), main_core.Text.encode(questionData.ID), questionData.QUESTION_TEXT.length > 16 ? "title=\"".concat(main_core.Text.encode(questionData.QUESTION_TEXT), "\"") : '', main_core.Text.encode(shortQuestionTitle));
 	        var questionDeleteButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a class=\"button delete-button\">\n\t\t\t\t\t<i class=\"fa-solid fa-trash\"></i>\n\t\t\t\t</a>\n\t\t\t"])));
 	        questionButton.onclick = function () {
+	          _this10.renderLoadingPreview();
+	          _this10.renderLoadingSettings();
 	          _this10.loadQuestion(+questionData.ID).then(function (question) {
 	            _this10.question = question;
 	            _this10.currentQuestionId = questionData.ID;
-	            _this10.render();
+	            _this10.chart = null;
+	            _this10.renderPreview();
+	            _this10.renderSettings();
 	          });
 	        };
 	        questionDeleteButton.onclick = function () {
@@ -272,6 +379,8 @@ this.Up = this.Up || {};
 	          _this10.deleteQuestion(+questionData.ID).then(function () {
 	            _this10.showNotify(_this10.notify, 1000, main_core.Loc.getMessage('UP_QUIZ_EDIT_DELETE_QUESTION_NOTIFY'));
 	            if (_this10.currentQuestionId === questionData.ID) {
+	              if (_this10.chart) _this10.chart.dispose();
+	              _this10.chart = null;
 	              _this10.reload();
 	            } else {
 	              _this10.loadQuestions().then(function (questions) {
@@ -307,6 +416,17 @@ this.Up = this.Up || {};
 	          _this10.showNotify(_this10.notify, 3000, main_core.Loc.getMessage('UP_QUIZ_EDIT_WHATS_WRONG_NOTIFY'));
 	        });
 	      };
+	      var questionButtons = QuestionsContainer.querySelectorAll('p.question-button');
+	      questionButtons.forEach(function (question) {
+	        question.onclick = function () {
+	          if (!question.parentNode.classList.contains('is-active-question-button')) {
+	            questionButtons.forEach(function (otherQuestion) {
+	              otherQuestion.parentNode.classList.remove('is-active-question-button');
+	            });
+	            question.parentNode.classList.add('is-active-question-button');
+	          }
+	        };
+	      });
 	      QuestionsContainer.appendChild(AddNewQuestionButton);
 	      return main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-one-quarter question-list\" id=\"questions-column\">\n\t\t\t\t<div class=\"question-list__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_QUESTIONS'), QuestionsContainer);
 	    }
@@ -326,7 +446,7 @@ this.Up = this.Up || {};
 	      }
 	      var DisplayPreviewContainer = PreviewContainerNode.querySelector('#chartPreviewContainer');
 	      var question_display_id = this.question.QUESTION_DISPLAY_ID;
-	      var DisplayPreviewNode = main_core.Tag.render(_templateObject14 || (_templateObject14 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div id=\"\">\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), main_core.Text.encode(this.DISPLAY_TYPES[question_display_id]));
+	      var DisplayPreviewNode = main_core.Tag.render(_templateObject14 || (_templateObject14 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div id=\"resultPreview\"></div>\n\t\t"])));
 	      DisplayPreviewContainer.appendChild(DisplayPreviewNode);
 	      return PreviewContainerNode;
 	    }
@@ -377,6 +497,7 @@ this.Up = this.Up || {};
 	        _this11.saveQuestion().then(function () {
 	          _this11.showNotify(_this11.notify, 1000, main_core.Loc.getMessage('UP_QUIZ_EDIT_SAVE_QUIZ_DATA_NOTIFY'));
 	          SettingsContainerNode.querySelector('#save-question-button').classList.remove('is-loading');
+	          _this11.renderQuestionList();
 	        }, function (reject) {
 	          reject.errors.forEach(function (error) {
 	            var errorCode = error.code;
@@ -426,7 +547,6 @@ this.Up = this.Up || {};
 	        } else {
 	          this.question.OPTIONS = JSON.stringify(answerValues);
 	        }
-	        console.log(this.question.OPTIONS);
 	      } else {
 	        selectableAnswers.classList.add("hidden");
 	        this.question.OPTIONS = null;

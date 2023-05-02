@@ -157,6 +157,11 @@
 
 #preview{
 	width: 50%;
+	position: relative;
+}
+
+#settings{
+	position: relative;
 }
 
 #questionType,
@@ -177,6 +182,10 @@
 	outline: none;
 }
 
+#resultPreview{
+	min-height: 300px;
+}
+
 #save-question-button{
 	width: 100%;
 }
@@ -193,4 +202,25 @@
 .delete-button:hover{
 	color: white!important;
 	background: #f14668;
+}
+
+@keyframes donut-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+.donut {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: inline-block;
+	border: 4px solid rgba(0, 0, 0, 0.1);
+	border-left-color: #7983ff;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	animation: donut-spin 1.2s linear infinite;
 }

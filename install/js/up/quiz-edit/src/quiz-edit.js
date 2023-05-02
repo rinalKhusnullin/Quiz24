@@ -1,5 +1,6 @@
 import {Type, Tag, Loc, Text} from 'main.core';
-//${Text.encode(taskData.NAME)}
+am4core.useTheme(am4themes_animated);
+
 export class QuizEdit
 {
 	DISPLAY_TYPES = {
@@ -19,6 +20,7 @@ export class QuizEdit
 	constructor(options = {})
 	{
 
+		am4core.options.autoDispose = true;
 		if (Type.isStringFilled(options.rootNodeId))
 		{
 			this.rootNodeId = options.rootNodeId;
@@ -43,9 +45,11 @@ export class QuizEdit
 		this.loadQuiz().then(quiz => {
 			this.quiz = quiz;
 			this.rootNode.parentNode.insertBefore(this.getQuizTitleNode(), this.rootNode); // Добавление редактирования опроса
+			this.renderLoading();
+			this.reload();
+		}, error => {
+			this.renderErrorPage();
 		});
-
-		this.reload();
 	}
 
 	loadQuiz()
@@ -127,7 +131,6 @@ export class QuizEdit
 					if (curr) {
 						curr.QUESTION_TEXT = this.question.QUESTION_TEXT;
 					}
-					this.render();
 					resolve(true);
 				})
 				.catch((error) => {
@@ -219,9 +222,9 @@ export class QuizEdit
 							this.render();
 						});
 					}
+				}, error => {
+					this.renderErrorPage();
 				});
-		}, error => {
-			this.renderErrorPage();
 		});
 	}
 
@@ -230,12 +233,15 @@ export class QuizEdit
 		this.rootNode.innerHTML = ``;
 		this.rootNode.appendChild(this.getQuestionListNode());
 		this.rootNode.appendChild(this.getQuestionPreviewNode());
+		if (!this.chart) this.renderChart();
 		this.rootNode.appendChild(this.getQuestionSettingsNode());
 	}
 
 	renderPreview()
 	{
 		document.getElementById('preview').replaceWith(this.getQuestionPreviewNode());
+		if (this.chart) this.chart.dispose();
+		this.renderChart();
 	}
 
 	renderSettings()
@@ -246,6 +252,125 @@ export class QuizEdit
 	renderQuestionList()
 	{
 		document.getElementById('questions-column').replaceWith(this.getQuestionListNode());
+	}
+
+	renderLoading()
+	{
+		if (!(this.rootNode.innerHTML === '<div class="donut"></div>'))
+			this.rootNode.innerHTML = `<div class="donut"></div>`;
+	}
+
+	renderLoadingPreview()
+	{
+		if (this.rootNode.querySelector('#preview'))
+			this.rootNode.querySelector('#preview').innerHTML = `<div class="donut"></div>`;
+	}
+
+	renderLoadingSettings()
+	{
+		if (this.rootNode.querySelector('#settings'))
+			this.rootNode.querySelector('#settings').innerHTML = `<div class="donut"></div>`;
+	}
+
+	renderChart()
+	{
+		let data = [];
+		if (this.question.QUESTION_TYPE_ID === '1' && this.question.OPTIONS != null )
+		{
+			let options = JSON.parse(this.question.OPTIONS);
+			options.forEach(option => {
+				data.push({
+					"option" : `${Text.encode(option)}`,
+					"weight" : Math.floor(Math.random() * 100),
+				});
+			})
+		}
+		else
+		{
+			data = [{
+				"option": "Lithuania",
+				"weight": 501.9
+			}, {
+				"option": "Czech Republic",
+				"weight": 301.9
+			}, {
+				"option": "Ireland",
+				"weight": 201.1
+			}, {
+				"option": "Germany",
+				"weight": 165.8
+			}, {
+				"option": "Australia",
+				"weight": 139.9
+			}, {
+				"option": "Austria",
+				"weight": 128.3
+			}, {
+				"option": "UK",
+				"weight": 99
+			}, {
+				"option": "Belgium",
+				"weight": 60
+			}, {
+				"option": "The Netherlands",
+				"weight": 50
+			}];
+		}
+
+
+		let chart;
+		if (this.question.QUESTION_DISPLAY_ID === '0')
+		{
+			chart = am4core.create("resultPreview", am4charts.PieChart);
+			chart.data = data;
+			let pieSeries = chart.series.push(new am4charts.PieSeries());
+			pieSeries.dataFields.value = "weight";
+			pieSeries.dataFields.category = "option";
+		}
+		else if (this.question.QUESTION_DISPLAY_ID === '1')
+		{
+			chart = am4core.create("resultPreview", am4plugins_wordCloud.WordCloud);
+			chart.fontFamily = "Courier New";
+			let series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+			series.randomness = 0.1;
+			series.rotationThreshold = 0.5;
+			series.data = data;
+
+			series.dataFields.word = "option";
+			series.dataFields.value = "weight";
+
+			series.heatRules.push({
+				"target": series.labels.template,
+				"property": "fill",
+				"min": am4core.color("#0000CC"),
+				"max": am4core.color("#CC00CC"),
+				"dataField": "value"
+			});
+
+			series.labels.template.tooltipText = "{option}:\n[bold]{weight}[/]";
+		}
+		else if (this.question.QUESTION_DISPLAY_ID === '2')
+		{
+			chart = am4core.create("resultPreview", am4charts.XYChart);
+			chart.data = data;
+			let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+			categoryAxis.dataFields.category = "option";
+			categoryAxis.title.text = "Answer";
+
+			let  valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+			valueAxis.title.text = "Answer Count";
+
+			let series = chart.series.push(new am4charts.ColumnSeries());
+			series.dataFields.valueY = "weight";
+			series.dataFields.categoryX = "option";
+			series.columns.template.tooltipText = "Answer: {categoryX}\nCount: {valueY}";
+		}
+		else if (this.question.QUESTION_DISPLAY_ID === '3')
+		{
+			document.getElementById('resultPreview').textContent = Loc.getMessage('UP_QUIZ_EDIT_RAW_OUTPUT_PREVIEW_TITLE');
+		}
+
+		this.chart = chart;
 	}
 
 	renderErrorPage()
@@ -321,10 +446,14 @@ export class QuizEdit
 			`;
 
 			questionButton.onclick = () => {
+				this.renderLoadingPreview();
+				this.renderLoadingSettings();
 				this.loadQuestion(+questionData.ID).then((question) => {
 					this.question = question;
 					this.currentQuestionId = questionData.ID;
-					this.render();
+					this.chart = null;
+					this.renderPreview();
+					this.renderSettings();
 				});
 			};
 
@@ -336,6 +465,8 @@ export class QuizEdit
 						this.showNotify(this.notify, 1000, Loc.getMessage('UP_QUIZ_EDIT_DELETE_QUESTION_NOTIFY'))
 						if (this.currentQuestionId === questionData.ID)
 						{
+							if (this.chart) this.chart.dispose();
+							this.chart = null;
 							this.reload();
 						}
 						else
@@ -389,7 +520,23 @@ export class QuizEdit
 					this.showNotify(this.notify, 3000, Loc.getMessage('UP_QUIZ_EDIT_WHATS_WRONG_NOTIFY'));
 				});
 		}
+
+		let questionButtons = QuestionsContainer.querySelectorAll('p.question-button');
+		questionButtons.forEach(question => {
+			question.onclick = () => {
+				if (!question.parentNode.classList.contains('is-active-question-button'))
+				{
+					questionButtons.forEach(otherQuestion => {
+						otherQuestion.parentNode.classList.remove('is-active-question-button');
+					});
+					question.parentNode.classList.add('is-active-question-button');
+				}
+			}
+		});
+
+
 		QuestionsContainer.appendChild(AddNewQuestionButton);
+
 
 		return Tag.render`
 			<div class="column is-one-quarter question-list" id="questions-column">
@@ -440,9 +587,7 @@ export class QuizEdit
 		let DisplayPreviewContainer = PreviewContainerNode.querySelector('#chartPreviewContainer');
 		let question_display_id = this.question.QUESTION_DISPLAY_ID;
 		let DisplayPreviewNode = Tag.render`
-			<div id="">
-				${Text.encode(this.DISPLAY_TYPES[question_display_id])}
-			</div>
+			<div id="resultPreview"></div>
 		`;
 
 		DisplayPreviewContainer.appendChild(DisplayPreviewNode);
@@ -548,7 +693,9 @@ export class QuizEdit
 			this.changeQuestion();
 		}
 
-		SettingsContainerNode.oninput = () => { this.changeQuestion() };
+		SettingsContainerNode.oninput = () => {
+			this.changeQuestion();
+		};
 
 		SettingsContainerNode.querySelector('#save-question-button').onclick = () => {
 			SettingsContainerNode.querySelector('#save-question-button').classList.add('is-loading');
@@ -556,6 +703,7 @@ export class QuizEdit
 			this.saveQuestion().then(() => {
 				this.showNotify(this.notify, 1000, Loc.getMessage('UP_QUIZ_EDIT_SAVE_QUIZ_DATA_NOTIFY'));
 				SettingsContainerNode.querySelector('#save-question-button').classList.remove('is-loading');
+				this.renderQuestionList();
 			}, reject => {
 				reject.errors.forEach(error => {
 					let errorCode = error.code;
@@ -619,7 +767,6 @@ export class QuizEdit
 			{
 				this.question.OPTIONS = JSON.stringify(answerValues);
 			}
-			console.log(this.question.OPTIONS);
 		}
 		else
 		{
