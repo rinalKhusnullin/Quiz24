@@ -38,6 +38,18 @@ export class QuizShow
 		}
 
 		this.questions = []; // Все вопросы : title, id
+
+		BX.addCustomEvent("onPullEvent-up.quiz", (command, params) => {
+			if (command === "update_answers") {
+				// Обработка Push-уведомления
+				console.log(params.message);
+				console.log(params.answer);
+				console.log(params.questionId);
+
+				this.updateChart();
+			}
+		});
+
 		this.reload();
 	}
 
@@ -330,6 +342,7 @@ export class QuizShow
 
 			this.chart = chart;
 		}
+
 	}
 
 	updateChart()

@@ -7,6 +7,7 @@ this.Up = this.Up || {};
 	window.am4core.useTheme(am4themes_material);
 	var QuizShow = /*#__PURE__*/function () {
 	  function QuizShow() {
+	    var _this = this;
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, QuizShow);
 	    babelHelpers.defineProperty(this, "DISPLAY_TYPES", {
@@ -26,16 +27,26 @@ this.Up = this.Up || {};
 	      throw new Error("QuizShow: element with id \"".concat(this.rootNodeId, "\" not found"));
 	    }
 	    this.questions = []; // Все вопросы : title, id
+
+	    BX.addCustomEvent("onPullEvent-up.quiz", function (command, params) {
+	      if (command === "update_answers") {
+	        // Обработка Push-уведомления
+	        console.log(params.message);
+	        console.log(params.answer);
+	        console.log(params.questionId);
+	        _this.updateChart();
+	      }
+	    });
 	    this.reload();
 	  }
 	  babelHelpers.createClass(QuizShow, [{
 	    key: "loadQuiz",
 	    value: function loadQuiz() {
-	      var _this = this;
+	      var _this2 = this;
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:quiz.quiz.getQuiz', {
 	          data: {
-	            id: _this.quizId
+	            id: _this2.quizId
 	          }
 	        }).then(function (response) {
 	          var quiz = response.data.quiz;
@@ -66,11 +77,11 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "loadQuestions",
 	    value: function loadQuestions() {
-	      var _this2 = this;
+	      var _this3 = this;
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:quiz.question.getQuestions', {
 	          data: {
-	            quizId: _this2.quizId
+	            quizId: _this3.quizId
 	          }
 	        }).then(function (response) {
 	          var questions = response.data.questions;
@@ -84,11 +95,11 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "loadAnswers",
 	    value: function loadAnswers() {
-	      var _this3 = this;
+	      var _this4 = this;
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:quiz.answer.getAnswers', {
 	          data: {
-	            questionId: _this3.question.ID
+	            questionId: _this4.question.ID
 	          }
 	        }).then(function (response) {
 	          var answers = response.data;
@@ -101,21 +112,21 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "reload",
 	    value: function reload() {
-	      var _this4 = this;
+	      var _this5 = this;
 	      this.loadQuiz().then(function (quiz) {
-	        _this4.quiz = quiz;
-	        _this4.loadQuestions().then(function (questions) {
-	          _this4.questions = questions;
-	          if (_this4.questions.length === 0) {
+	        _this5.quiz = quiz;
+	        _this5.loadQuestions().then(function (questions) {
+	          _this5.questions = questions;
+	          if (_this5.questions.length === 0) {
 	            alert("todo вопросов нет");
 	            //this.reload();
 	          } else {
-	            _this4.currentQuestionId = _this4.questions[0].ID;
-	            _this4.loadQuestion(_this4.currentQuestionId).then(function (question) {
-	              _this4.question = question;
-	              _this4.loadAnswers().then(function (answers) {
-	                _this4.answers = answers;
-	                _this4.render();
+	            _this5.currentQuestionId = _this5.questions[0].ID;
+	            _this5.loadQuestion(_this5.currentQuestionId).then(function (question) {
+	              _this5.question = question;
+	              _this5.loadAnswers().then(function (answers) {
+	                _this5.answers = answers;
+	                _this5.render();
 	              });
 	            });
 	          }
@@ -135,12 +146,12 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getQuestionsListNode",
 	    value: function getQuestionsListNode() {
-	      var _this5 = this;
+	      var _this6 = this;
 	      var QuestionListNode = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<div class=\"question-list__questions\"></div>"])));
 	      this.questions.forEach(function (question) {
 	        var QuestionNode = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<a class=\"question-list__question button\">", "</a>"])), main_core.Text.encode(question.QUESTION_TEXT));
 	        QuestionNode.onclick = function () {
-	          _this5.renderQuestionResult(+main_core.Text.encode(question.ID));
+	          _this6.renderQuestionResult(+main_core.Text.encode(question.ID));
 	        };
 	        QuestionListNode.appendChild(QuestionNode);
 	      });
@@ -149,10 +160,10 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getQuestionResultNode",
 	    value: function getQuestionResultNode() {
-	      var _this6 = this;
+	      var _this7 = this;
 	      var updateButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["<button id=\"updateButton\"><i class=\"fa-solid fa-rotate-right\"></i></button>"])));
 	      updateButton.onclick = function () {
-	        _this6.updateChart();
+	        _this7.updateChart();
 	      };
 	      return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>", " : </strong>\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<div id=\"chart\" style=\"width: 900px; height: 600px;\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_SHOW_STATISTIC'), main_core.Loc.getMessage('UP_QUIZ_SHOW_QUESTION'), main_core.Text.encode(this.question.QUESTION_TEXT), updateButton);
 	    }
@@ -244,22 +255,22 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "updateChart",
 	    value: function updateChart() {
-	      var _this7 = this;
+	      var _this8 = this;
 	      this.loadAnswers().then(function (answers) {
-	        _this7.answers = answers;
-	        _this7.chart.data = _this7.getAnswersData();
+	        _this8.answers = answers;
+	        _this8.chart.data = _this8.getAnswersData();
 	      });
 	    } //update ResultNode
 	  }, {
 	    key: "renderQuestionResult",
 	    value: function renderQuestionResult(questionId) {
-	      var _this8 = this;
+	      var _this9 = this;
 	      this.loadQuestion(questionId).then(function (question) {
-	        _this8.question = question;
-	        _this8.loadAnswers().then(function (answers) {
-	          _this8.answers = answers;
-	          document.getElementById('questionResult').replaceWith(_this8.getQuestionResultNode());
-	          _this8.renderChart();
+	        _this9.question = question;
+	        _this9.loadAnswers().then(function (answers) {
+	          _this9.answers = answers;
+	          document.getElementById('questionResult').replaceWith(_this9.getQuestionResultNode());
+	          _this9.renderChart();
 	        });
 	      });
 	    }

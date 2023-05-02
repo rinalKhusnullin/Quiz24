@@ -159,6 +159,7 @@ this.Up = this.Up || {};
 	          answer: answer
 	        }
 	      }).then(function (response) {
+	        console.log(response);
 	        if (+_this5.questions.length === 0) {
 	          _this5.renderCompletely();
 	        } else {

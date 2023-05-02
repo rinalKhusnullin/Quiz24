@@ -210,6 +210,7 @@ export class QuizTake
 				}
 			)
 			.then((response) => {
+				console.log(response);
 				if (+this.questions.length === 0)
 				{
 					this.renderCompletely();

@@ -120,6 +120,13 @@ class QuizRepository
 		return true;
 	}
 
+	public static function getUserIdByQuizId(int $quizId)
+	{
+		$result = QuizzesTable::getByPrimary($quizId)->fetch();
+		if ($result.success) return (int)$result['USER_ID'];
+		return 0;
+	}
+
 	public static function getQuizCount(int $userId) : int
 	{
 		return QuizzesTable::getCount(['=USER_ID' => $userId]);

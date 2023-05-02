@@ -10,4 +10,10 @@ return [
 		],
 		'readonly' => true,
 	],
+	'modules' => array(
+		'push' => array(
+			'class_name' => 'CPushManager',
+			'modules' => array('pull'),
+		),
+	),
 ];

@@ -3,7 +3,7 @@
 namespace Up\Quiz\Repository;
 
 use Up\Quiz\Model\QuestionsTable;
-
+use Up\Quiz\Repository\QuizRepository;
 class QuestionRepository
 {
 	public static function getQuestions(int $quizId): ?array
@@ -21,7 +21,7 @@ class QuestionRepository
 	public static function getQuestion(int $id)
 	{
 		$question = QuestionsTable::getById($id)->fetch();
-		$question['QUESTION_TEXT'] =stripslashes($question['QUESTION_TEXT']);
+		$question['QUESTION_TEXT'] = stripslashes($question['QUESTION_TEXT']);
 		$question['QUESTION_TYPE_ID'] = stripslashes($question['QUESTION_TYPE_ID']);
 		$question['QUESTION_DISPLAY_ID'] = stripslashes($question['QUESTION_DISPLAY_ID']);
 		$question['OPTIONS'] = stripslashes($question['OPTIONS']);
@@ -78,6 +78,13 @@ class QuestionRepository
 		}
 
 		return $result->getId();
+	}
+
+	public static function getUserIdByQuestionId(int $questionId)
+	{
+		$result = QuestionsTable::getByPrimary($questionId)->fetch();
+		$quizId = $result['QUIZ_ID'];
+		return QuizRepository::getUserIdByQuizId($quizId);
 	}
 
 	public static function checkQuizHasQuestion(int $quizId, int $questionId) : bool //вопрос существует и принадлежит к переданному квизу
