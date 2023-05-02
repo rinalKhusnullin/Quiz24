@@ -6,7 +6,7 @@ Set `Quiz template` as your primary site template
 
 ## Setup modern Bitrix routing
 
-Add `tasks.php` in `routing` section of `${doc_root}/bitrix/.settings.php` file:
+Add `quiz.php` in `routing` section of `${doc_root}/bitrix/.settings.php` file:
 
 ```php
 'routing' => ['value' => [
