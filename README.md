@@ -39,4 +39,5 @@ You probably want to make following symlinks:
 local/components/up -> local/modules/up.tasks/install/components/up
 local/templates/quiz -> local/modules/up.tasks/install/templates/quiz
 local/routes/quiz.php -> local/modules/up.tasks/install/routes/quiz.php
+local/js/quiz.php -> local/modules/up.tasks/install/js
 ```
