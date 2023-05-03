@@ -63,11 +63,11 @@ class Answer extends Engine\Controller
 			return null;
 		}
 		if (trim($answer) === '' ){
-			$this->addError(new Error('Answer should be not empty', 'invalid_answer'));
+			$this->addError(new Error('Answer should be not empty', 'empty_answer'));
 			return null;
 		}
 		if (strlen(trim($answer)) > 128){
-			$this->addError(new Error('Answer length should be not more 128', 'invalid_answer'));
+			$this->addError(new Error('Answer length should be not more 128', 'exceeding_answer'));
 			return null;
 		}
 

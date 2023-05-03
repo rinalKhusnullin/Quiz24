@@ -28,7 +28,6 @@ class Question extends Engine\Controller
 		if ($id <= 0)
 		{
 			$this->addError(new Error('Question id should be greater than 0', 'invalid_question_id'));
-
 			return null;
 		}
 
@@ -44,7 +43,6 @@ class Question extends Engine\Controller
 		if ($quizId <= 0)
 		{
 			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
-
 			return null;
 		}
 
@@ -60,37 +58,37 @@ class Question extends Engine\Controller
 
 		if (empty($question))
 		{
-			$this->addError(new Error('Question is null or empty', 'invalid_question'));
+			$this->addError(new Error('Question is null or empty', 'empty_question'));
 			return null;
 		}
 
 		$question["QUESTION_TEXT"] = trim($question["QUESTION_TEXT"]);
 		if (empty($question["QUESTION_TEXT"]))
 		{
-			$this->addError(new Error('Текст вопроса не может быть пустым', 'invalid_text'));
+			$this->addError(new Error('Question text cannot be empty', 'empty_question_text'));
 		}
 		if (mb_strlen($question["QUESTION_TEXT"]) > 256)
 		{
-			$this->addError(new Error('Длина вопроса не может быть больше 256', 'invalid_text'));
+			$this->addError(new Error('Question length cannot be more than 256', 'exceeding_question_text'));
 		}
 
-		if (!is_numeric($question["ID"])){
-			$this->addError(new Error('Question ID must be numeric', 'invalid_questionID'));
+		if ((int)$question["ID"] <= 0){
+			$this->addError(new Error('Question ID should be greater than 0', 'invalid_question_id'));
 		}
 
 		if (!in_array($question["QUESTION_TYPE_ID"], ['0', '1'], true))
 		{
-			$this->addError(new Error('Неверное значение для типа вопроса', 'invalid_question_type_id'));
+			$this->addError(new Error('Invalid value for question type', 'invalid_question_type_id'));
 		}
 
 		if (!in_array($question["QUESTION_DISPLAY_ID"], ['0', '1', '2', '3'], true))
 		{
-			$this->addError(new Error('Неверное значение для типа отображения результатов вопроса', 'invalid_display_type_id'));
+			$this->addError(new Error('Invalid value for question result display type', 'invalid_display_type_id'));
 		}
 
 		if ($question['QUESTION_TYPE_ID'] === '1' && empty($question["OPTIONS"]))
 		{
-			$this->addError(new Error('У вопроса с выбором варианта ответа должен быть хотя бы один вариант ответа', 'invalid_options'));
+			$this->addError(new Error('A multiple choice question must have at least one answer choice', 'empty_options'));
 		}
 
 		if (!empty($question["OPTIONS"]))
@@ -98,12 +96,12 @@ class Question extends Engine\Controller
 			$options = json_decode($question["OPTIONS"]);
 			if ($options === null && json_last_error() !== JSON_ERROR_NONE)
 			{
-				$this->addError(new Error('Question options parse error', 'invalid_options'));
+				$this->addError(new Error('Question options parse error', 'parse_options'));
 				return null;
 			}
 			if (count($options) > 20)
 			{
-				$this->addError(new Error('Максимальное количество вариантов ответа - 20', 'invalid_options'));
+				$this->addError(new Error('The maximum number of question options : 20', 'max_count_options'));
 				return null;
 			}
 			$options = array_map('trim', $options);
@@ -111,12 +109,12 @@ class Question extends Engine\Controller
 			{
 				if (empty($option))
 				{
-					$this->addError(new Error('Варианты ответа не могут быть пустыми', 'invalid_options'));
+					$this->addError(new Error('Question options cannot be empty', 'empty_option'));
 					break;
 				}
 				if (mb_strlen($option) > 40)
 				{
-					$this->addError(new Error('Варианты ответа не могут превышать 40 символов', 'invalid_options'));
+					$this->addError(new Error('Question options cannot exceed 40 characters', 'exceeding_option'));
 					break;
 				}
 			}
@@ -130,20 +128,20 @@ class Question extends Engine\Controller
 		global $USER;
 		$userId = $USER->GetID();
 
-		if (!is_numeric($question["QUIZ_ID"]))
+		if ((int)$question["QUIZ_ID"] <= 0)
 		{
-			$this->addError(new Error('QuizID must be numeric', 'invalid_quizId'));
+			$this->addError(new Error('Quiz id should be greater than 0', 'invalid_quiz_id'));
 			return null;
 		}
 
 		if (!QuizRepository::checkUserHasQuiz($userId, (int)$question["QUIZ_ID"]))//принадлежит ли quiz текущему пользователю и существует
 		{
-			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			$this->addError(new Error('Quiz not found in current User', 'quiz_not_found'));
 			return null;
 		}
 
 		if (!QuestionRepository::checkQuizHasQuestion((int)$question["QUIZ_ID"], (int)$question["ID"])){//Проверка что вопрос принадлежит именно к этому квизу
-			$this->addError(new Error('Question not found in current Quiz', 'invalid_questionId'));
+			$this->addError(new Error('Question not found in current Quiz', 'question_not_found'));
 			return null;
 		}
 
@@ -163,7 +161,7 @@ class Question extends Engine\Controller
 		$userId = $USER->GetID();
 		if (!QuizRepository::checkUserHasQuiz($userId, $quizId))//принадлежит ли quiz текущему пользователю и существует
 		{
-			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			$this->addError(new Error('Quiz not found in current User', 'quiz_not_found'));
 			return null;
 		}
 
@@ -193,12 +191,12 @@ class Question extends Engine\Controller
 		$userId = $USER->GetID();
 		if (!QuizRepository::checkUserHasQuiz($userId, $quizId))//quiz принадлежит текущему пользователю и существует
 		{
-			$this->addError(new Error('Quiz not found in current User', 'invalid_quizId'));
+			$this->addError(new Error('Quiz not found in current User', 'quiz_not_found'));
 			return null;
 		}
 
 		if (!QuestionRepository::checkQuizHasQuestion($quizId, $id)){//вопрос принадлежит именно к этому квизу и существует
-			$this->addError(new Error('Question not found in current Quiz', 'invalid_questionId'));
+			$this->addError(new Error('Question not found in current Quiz', 'invalid_question_id'));
 			return null;
 		}
 

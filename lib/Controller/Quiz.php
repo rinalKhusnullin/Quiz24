@@ -49,7 +49,7 @@ class Quiz extends Engine\Controller
 		$quizCount = QuizRepository::getQuizCount($userId);
 		if ($quizCount >= 11)
 		{
-			$this->addError(new Error('Maximum number of quizzes : 11','exceeding_quiz_count'));
+			$this->addError(new Error('Maximum number of quizzes : 11','max_count_quizzes'));
 			return null;
 		}
 
