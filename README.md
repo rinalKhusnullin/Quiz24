@@ -6,7 +6,7 @@ Set `Quiz template` as your primary site template
 
 ## Setup modern Bitrix routing
 
-Add `tasks.php` in `routing` section of `${doc_root}/bitrix/.settings.php` file:
+Add `quiz.php` in `routing` section of `${doc_root}/bitrix/.settings.php` file:
 
 ```php
 'routing' => ['value' => [
@@ -39,4 +39,5 @@ You probably want to make following symlinks:
 local/components/up -> local/modules/up.tasks/install/components/up
 local/templates/quiz -> local/modules/up.tasks/install/templates/quiz
 local/routes/quiz.php -> local/modules/up.tasks/install/routes/quiz.php
+local/js/quiz.php -> local/modules/up.tasks/install/js
 ```
