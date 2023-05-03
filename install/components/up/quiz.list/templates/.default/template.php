@@ -4,6 +4,7 @@
 use Bitrix\Main\Page\Asset;
 
 \Bitrix\Main\UI\Extension::load('up.quiz-list');
+\Bitrix\Main\UI\Extension::load("up.quiz-error-manager");
 \Bitrix\Main\UI\Extension::load('qrcode');
 \Bitrix\Main\UI\Extension::load("ui.notification");
 
