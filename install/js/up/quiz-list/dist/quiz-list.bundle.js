@@ -167,7 +167,7 @@ this.Up = this.Up || {};
 	        stack: new BX.UI.Notification.Stack({
 	          position: 'bottom-center'
 	        }),
-	        content: main_core.Loc.getMessage('UP_QUIZ_LIST_STOP_CREATE_QUIZZES'),
+	        content: Up.Quiz.QuizErrorManager.getMessage('max_count_quizzes'),
 	        autoHide: true,
 	        autoHideDelay: 5000
 	      });
@@ -179,14 +179,15 @@ this.Up = this.Up || {};
 	          addButton.classList.remove('is-loading');
 	          window.location.replace("/quiz/".concat(result.data, "/edit"));
 	        }, function (reject) {
-	          if (reject.errors[0].code === 'max_count_quizzes') {
+	          var error = reject.errors[0];
+	          if (error.code === 'max_count_quizzes') {
 	            addButton.classList.remove('is-loading');
 	            _this6.closeCreateQuizModal();
 	            MaxCountQuizzesNotify.show();
 	            return;
 	          }
 	          addButton.classList.remove('is-loading');
-	          quizTitleHelper.textContent = reject.errors[0].message;
+	          quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(error.code);
 	          quizTitleInput.oninput = function () {
 	            quizTitleHelper.textContent = '';
 	          };

@@ -272,7 +272,7 @@ export class QuizList
 		const addButton = document.getElementById('creating_quiz_btn');
 		let MaxCountQuizzesNotify = new BX.UI.Notification.Balloon({
 			stack : new BX.UI.Notification.Stack({position: 'bottom-center'}),
-			content : Loc.getMessage('UP_QUIZ_LIST_STOP_CREATE_QUIZZES'),
+			content : Up.Quiz.QuizErrorManager.getMessage('max_count_quizzes'),
 			autoHide: true,
 			autoHideDelay: 5000,
 		});
@@ -288,7 +288,8 @@ export class QuizList
 				window.location.replace(`/quiz/${result.data}/edit`);
 
 			}, reject => {
-				if (reject.errors[0].code === 'max_count_quizzes')
+				let error = reject.errors[0];
+				if (error.code === 'max_count_quizzes')
 				{
 					addButton.classList.remove('is-loading');
 					this.closeCreateQuizModal();
@@ -296,7 +297,7 @@ export class QuizList
 					return;
 				}
 				addButton.classList.remove('is-loading');
-				quizTitleHelper.textContent = reject.errors[0].message;
+				quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(error.code);
 				quizTitleInput.oninput = () => {
 					quizTitleHelper.textContent = '';
 				};
