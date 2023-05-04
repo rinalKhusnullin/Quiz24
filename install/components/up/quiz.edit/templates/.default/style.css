@@ -224,3 +224,9 @@
 	height: 30px;
 	animation: donut-spin 1.2s linear infinite;
 }
+
+.answer-helper{
+	margin-top: -0.7rem!important;
+	margin-bottom: 0.5rem;
+	padding: 0 0 0 5px;
+}
