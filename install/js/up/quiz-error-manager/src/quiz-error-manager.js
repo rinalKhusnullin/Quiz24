@@ -30,6 +30,8 @@ export class QuizErrorManager
 		'max_count_questions'	: Loc.getMessage('UP_QUIZ_ERROR_MAX_COUNT_QUESTIONS'),
 		'empty_answer'			: Loc.getMessage('UP_QUIZ_ERROR_EMPTY_ANSWER'),
 		'exceeding_answer'		: Loc.getMessage('UP_QUIZ_ERROR_EXCEEDING_ANSWER'),
+		'invalid_answer'		: Loc.getMessage('UP_QUIZ_ERROR_INVALID_ANSWER'),
+		'inactive_quiz'			: Loc.getMessage('UP_QUIZ_ERROR_INACTIVE_QUIZ'),
 	};
 
 	static getQuizNotFoundError()
@@ -40,6 +42,21 @@ export class QuizErrorManager
 					<span class="error-icon"><i class="fa-regular fa-circle-question fa-2xl"></i></span>
 					<div class="error-info">
 						<h1 class="error-title">Опрос не найден</h1>
+						<a href="/" class="is-ghost is-underlined">Вернуться на главную</a>
+					</div>
+				</div>
+			</section>
+		`;
+	}
+
+	static getQuizNotAvailableError()
+	{
+		return Tag.render`
+			<section class="section error-message">
+				<div class="error-content">
+					<span class="error-icon"><i class="fa-solid fa-lock fa-2xl"></i></span>
+					<div class="error-info">
+						<h1 class="error-title">Опрос закрыт для прохождения</h1>
 						<a href="/" class="is-ghost is-underlined">Вернуться на главную</a>
 					</div>
 				</div>
