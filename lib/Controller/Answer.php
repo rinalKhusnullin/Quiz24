@@ -10,6 +10,7 @@ use Bitrix\Main\EventManager;
 use Up\Quiz\PullHandler;
 use \Bitrix\Main\Engine\Response\Json;
 use Up\Quiz\Repository\QuestionRepository;
+use Up\Quiz\Repository\QuizRepository;
 
 Loader::includeModule('pull');
 
@@ -62,16 +63,27 @@ class Answer extends Engine\Controller
 			$this->addError(new Error('Question id should be greater than 0', 'invalid_question_id'));
 			return null;
 		}
-		if (trim($answer) === '' ){
+		if (empty(trim($answer))){
 			$this->addError(new Error('Answer should be not empty', 'empty_answer'));
 			return null;
 		}
-		if (strlen(trim($answer)) > 128){
+		if (mb_strlen($answer) > 128){
 			$this->addError(new Error('Answer length should be not more 128', 'exceeding_answer'));
 			return null;
 		}
 
-		$result = AnswerRepository::createAnswer($questionId, trim($answer));
+		if (!QuestionRepository::questionHasOption($questionId, $answer))
+		{
+			$this->addError(new Error('Question does not have this answer option', 'invalid_answer'));
+			return null;
+		}
+
+		if (!QuestionRepository::isQuizOpen($questionId)){
+			$this->addError(new Error('Quiz is not active', 'inactive_quiz'));
+			return null;
+		}
+
+		$result = AnswerRepository::createAnswer($questionId, $answer);
 		$f = $this->sendPushNotificationAction($answer, $questionId);
 		return [$result, $f];
 	}
