@@ -2,7 +2,7 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23;
 	am4core.useTheme(am4themes_animated);
 	var QuizEdit = /*#__PURE__*/function () {
 	  function QuizEdit() {
@@ -324,6 +324,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "renderErrorPage",
 	    value: function renderErrorPage() {
+	      this.rootNode.classList.remove('columns');
 	      this.rootNode.innerHTML = "";
 	      this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
 	    }
@@ -336,14 +337,15 @@ this.Up = this.Up || {};
 	      var quizTitleHelper = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<p class=\"help is-danger\"></p>"])));
 	      quizTitleSaveButton.onclick = function () {
 	        quizTitleSaveButton.classList.add('is-loading');
-	        _this9.updateQuizTitle(quizTitleInput.value).then(function (success) {
+	        _this9.updateQuizTitle(quizTitleInput.value).then(function () {
 	          quizTitleHelper.textContent = '';
 	          quizTitleSaveButton.classList.remove('is-loading');
 	          _this9.notify.content = main_core.Loc.getMessage('UP_QUIZ_EDIT_SAVE_QUIZ_TITLE_NOTIFY');
 	          _this9.notify.show();
 	        }, function (error) {
-	          if (error.errors[0].code === 'invalid_quiz_title') {
-	            quizTitleHelper.textContent = error.errors[0].message;
+	          var errorCode = error.errors[0].code;
+	          if (errorCode === 'empty_quiz_title') {
+	            quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
 	          }
 	          quizTitleSaveButton.classList.remove('is-loading');
 	        });
@@ -408,9 +410,10 @@ this.Up = this.Up || {};
 	            _this10.renderQuestionList();
 	          });
 	        }, function (error) {
+	          var errorCode = error.errors[0].code;
 	          AddNewQuestionButton.classList.remove('is-loading');
-	          if (error.errors[0].code === 'max_count_questions') {
-	            _this10.showNotify(_this10.notify, 2000, main_core.Loc.getMessage('UP_QUIZ_EDIT_MAX_QUESTION_COUNT_NOTIFY'));
+	          if (errorCode === 'max_count_questions') {
+	            _this10.showNotify(_this10.notify, 2000, Up.Quiz.QuizErrorManager.getMessage(errorCode));
 	            return;
 	          }
 	          _this10.showNotify(_this10.notify, 3000, main_core.Loc.getMessage('UP_QUIZ_EDIT_WHATS_WRONG_NOTIFY'));
@@ -501,18 +504,31 @@ this.Up = this.Up || {};
 	        }, function (reject) {
 	          reject.errors.forEach(function (error) {
 	            var errorCode = error.code;
-	            var errorMessage = error.message;
-	            if (errorCode === 'invalid_text') {
+	            var errorMessage = Up.Quiz.QuizErrorManager.getMessage(errorCode);
+	            if (errorCode === 'empty_question_text') {
 	              SettingsContainerNode.querySelector('#question-text-helper').textContent = errorMessage;
-	            }
-	            if (errorCode === 'invalid_question_type_id') {
+	            } else if (errorCode === 'invalid_question_type_id') {
 	              SettingsContainerNode.querySelector('#question-type-helper').textContent = errorMessage;
-	            }
-	            if (errorCode === 'invalid_display_type_id') {
+	            } else if (errorCode === 'invalid_display_type_id') {
 	              SettingsContainerNode.querySelector('#question-display-type-helper').textContent = errorMessage;
-	            }
-	            if (errorCode === 'invalid_options') {
+	            } else if (errorCode === 'max_count_options') {
 	              SettingsContainerNode.querySelector('#question-options-helper').textContent = errorMessage;
+	            } else if (errorCode === 'empty_options') {
+	              SettingsContainerNode.querySelector('#question-options-helper').textContent = errorMessage;
+	            } else if (errorCode === 'empty_option') {
+	              SettingsContainerNode.querySelectorAll('.question-settings__answer-inputs').forEach(function (answerInput) {
+	                if (answerInput.querySelector('input').value === '') {
+	                  answerInput.after(main_core.Tag.render(_templateObject22 || (_templateObject22 = babelHelpers.taggedTemplateLiteral(["<p class=\"help is-danger answer-helper\">", "</p>"])), errorMessage));
+	                }
+	              });
+	            } else if (errorCode === 'exceeding_option') {
+	              SettingsContainerNode.querySelectorAll('.question-settings__answer-inputs').forEach(function (answerInput) {
+	                if (answerInput.querySelector('input').value.length > 40) {
+	                  answerInput.after(main_core.Tag.render(_templateObject23 || (_templateObject23 = babelHelpers.taggedTemplateLiteral(["<p class=\"help is-danger answer-helper\">", "</p>"])), errorMessage));
+	                }
+	              });
+	            } else {
+	              _this11.showNotify(_this11.notify, 2000, errorMessage);
 	            }
 	          });
 	          SettingsContainerNode.querySelector('#save-question-button').classList.remove('is-loading');
@@ -527,6 +543,15 @@ this.Up = this.Up || {};
 	      if (document.querySelector('#question-type-helper')) document.querySelector('#question-type-helper').textContent = '';
 	      if (document.querySelector('#question-display-type-helper')) document.querySelector('#question-display-type-helper').textContent = '';
 	      if (document.querySelector('#question-options-helper')) document.querySelector('#question-options-helper').textContent = '';
+	      var answerHelpers = document.querySelectorAll('.answer-helper');
+	      var answerContainer = document.querySelector('#answersContainer');
+	      if (answerHelpers) {
+	        if (answerContainer) {
+	          answerHelpers.forEach(function (answerHelper) {
+	            answerContainer.removeChild(answerHelper);
+	          });
+	        }
+	      }
 	    }
 	  }, {
 	    key: "changeQuestion",

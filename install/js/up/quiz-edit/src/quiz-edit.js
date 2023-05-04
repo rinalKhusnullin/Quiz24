@@ -375,6 +375,7 @@ export class QuizEdit
 
 	renderErrorPage()
 	{
+		this.rootNode.classList.remove('columns');
 		this.rootNode.innerHTML = ``;
 		this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
 	}
@@ -387,15 +388,16 @@ export class QuizEdit
 
 		quizTitleSaveButton.onclick = () => {
 			quizTitleSaveButton.classList.add('is-loading');
-			this.updateQuizTitle(quizTitleInput.value).then(success => {
+			this.updateQuizTitle(quizTitleInput.value).then(() => {
 				quizTitleHelper.textContent = '';
 				quizTitleSaveButton.classList.remove('is-loading');
 				this.notify.content = Loc.getMessage('UP_QUIZ_EDIT_SAVE_QUIZ_TITLE_NOTIFY');
 				this.notify.show();
 			}, error => {
-				if (error.errors[0].code === 'invalid_quiz_title')
+				let errorCode = error.errors[0].code;
+				if (errorCode === 'empty_quiz_title')
 				{
-					quizTitleHelper.textContent = error.errors[0].message;
+					quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
 				}
 				quizTitleSaveButton.classList.remove('is-loading');
 			});
@@ -511,10 +513,11 @@ export class QuizEdit
 						this.renderQuestionList();
 					})
 				}, (error) => {
+					let errorCode = error.errors[0].code;
 					AddNewQuestionButton.classList.remove('is-loading');
-					if (error.errors[0].code === 'max_count_questions')
+					if (errorCode === 'max_count_questions')
 					{
-						this.showNotify(this.notify, 2000, Loc.getMessage('UP_QUIZ_EDIT_MAX_QUESTION_COUNT_NOTIFY'));
+						this.showNotify(this.notify, 2000, Up.Quiz.QuizErrorManager.getMessage(errorCode));
 						return;
 					}
 					this.showNotify(this.notify, 3000, Loc.getMessage('UP_QUIZ_EDIT_WHATS_WRONG_NOTIFY'));
@@ -707,20 +710,43 @@ export class QuizEdit
 			}, reject => {
 				reject.errors.forEach(error => {
 					let errorCode = error.code;
-					let errorMessage = error.message;
+					let errorMessage = Up.Quiz.QuizErrorManager.getMessage(errorCode);
 
-					if (errorCode === 'invalid_text')
+					if (errorCode === 'empty_question_text')
 					{
 						SettingsContainerNode.querySelector('#question-text-helper').textContent = errorMessage;
 					}
-					if (errorCode === 'invalid_question_type_id') {
+					else if (errorCode === 'invalid_question_type_id') {
 						SettingsContainerNode.querySelector('#question-type-helper').textContent = errorMessage;
 					}
-					if (errorCode === 'invalid_display_type_id') {
+					else if (errorCode === 'invalid_display_type_id') {
 						SettingsContainerNode.querySelector('#question-display-type-helper').textContent = errorMessage;
 					}
-					if (errorCode === 'invalid_options') {
+					else if (errorCode === 'max_count_options') {
 						SettingsContainerNode.querySelector('#question-options-helper').textContent = errorMessage;
+					}
+					else if (errorCode === 'empty_options') {
+						SettingsContainerNode.querySelector('#question-options-helper').textContent = errorMessage;
+					}
+					else if (errorCode === 'empty_option')
+					{
+						SettingsContainerNode.querySelectorAll('.question-settings__answer-inputs').forEach(answerInput => {
+							if (answerInput.querySelector('input').value === ''){
+								answerInput.after(Tag.render`<p class="help is-danger answer-helper">${errorMessage}</p>`)
+							}
+						});
+					}
+					else if (errorCode === 'exceeding_option')
+					{
+						SettingsContainerNode.querySelectorAll('.question-settings__answer-inputs').forEach(answerInput => {
+							if (answerInput.querySelector('input').value.length > 40){
+								answerInput.after(Tag.render`<p class="help is-danger answer-helper">${errorMessage}</p>`)
+							}
+						});
+					}
+					else
+					{
+						this.showNotify(this.notify, 2000, errorMessage);
 					}
 				})
 				SettingsContainerNode.querySelector('#save-question-button').classList.remove('is-loading');
@@ -743,6 +769,16 @@ export class QuizEdit
 
 		if (document.querySelector('#question-options-helper'))
 			document.querySelector('#question-options-helper').textContent = '';
+
+		let answerHelpers = document.querySelectorAll('.answer-helper');
+		let answerContainer = document.querySelector('#answersContainer');
+		if (answerHelpers){
+			if (answerContainer){
+				answerHelpers.forEach(answerHelper => {
+					answerContainer.removeChild(answerHelper);
+				});
+			}
+		}
 	}
 
 	changeQuestion()
