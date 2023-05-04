@@ -99,4 +99,21 @@ class QuestionRepository
 		return QuestionsTable::getCount(['=QUIZ_ID' => $quizId]);
 	}
 
+	public static function questionHasOption(int $questionId, string $option) : bool
+	{
+		$question = self::getQuestion($questionId);
+		if ($question['QUESTION_TYPE_ID'] === '0')
+		{
+			return true;
+		}
+		$options = json_decode($question["OPTIONS"]);
+		return in_array($option, $options, true);
+	}
+
+	public static function isQuizOpen(int $questionId) : bool
+	{
+		$question = self::getQuestion($questionId);
+		$quiz = QuizRepository::getQuiz($question["QUIZ_ID"]);
+		return (bool)$quiz['IS_ACTIVE'];
+	}
 }
