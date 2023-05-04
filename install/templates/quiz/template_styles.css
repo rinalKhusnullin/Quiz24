@@ -72,6 +72,18 @@ body {
 		display: flex!important;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 20px;
+		padding: 0!important;
+	}
+
+	.user-info{
+		padding: 0 12px;
+	}
+
+	.navbar .button{
+		font-size: .6rem;
+	}
+	
+	.navbar-brand__logo{
+		font-size: 1.4rem!important;
 	}
 }
