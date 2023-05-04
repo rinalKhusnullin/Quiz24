@@ -150,7 +150,8 @@ export class QuizTake
 
 		if (+this.question.QUESTION_TYPE_ID === 0)
 		{
-			const QuestionTypeInput = Tag.render`<input type="text" class="input question-form__input" placeholder="${Loc.getMessage('UP_QUIZ_TAKE_OPEN_ANSWER')}">`;
+			const QuestionTypeInput = Tag.render`
+				<input type="text" class="input question-form__input" placeholder="${Loc.getMessage('UP_QUIZ_TAKE_OPEN_ANSWER')}">`;
 			QuestionFormNode.appendChild(QuestionTypeInput);
 		}
 		else if (+this.question.QUESTION_TYPE_ID === 1)
@@ -171,9 +172,10 @@ export class QuizTake
 			}
 			QuestionFormNode.appendChild(Tag.render`<div class="field">
 				${AnswerContainer}
-				<p class="help is-danger mb-2" id="answer-helper"></p>
 			</div>`);
 		}
+
+		QuestionFormNode.appendChild(Tag.render`<p class="help is-danger mb-2" id="answer-helper"></p>`);
 
 		const SendButton = Tag.render`<button class="button question-form__button">${Loc.getMessage('UP_QUIZ_TAKE_SEND')}</button>`;
 

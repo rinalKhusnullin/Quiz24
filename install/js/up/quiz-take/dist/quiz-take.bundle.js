@@ -2,7 +2,7 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8;
 	var QuizTake = /*#__PURE__*/function () {
 	  function QuizTake() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -118,7 +118,7 @@ this.Up = this.Up || {};
 	      var _this4 = this;
 	      var QuestionFormNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-form__container box\" id=\"question-form\">\n\t\t\t\t<h1 class=\"subtitle is-4\">", "</h1>\n\t\t\t</div>"])), main_core.Text.encode(this.question.QUESTION_TEXT));
 	      if (+this.question.QUESTION_TYPE_ID === 0) {
-	        var QuestionTypeInput = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<input type=\"text\" class=\"input question-form__input\" placeholder=\"", "\">"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_OPEN_ANSWER'));
+	        var QuestionTypeInput = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"input question-form__input\" placeholder=\"", "\">"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_OPEN_ANSWER'));
 	        QuestionFormNode.appendChild(QuestionTypeInput);
 	      } else if (+this.question.QUESTION_TYPE_ID === 1) {
 	        var AnswerContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
@@ -129,9 +129,10 @@ this.Up = this.Up || {};
 	            AnswerContainer.appendChild(Answer);
 	          }
 	        }
-	        QuestionFormNode.appendChild(main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"field\">\n\t\t\t\t", "\n\t\t\t\t<p class=\"help is-danger mb-2\" id=\"answer-helper\"></p>\n\t\t\t</div>"])), AnswerContainer));
+	        QuestionFormNode.appendChild(main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"field\">\n\t\t\t\t", "\n\t\t\t</div>"])), AnswerContainer));
 	      }
-	      var SendButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
+	      QuestionFormNode.appendChild(main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<p class=\"help is-danger mb-2\" id=\"answer-helper\"></p>"]))));
+	      var SendButton = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
 	      SendButton.onclick = function () {
 	        var answer = '';
 	        if (+_this4.question.QUESTION_TYPE_ID === 0) {
