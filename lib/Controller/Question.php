@@ -112,6 +112,9 @@ class Question extends Engine\Controller
 					$this->addError(new Error('Question options cannot be empty', 'empty_option'));
 					break;
 				}
+			}
+			foreach ($options as $option)
+			{
 				if (mb_strlen($option) > 40)
 				{
 					$this->addError(new Error('Question options cannot exceed 40 characters', 'exceeding_option'));
