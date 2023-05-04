@@ -54,7 +54,7 @@ class QuizRepository
 
 		$sqlHelper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
 		$title = $sqlHelper->forSql($title);
-		$result = QuizzesTable::add(['TITLE' => $title, 'CODE'=>$code, 'USER_ID'=>$userId]);
+		$result = QuizzesTable::add(['TITLE' => $title, 'CODE'=>$code, 'USER_ID'=>$userId, 'IS_ACTIVE' => 1]);
 
 		if ($result->isSuccess())
 		{
@@ -144,6 +144,4 @@ class QuizRepository
 		}
 		return $result->getErrors();
 	}
-
-
 }
