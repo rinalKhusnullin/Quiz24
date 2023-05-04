@@ -32,29 +32,30 @@ export class QuizTake
 			{
 				this.rootNode.innerHTML = ``;
 				this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
+				return;
 			}
-			else if (+quiz.IS_ACTIVE === 0)
+			if (+quiz.IS_ACTIVE === 0)
 			{
-				alert('TODO : ЕСЛИ QUIZ ЗАКРЫТ ДЛЯ ПРОХОЖДЕНИЯ');
+				this.rootNode.innerHTML = ``;
+				this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotAvailableError());
+				return;
 			}
-			else {
-				this.quiz = quiz;
-				this.loadQuestions().then(questions =>{
-					if (questions.length === 0)
-					{
-						alert('TODO: ЕСЛИ ВОПРОСОВ НЕТ');
-					}
-					else
-					{
-						this.questions = questions;
-						this.currentQuestionId = questions[0].ID;
-						this.loadQuestion(this.currentQuestionId).then(question =>{
-							this.question = question;
-							this.render()
-						});
-					}
-				});
-			}
+			this.quiz = quiz;
+			this.loadQuestions().then(questions =>{
+				if (questions.length === 0)
+				{
+					alert('TODO: ЕСЛИ ВОПРОСОВ НЕТ');
+				}
+				else
+				{
+					this.questions = questions;
+					this.currentQuestionId = questions[0].ID;
+					this.loadQuestion(this.currentQuestionId).then(question =>{
+						this.question = question;
+						this.render()
+					});
+				}
+			});
 
 		});
 	}
@@ -168,7 +169,10 @@ export class QuizTake
 					AnswerContainer.appendChild(Answer);
 				}
 			}
-			QuestionFormNode.appendChild(Tag.render`<div class="field">${AnswerContainer}</div>`);
+			QuestionFormNode.appendChild(Tag.render`<div class="field">
+				${AnswerContainer}
+				<p class="help is-danger mb-2" id="answer-helper"></p>
+			</div>`);
 		}
 
 		const SendButton = Tag.render`<button class="button question-form__button">${Loc.getMessage('UP_QUIZ_TAKE_SEND')}</button>`;
@@ -191,26 +195,9 @@ export class QuizTake
 				}
 			}
 
-			this.sendAnswer(this.question.ID, answer);
-		};
-
-		QuestionFormNode.appendChild(SendButton);
-		return QuestionFormNode;
-	}
-
-	sendAnswer(questionId, answer)
-	{
-		this.questions.shift();
-		BX.ajax.runAction(
-				'up:quiz.answer.createAnswer', {
-					data: {
-						questionId: questionId,
-						answer: answer
-					}
-				}
-			)
-			.then((response) => {
-				console.log(response);
+			SendButton.classList.add('is-loading');
+			this.sendAnswer(this.question.ID, answer).then(success => {
+				this.questions.shift();
 				if (+this.questions.length === 0)
 				{
 					this.renderCompletely();
@@ -223,10 +210,41 @@ export class QuizTake
 						this.renderQuestion();
 					})
 				}
-			})
-			.catch((error) => {
-				console.error(error);
+			}, error => {
+				let errorCode = error.errors[0].code;
+				if (errorCode === 'inactive_quiz')
+				{
+					location.reload();
+				}
+				document.getElementById('answer-helper').textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
+				SendButton.classList.remove('is-loading');
 			});
+		};
+
+		QuestionFormNode.appendChild(SendButton);
+		return QuestionFormNode;
+	}
+
+	sendAnswer(questionId, answer)
+	{
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+					'up:quiz.answer.createAnswer', {
+						data: {
+							questionId: questionId,
+							answer: answer
+						}
+					}
+				)
+				.then((response) => {
+					console.log(response);
+					resolve(response);
+				})
+				.catch((error) => {
+					console.error(error);
+					reject(error);
+				});
+		});
 	}
 
 	renderQuestion(){

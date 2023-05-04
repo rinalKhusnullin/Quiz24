@@ -28,23 +28,26 @@ this.Up = this.Up || {};
 	        if (quiz === false) {
 	          _this.rootNode.innerHTML = "";
 	          _this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
-	        } else if (+quiz.IS_ACTIVE === 0) {
-	          alert('TODO : ЕСЛИ QUIZ ЗАКРЫТ ДЛЯ ПРОХОЖДЕНИЯ');
-	        } else {
-	          _this.quiz = quiz;
-	          _this.loadQuestions().then(function (questions) {
-	            if (questions.length === 0) {
-	              alert('TODO: ЕСЛИ ВОПРОСОВ НЕТ');
-	            } else {
-	              _this.questions = questions;
-	              _this.currentQuestionId = questions[0].ID;
-	              _this.loadQuestion(_this.currentQuestionId).then(function (question) {
-	                _this.question = question;
-	                _this.render();
-	              });
-	            }
-	          });
+	          return;
 	        }
+	        if (+quiz.IS_ACTIVE === 0) {
+	          _this.rootNode.innerHTML = "";
+	          _this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotAvailableError());
+	          return;
+	        }
+	        _this.quiz = quiz;
+	        _this.loadQuestions().then(function (questions) {
+	          if (questions.length === 0) {
+	            alert('TODO: ЕСЛИ ВОПРОСОВ НЕТ');
+	          } else {
+	            _this.questions = questions;
+	            _this.currentQuestionId = questions[0].ID;
+	            _this.loadQuestion(_this.currentQuestionId).then(function (question) {
+	              _this.question = question;
+	              _this.render();
+	            });
+	          }
+	        });
 	      });
 	    }
 	  }, {
@@ -126,7 +129,7 @@ this.Up = this.Up || {};
 	            AnswerContainer.appendChild(Answer);
 	          }
 	        }
-	        QuestionFormNode.appendChild(main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"field\">", "</div>"])), AnswerContainer));
+	        QuestionFormNode.appendChild(main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"field\">\n\t\t\t\t", "\n\t\t\t\t<p class=\"help is-danger mb-2\" id=\"answer-helper\"></p>\n\t\t\t</div>"])), AnswerContainer));
 	      }
 	      var SendButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
 	      SendButton.onclick = function () {
@@ -143,7 +146,26 @@ this.Up = this.Up || {};
 	            }
 	          }
 	        }
-	        _this4.sendAnswer(_this4.question.ID, answer);
+	        SendButton.classList.add('is-loading');
+	        _this4.sendAnswer(_this4.question.ID, answer).then(function (success) {
+	          _this4.questions.shift();
+	          if (+_this4.questions.length === 0) {
+	            _this4.renderCompletely();
+	          } else {
+	            _this4.currentQuestionId = _this4.questions[0].ID;
+	            _this4.loadQuestion(_this4.currentQuestionId).then(function (question) {
+	              _this4.question = question;
+	              _this4.renderQuestion();
+	            });
+	          }
+	        }, function (error) {
+	          var errorCode = error.errors[0].code;
+	          if (errorCode === 'inactive_quiz') {
+	            location.reload();
+	          }
+	          document.getElementById('answer-helper').textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
+	          SendButton.classList.remove('is-loading');
+	        });
 	      };
 	      QuestionFormNode.appendChild(SendButton);
 	      return QuestionFormNode;
@@ -151,26 +173,19 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "sendAnswer",
 	    value: function sendAnswer(questionId, answer) {
-	      var _this5 = this;
-	      this.questions.shift();
-	      BX.ajax.runAction('up:quiz.answer.createAnswer', {
-	        data: {
-	          questionId: questionId,
-	          answer: answer
-	        }
-	      }).then(function (response) {
-	        console.log(response);
-	        if (+_this5.questions.length === 0) {
-	          _this5.renderCompletely();
-	        } else {
-	          _this5.currentQuestionId = _this5.questions[0].ID;
-	          _this5.loadQuestion(_this5.currentQuestionId).then(function (question) {
-	            _this5.question = question;
-	            _this5.renderQuestion();
-	          });
-	        }
-	      })["catch"](function (error) {
-	        console.error(error);
+	      return new Promise(function (resolve, reject) {
+	        BX.ajax.runAction('up:quiz.answer.createAnswer', {
+	          data: {
+	            questionId: questionId,
+	            answer: answer
+	          }
+	        }).then(function (response) {
+	          console.log(response);
+	          resolve(response);
+	        })["catch"](function (error) {
+	          console.error(error);
+	          reject(error);
+	        });
 	      });
 	    }
 	  }, {
