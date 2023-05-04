@@ -441,7 +441,7 @@ this.Up = this.Up || {};
 	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
 	        var options = JSON.parse(this.question.OPTIONS);
 	        for (var i = 0; i < options.length; i++) {
-	          var AnswerPreview = main_core.Tag.render(_templateObject12 || (_templateObject12 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\"><input type=\"radio\" name=\"previewRadio\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), main_core.Text.encode(options[i]));
+	          var AnswerPreview = main_core.Tag.render(_templateObject12 || (_templateObject12 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\"><input class=\"option-input radio\" type=\"radio\" name=\"previewRadio\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), main_core.Text.encode(options[i]));
 	          AnswerPreviewContainer.appendChild(AnswerPreview);
 	        }
 	      } else {

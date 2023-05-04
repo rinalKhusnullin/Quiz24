@@ -23,13 +23,17 @@ body {
 	flex: 1 0 auto;
 }
 .footer {
-  	width: 100%;
+	padding: 30px 0!important;
+	margin: 20px 0;
+	width: 100%;
 	flex: 0 0 50px;
-	padding: 1rem 0 2rem;
+	box-shadow: rgba(0, 0, 0, 0.04) 0px -5px 5px;
+	background: #fff!important;
 }
 
 .navbar {
     box-shadow: rgba(0, 0, 0, 0.04) 0 3px 5px;
+	padding: 20px;
 }
 
 .navbar-brand__logo{

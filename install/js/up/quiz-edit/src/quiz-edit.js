@@ -573,7 +573,7 @@ export class QuizEdit
 			for (let i = 0; i < options.length; i++)
 			{
 				const AnswerPreview = Tag.render`
-					<label class="radio"><input type="radio" name="previewRadio">
+					<label class="radio"><input class="option-input radio" type="radio" name="previewRadio">
 						${Text.encode(options[i])}
 					</label>
 				`;

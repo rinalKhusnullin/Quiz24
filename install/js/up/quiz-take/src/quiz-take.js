@@ -44,7 +44,7 @@ export class QuizTake
 			this.loadQuestions().then(questions =>{
 				if (questions.length === 0)
 				{
-					alert('TODO: ЕСЛИ ВОПРОСОВ НЕТ');
+					this.renderCompletely();
 				}
 				else
 				{
@@ -137,6 +137,7 @@ export class QuizTake
 		`;
 		this.rootNode.appendChild(QuizHeroSection);
 
+
 		let QuestionForm = this.getQuestionForm();
 		this.rootNode.appendChild(QuestionForm);
 	}
@@ -145,7 +146,7 @@ export class QuizTake
 	{
 		const QuestionFormNode = Tag.render`
 			<div class="question-form__container box" id="question-form">
-				<h1 class="subtitle is-4">${Text.encode(this.question.QUESTION_TEXT)}</h1>
+				<h1 class="subtitle is-4 mb-2">${Text.encode(this.question.QUESTION_TEXT)}</h1>
 			</div>`;
 
 		if (+this.question.QUESTION_TYPE_ID === 0)
@@ -163,7 +164,7 @@ export class QuizTake
 				{
 					const Answer = Tag.render`
 					<label class="radio">
-						<input type="radio" name="questionAnswer" value="${Text.encode(options[i])}">
+						<input class="option-input radio" type="radio" name="questionAnswer" value="${Text.encode(options[i])}">
 						${Text.encode(options[i])}
 					</label>
 				`;
@@ -177,7 +178,7 @@ export class QuizTake
 
 		QuestionFormNode.appendChild(Tag.render`<p class="help is-danger mb-2" id="answer-helper"></p>`);
 
-		const SendButton = Tag.render`<button class="button question-form__button">${Loc.getMessage('UP_QUIZ_TAKE_SEND')}</button>`;
+		const SendButton = Tag.render`<button class="button question-form__button is-success">${Loc.getMessage('UP_QUIZ_TAKE_SEND')}</button>`;
 
 		SendButton.onclick = () => {
 			let answer = '';
@@ -217,6 +218,7 @@ export class QuizTake
 				if (errorCode === 'inactive_quiz')
 				{
 					location.reload();
+					return;
 				}
 				document.getElementById('answer-helper').textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
 				SendButton.classList.remove('is-loading');
@@ -239,7 +241,6 @@ export class QuizTake
 					}
 				)
 				.then((response) => {
-					console.log(response);
 					resolve(response);
 				})
 				.catch((error) => {
@@ -255,6 +256,19 @@ export class QuizTake
 
 	renderCompletely(){
 		this.rootNode.innerHTML = ``;
-		this.rootNode.textContent = `${Loc.getMessage('UP_QUIZ_TAKE_YOU_ANSWERED_ALL_THE_QUESTIONS')}`;
+		this.rootNode.appendChild(Tag.render`
+			<section class="hero is-small is-primary">
+				<div class="hero-body">
+					<p class="title mb-0">
+						${Text.encode(this.quiz.TITLE)}#${Text.encode(this.quiz.CODE)}
+					</p>
+				</div>
+			</section>
+		`);
+
+		this.rootNode.appendChild(Tag.render`
+			<div class="question-form__container box" id="question-form">
+				<h1 class="subtitle is-4 mb-2">${Loc.getMessage('UP_QUIZ_TAKE_YOU_ANSWERED_ALL_THE_QUESTIONS')}</h1>
+			</div>`);
 	}
 }

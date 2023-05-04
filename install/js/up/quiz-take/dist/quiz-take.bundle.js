@@ -2,7 +2,7 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10;
 	var QuizTake = /*#__PURE__*/function () {
 	  function QuizTake() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -38,7 +38,7 @@ this.Up = this.Up || {};
 	        _this.quiz = quiz;
 	        _this.loadQuestions().then(function (questions) {
 	          if (questions.length === 0) {
-	            alert('TODO: ЕСЛИ ВОПРОСОВ НЕТ');
+	            _this.renderCompletely();
 	          } else {
 	            _this.questions = questions;
 	            _this.currentQuestionId = questions[0].ID;
@@ -116,7 +116,7 @@ this.Up = this.Up || {};
 	    key: "getQuestionForm",
 	    value: function getQuestionForm() {
 	      var _this4 = this;
-	      var QuestionFormNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-form__container box\" id=\"question-form\">\n\t\t\t\t<h1 class=\"subtitle is-4\">", "</h1>\n\t\t\t</div>"])), main_core.Text.encode(this.question.QUESTION_TEXT));
+	      var QuestionFormNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-form__container box\" id=\"question-form\">\n\t\t\t\t<h1 class=\"subtitle is-4 mb-2\">", "</h1>\n\t\t\t</div>"])), main_core.Text.encode(this.question.QUESTION_TEXT));
 	      if (+this.question.QUESTION_TYPE_ID === 0) {
 	        var QuestionTypeInput = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<input type=\"text\" class=\"input question-form__input\" placeholder=\"", "\">"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_OPEN_ANSWER'));
 	        QuestionFormNode.appendChild(QuestionTypeInput);
@@ -125,14 +125,14 @@ this.Up = this.Up || {};
 	        if (this.question.OPTIONS != null && this.question.OPTIONS !== 'undefined' && this.question.OPTIONS !== '') {
 	          var options = JSON.parse(this.question.OPTIONS);
 	          for (var i = 0; i < options.length; i++) {
-	            var Answer = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input type=\"radio\" name=\"questionAnswer\" value=\"", "\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), main_core.Text.encode(options[i]), main_core.Text.encode(options[i]));
+	            var Answer = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<label class=\"radio\">\n\t\t\t\t\t\t<input class=\"option-input radio\" type=\"radio\" name=\"questionAnswer\" value=\"", "\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</label>\n\t\t\t\t"])), main_core.Text.encode(options[i]), main_core.Text.encode(options[i]));
 	            AnswerContainer.appendChild(Answer);
 	          }
 	        }
 	        QuestionFormNode.appendChild(main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"field\">\n\t\t\t\t", "\n\t\t\t</div>"])), AnswerContainer));
 	      }
 	      QuestionFormNode.appendChild(main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<p class=\"help is-danger mb-2\" id=\"answer-helper\"></p>"]))));
-	      var SendButton = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
+	      var SendButton = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button is-success\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
 	      SendButton.onclick = function () {
 	        var answer = '';
 	        if (+_this4.question.QUESTION_TYPE_ID === 0) {
@@ -163,6 +163,7 @@ this.Up = this.Up || {};
 	          var errorCode = error.errors[0].code;
 	          if (errorCode === 'inactive_quiz') {
 	            location.reload();
+	            return;
 	          }
 	          document.getElementById('answer-helper').textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
 	          SendButton.classList.remove('is-loading');
@@ -181,7 +182,6 @@ this.Up = this.Up || {};
 	            answer: answer
 	          }
 	        }).then(function (response) {
-	          console.log(response);
 	          resolve(response);
 	        })["catch"](function (error) {
 	          console.error(error);
@@ -198,7 +198,8 @@ this.Up = this.Up || {};
 	    key: "renderCompletely",
 	    value: function renderCompletely() {
 	      this.rootNode.innerHTML = "";
-	      this.rootNode.textContent = "".concat(main_core.Loc.getMessage('UP_QUIZ_TAKE_YOU_ANSWERED_ALL_THE_QUESTIONS'));
+	      this.rootNode.appendChild(main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"hero is-small is-primary\">\n\t\t\t\t<div class=\"hero-body\">\n\t\t\t\t\t<p class=\"title mb-0\">\n\t\t\t\t\t\t", "#", "\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), main_core.Text.encode(this.quiz.TITLE), main_core.Text.encode(this.quiz.CODE)));
+	      this.rootNode.appendChild(main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"question-form__container box\" id=\"question-form\">\n\t\t\t\t<h1 class=\"subtitle is-4 mb-2\">", "</h1>\n\t\t\t</div>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_YOU_ANSWERED_ALL_THE_QUESTIONS')));
 	    }
 	  }]);
 	  return QuizTake;
