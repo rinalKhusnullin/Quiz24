@@ -41,8 +41,8 @@ export class QuizErrorManager
 				<div class="error-content">
 					<span class="error-icon"><i class="fa-regular fa-circle-question fa-2xl"></i></span>
 					<div class="error-info">
-						<h1 class="error-title">Опрос не найден</h1>
-						<a href="/" class="is-ghost is-underlined">Вернуться на главную</a>
+						<h1 class="error-title">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_FOUND_TITLE')}</h1>
+						<a href="/" class="is-ghost is-underlined">${Loc.getMessage('UP_QUIZ_ERROR_GO_TO_MAIN_PAGE')}</a>
 					</div>
 				</div>
 			</section>
@@ -56,21 +56,36 @@ export class QuizErrorManager
 				<div class="error-content">
 					<span class="error-icon"><i class="fa-solid fa-lock fa-2xl"></i></span>
 					<div class="error-info">
-						<h1 class="error-title">Опрос закрыт для прохождения</h1>
-						<a href="/" class="is-ghost is-underlined">Вернуться на главную</a>
+						<h1 class="error-title">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_AVAILABLE_TITLE')}</h1>
+						<a href="/" class="is-ghost is-underlined">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_GO_TO_MAIN_PAGE')}</a>
 					</div>
 				</div>
 			</section>
 		`;
 	}
 
-	static showNotify(errorCode)
+	static getNotQuestionsError()
 	{
-		return 'Ошибка крутая типо йоу';
+		return Tag.render`
+			<section class="section error-message">
+				<div class="error-content">
+					<span class="error-icon"><i class="fa-sharp fa-solid fa-person-circle-question fa-2xl"></i></span>
+					<div class="error-info">
+						<h1 class="error-title">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_HAS_QUESTIONS')}</h1>
+						<a href="/" class="is-ghost is-underlined">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_GO_TO_MAIN_PAGE')}</a>
+					</div>
+				</div>
+			</section>
+		`;
 	}
 
 	static getMessage(errorCode)
 	{
 		return this.ERROR_MAP[errorCode];
+	}
+
+	static test()
+	{
+		return 'up:jaypmt_npet_gt_nd_qdlz';
 	}
 }

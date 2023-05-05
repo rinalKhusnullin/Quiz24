@@ -2,7 +2,7 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2;
+	var _templateObject, _templateObject2, _templateObject3;
 	var QuizErrorManager = /*#__PURE__*/function () {
 	  function QuizErrorManager() {
 	    babelHelpers.classCallCheck(this, QuizErrorManager);
@@ -12,22 +12,27 @@ this.Up = this.Up || {};
 	  babelHelpers.createClass(QuizErrorManager, null, [{
 	    key: "getQuizNotFoundError",
 	    value: function getQuizNotFoundError() {
-	      return main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"section error-message\">\n\t\t\t\t<div class=\"error-content\">\n\t\t\t\t\t<span class=\"error-icon\"><i class=\"fa-regular fa-circle-question fa-2xl\"></i></span>\n\t\t\t\t\t<div class=\"error-info\">\n\t\t\t\t\t\t<h1 class=\"error-title\">\u041E\u043F\u0440\u043E\u0441 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D</h1>\n\t\t\t\t\t\t<a href=\"/\" class=\"is-ghost is-underlined\">\u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u043D\u0430 \u0433\u043B\u0430\u0432\u043D\u0443\u044E</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])));
+	      return main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"section error-message\">\n\t\t\t\t<div class=\"error-content\">\n\t\t\t\t\t<span class=\"error-icon\"><i class=\"fa-regular fa-circle-question fa-2xl\"></i></span>\n\t\t\t\t\t<div class=\"error-info\">\n\t\t\t\t\t\t<h1 class=\"error-title\">", "</h1>\n\t\t\t\t\t\t<a href=\"/\" class=\"is-ghost is-underlined\">", "</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_FOUND_TITLE'), main_core.Loc.getMessage('UP_QUIZ_ERROR_GO_TO_MAIN_PAGE'));
 	    }
 	  }, {
 	    key: "getQuizNotAvailableError",
 	    value: function getQuizNotAvailableError() {
-	      return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"section error-message\">\n\t\t\t\t<div class=\"error-content\">\n\t\t\t\t\t<span class=\"error-icon\"><i class=\"fa-solid fa-lock fa-2xl\"></i></span>\n\t\t\t\t\t<div class=\"error-info\">\n\t\t\t\t\t\t<h1 class=\"error-title\">\u041E\u043F\u0440\u043E\u0441 \u0437\u0430\u043A\u0440\u044B\u0442 \u0434\u043B\u044F \u043F\u0440\u043E\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F</h1>\n\t\t\t\t\t\t<a href=\"/\" class=\"is-ghost is-underlined\">\u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u043D\u0430 \u0433\u043B\u0430\u0432\u043D\u0443\u044E</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])));
+	      return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"section error-message\">\n\t\t\t\t<div class=\"error-content\">\n\t\t\t\t\t<span class=\"error-icon\"><i class=\"fa-solid fa-lock fa-2xl\"></i></span>\n\t\t\t\t\t<div class=\"error-info\">\n\t\t\t\t\t\t<h1 class=\"error-title\">", "</h1>\n\t\t\t\t\t\t<a href=\"/\" class=\"is-ghost is-underlined\">", "</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_AVAILABLE_TITLE'), main_core.Loc.getMessage('UP_QUIZ_ERROR_QUIZ_GO_TO_MAIN_PAGE'));
 	    }
 	  }, {
-	    key: "showNotify",
-	    value: function showNotify(errorCode) {
-	      return 'Ошибка крутая типо йоу';
+	    key: "getNotQuestionsError",
+	    value: function getNotQuestionsError() {
+	      return main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<section class=\"section error-message\">\n\t\t\t\t<div class=\"error-content\">\n\t\t\t\t\t<span class=\"error-icon\"><i class=\"fa-sharp fa-solid fa-person-circle-question fa-2xl\"></i></span>\n\t\t\t\t\t<div class=\"error-info\">\n\t\t\t\t\t\t<h1 class=\"error-title\">", "</h1>\n\t\t\t\t\t\t<a href=\"/\" class=\"is-ghost is-underlined\">", "</a>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</section>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_HAS_QUESTIONS'), main_core.Loc.getMessage('UP_QUIZ_ERROR_QUIZ_GO_TO_MAIN_PAGE'));
 	    }
 	  }, {
 	    key: "getMessage",
 	    value: function getMessage(errorCode) {
 	      return this.ERROR_MAP[errorCode];
+	    }
+	  }, {
+	    key: "test",
+	    value: function test() {
+	      return 'up:jaypmt_npet_gt_nd_qdlz';
 	    }
 	  }]);
 	  return QuizErrorManager;

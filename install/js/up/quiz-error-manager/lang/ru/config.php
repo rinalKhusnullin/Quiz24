@@ -29,3 +29,9 @@ $MESS['UP_QUIZ_ERROR_EMPTY_ANSWER'] = 'Ответ не должен быть п�
 $MESS['UP_QUIZ_ERROR_EXCEEDING_ANSWER'] = 'Длина ответа не может превышать 128 символов';
 $MESS['UP_QUIZ_ERROR_INVALID_ANSWER'] = 'Выбранного ответа нет среди возможных вариантов';
 $MESS['UP_QUIZ_ERROR_INACTIVE_QUIZ'] = 'Опрос недоступен для прохождения';
+
+// Node words
+$MESS['UP_QUIZ_ERROR_GO_TO_MAIN_PAGE'] = 'Вернуться на главную';
+$MESS['UP_QUIZ_ERROR_QUIZ_NOT_FOUND_TITLE'] = 'Опрос не найден';
+$MESS['UP_QUIZ_ERROR_QUIZ_NOT_AVAILABLE_TITLE'] = 'Опрос закрыт для прохождения';
+$MESS['UP_QUIZ_ERROR_QUIZ_NOT_HAS_QUESTIONS'] = 'У данного опроса нет вопросов';
