@@ -2,7 +2,7 @@ this.Up = this.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8;
 	window.am4core.useTheme(am4themes_animated);
 	window.am4core.useTheme(am4themes_material);
 	var QuizShow = /*#__PURE__*/function () {
@@ -34,7 +34,7 @@ this.Up = this.Up || {};
 	        console.log(params.message);
 	        console.log(params.answer);
 	        console.log(params.questionId);
-	        _this.updateChart();
+	        _this.updateChart(params.answer, params.questionId);
 	      }
 	    });
 	    this.reload();
@@ -118,10 +118,10 @@ this.Up = this.Up || {};
 	        _this5.loadQuestions().then(function (questions) {
 	          _this5.questions = questions;
 	          if (_this5.questions.length === 0) {
-	            alert("todo вопросов нет");
-	            //this.reload();
+	            _this5.rootNode.innerHTML = '';
+	            _this5.rootNode.appendChild(Up.Quiz.QuizErrorManager.getNotQuestionsError());
 	          } else {
-	            _this5.currentQuestionId = _this5.questions[0].ID;
+	            _this5.currentQuestionId = +_this5.questions[0].ID;
 	            _this5.loadQuestion(_this5.currentQuestionId).then(function (question) {
 	              _this5.question = question;
 	              _this5.loadAnswers().then(function (answers) {
@@ -131,6 +131,9 @@ this.Up = this.Up || {};
 	            });
 	          }
 	        });
+	      }, function (error) {
+	        _this5.rootNode.innerHTML = '';
+	        _this5.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
 	      });
 	    }
 	  }, {
@@ -152,20 +155,31 @@ this.Up = this.Up || {};
 	        var QuestionNode = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<a class=\"question-list__question button\">", "</a>"])), main_core.Text.encode(question.QUESTION_TEXT));
 	        QuestionNode.onclick = function () {
 	          _this6.renderQuestionResult(+main_core.Text.encode(question.ID));
+	          _this6.currentQuestionId = +question.ID;
 	        };
+	        if (_this6.currentQuestionId === +question.ID) {
+	          QuestionNode.classList.add('is-link', 'is-selected');
+	        }
 	        QuestionListNode.appendChild(QuestionNode);
 	      });
+	      QuestionListNode.onclick = function (e) {
+	        var target = e.target;
+	        var questions = QuestionListNode.querySelectorAll('.question-list__question');
+	        if (!target.closest('.question-list__question')) return;
+	        questions.forEach(function (question) {
+	          if (target === question) {
+	            if (!question.classList.contains('is-link')) question.classList.add('is-link', 'is-selected');
+	          } else {
+	            question.classList.remove('is-link', 'is-selected');
+	          }
+	        });
+	      };
 	      return QuestionListNode;
 	    }
 	  }, {
 	    key: "getQuestionResultNode",
 	    value: function getQuestionResultNode() {
-	      var _this7 = this;
-	      var updateButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["<button id=\"updateButton\"><i class=\"fa-solid fa-rotate-right\"></i></button>"])));
-	      updateButton.onclick = function () {
-	        _this7.updateChart();
-	      };
-	      return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t<strong>", " : </strong>\n\t\t\t\t\t", "\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t\t<div>\n\t\t\t\t\t<div id=\"chart\" style=\"width: 900px; height: 600px;\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_SHOW_STATISTIC'), main_core.Loc.getMessage('UP_QUIZ_SHOW_QUESTION'), main_core.Text.encode(this.question.QUESTION_TEXT), updateButton);
+	      return main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\" column is-three-quarters statistics\" id=\"questionResult\">\n\t\t\t\t<div class=\"statistics__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t<div id=\"statistics__content\">\n\t\t\t\t\t<div class=\"statistics__question-title\">\n\t\t\t\t\t\t<strong>", " : </strong>\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<div id=\"chart\" style=\"width: 900px; height: 600px;\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_SHOW_STATISTIC'), main_core.Loc.getMessage('UP_QUIZ_SHOW_QUESTION'), main_core.Text.encode(this.question.QUESTION_TEXT));
 	    }
 	  }, {
 	    key: "renderChart",
@@ -182,6 +196,7 @@ this.Up = this.Up || {};
 	        chart.data = data;
 	        chart.animated = true;
 	        chart.legend = new am4charts.Legend();
+	        if (this.chart) this.chart.dispose();
 	        this.chart = chart;
 	      } else if (chartType === 'WordCloud') {
 	        // установка данных для диаграммы
@@ -210,6 +225,7 @@ this.Up = this.Up || {};
 	        //chart.background.cornerRadius = 10;
 	        //chart.padding(40, 40, 40, 40);
 	        _chart.legend = null;
+	        if (this.chart) this.chart.dispose();
 	        this.chart = _chart;
 	      } else if (chartType === 'BarChart' || 1) {
 	        // установка данных для диаграммы
@@ -248,29 +264,46 @@ this.Up = this.Up || {};
 	        //chart.background.stroke = am4core.color('#D3D3D3');
 	        //chart.background.strokeWidth = 2;
 	        //chart.background.cornerRadius = 10;
-
+	        if (this.chart) this.chart.dispose();
 	        this.chart = _chart2;
 	      }
+	      this.chart.animationDuration = 5000; // продолжительность анимации в миллисекундах
+	      this.chart.animationEasing = am4core.ease.sinOut;
 	    }
 	  }, {
 	    key: "updateChart",
-	    value: function updateChart() {
-	      var _this8 = this;
-	      this.loadAnswers().then(function (answers) {
-	        _this8.answers = answers;
-	        _this8.chart.data = _this8.getAnswersData();
+	    value: function updateChart(answerValue, questionID) {
+	      if (questionID !== this.currentQuestionId) {
+	        return;
+	      }
+	      for (var i = 0; i < this.chart.data.length; i++) {
+	        if (answerValue === this.chart.data[i].answer) {
+	          this.chart.data[i].count++;
+	          this.chart.invalidateRawData();
+	          return;
+	        }
+	      }
+	      this.chart.addData({
+	        answer: answerValue,
+	        count: 1
 	      });
+	      this.chart.invalidateData();
 	    } //update ResultNode
 	  }, {
 	    key: "renderQuestionResult",
 	    value: function renderQuestionResult(questionId) {
-	      var _this9 = this;
+	      var _this7 = this;
+	      BX.showWait("statistics__content", "", "big", {
+	        useIcon: true,
+	        icon: "spinner"
+	      });
 	      this.loadQuestion(questionId).then(function (question) {
-	        _this9.question = question;
-	        _this9.loadAnswers().then(function (answers) {
-	          _this9.answers = answers;
-	          document.getElementById('questionResult').replaceWith(_this9.getQuestionResultNode());
-	          _this9.renderChart();
+	        _this7.question = question;
+	        _this7.loadAnswers().then(function (answers) {
+	          _this7.answers = answers;
+	          document.getElementById('questionResult').replaceWith(_this7.getQuestionResultNode());
+	          _this7.renderChart();
+	          BX.closeWait();
 	        });
 	      });
 	    }
@@ -289,9 +322,9 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getShareNode",
 	    value: function getShareNode(quiz) {
-	      var quizTakeLink = "".concat(location.hostname, "/quiz/").concat(main_core.Text.encode(quiz.CODE), "/take");
-	      var shareButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<button class=\"button\">\n\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t</button>\n\t\t"])));
-	      var shareModal = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-success copy\">", "</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), quizTakeLink, main_core.Loc.getMessage('UP_QUIZ_SHOW_COPY'));
+	      var quizTakeLink = "".concat(location.origin, "/quiz/").concat(main_core.Text.encode(quiz.CODE), "/take");
+	      var shareButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<button class=\"button\">\n\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t</button>\n\t\t"])));
+	      var shareModal = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box qr-modal\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-dark copy\">", "</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), main_core.Text.encode(quizTakeLink), main_core.Loc.getMessage('UP_QUIZ_SHOW_COPY'));
 	      shareButton.onclick = function () {
 	        shareModal.classList.add('is-active');
 	      };
@@ -302,9 +335,19 @@ this.Up = this.Up || {};
 	        };
 	      });
 	      var copyButton = shareModal.querySelector('.copy');
+	      var CopyLinkIsSuccess = new BX.UI.Notification.Balloon({
+	        stack: new BX.UI.Notification.Stack({
+	          position: 'bottom-center'
+	        }),
+	        content: main_core.Loc.getMessage('UP_QUIZ_SHOW_LINK_COPY_SUCCESS'),
+	        autoHide: true,
+	        autoHideDelay: 1000,
+	        blinkOnUpdate: true
+	      });
 	      copyButton.onclick = function () {
 	        shareModal.querySelector('.input').select();
 	        document.execCommand("copy");
+	        CopyLinkIsSuccess.show();
 	      };
 	      new QRCode(shareModal.querySelector(".qr"), {
 	        text: quizTakeLink,
@@ -314,7 +357,7 @@ this.Up = this.Up || {};
 	        colorLight: "#ffffff",
 	        correctLevel: QRCode.CorrectLevel.H
 	      });
-	      return main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t", "\n\t\t\t", "\n\t\t"])), shareButton, shareModal);
+	      return main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t", "\n\t\t\t", "\n\t\t"])), shareButton, shareModal);
 	    }
 	  }]);
 	  return QuizShow;

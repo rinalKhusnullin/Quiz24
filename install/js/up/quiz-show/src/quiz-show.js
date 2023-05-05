@@ -46,7 +46,7 @@ export class QuizShow
 				console.log(params.answer);
 				console.log(params.questionId);
 
-				this.updateChart();
+				this.updateChart(params.answer, params.questionId);
 			}
 		});
 
@@ -142,16 +142,15 @@ export class QuizShow
 			this.quiz = quiz;
 			this.loadQuestions()
 				.then(questions => {
-
 					this.questions = questions;
 					if (this.questions.length === 0)
 					{
-						alert("todo вопросов нет");
-						//this.reload();
+						this.rootNode.innerHTML = '';
+						this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getNotQuestionsError());
 					}
 					else
 					{
-						this.currentQuestionId = this.questions[0].ID;
+						this.currentQuestionId = +this.questions[0].ID;
 						this.loadQuestion(this.currentQuestionId).then(question =>{
 							this.question = question;
 							this.loadAnswers().then(answers =>{
@@ -162,7 +161,10 @@ export class QuizShow
 					}
 
 				});
-			});
+			}, error => {
+			this.rootNode.innerHTML = '';
+			this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getQuizNotFoundError());
+		});
 	}
 
 
@@ -205,30 +207,48 @@ export class QuizShow
 			const QuestionNode = Tag.render`<a class="question-list__question button">${Text.encode(question.QUESTION_TEXT)}</a>`;
 			QuestionNode.onclick = () => {
 				this.renderQuestionResult(+Text.encode(question.ID));
+				this.currentQuestionId = +question.ID;
+			}
+			if (this.currentQuestionId === +question.ID)
+			{
+				QuestionNode.classList.add('is-link', 'is-selected');
 			}
 			QuestionListNode.appendChild(QuestionNode);
-		})
+		});
+		QuestionListNode.onclick = (e) => {
+			let target = e.target;
+			let questions = QuestionListNode.querySelectorAll('.question-list__question');
+
+			if (!target.closest('.question-list__question')) return;
+
+			questions.forEach(question => {
+				if (target === question)
+				{
+					if (!question.classList.contains('is-link'))
+						question.classList.add('is-link', 'is-selected');
+				}
+				else
+				{
+					question.classList.remove('is-link', 'is-selected');
+				}
+			})
+		};
 		return QuestionListNode;
 	}
 
 	getQuestionResultNode()
 	{
-		let updateButton = Tag.render`<button id="updateButton"><i class="fa-solid fa-rotate-right"></i></button>`;
-
-		updateButton.onclick = () => {
-			this.updateChart();
-		};
-
 		return Tag.render`
 			<div class=" column is-three-quarters statistics" id="questionResult">
 				<div class="statistics__title has-text-weight-semibold has-text-centered is-uppercase">${Loc.getMessage('UP_QUIZ_SHOW_STATISTIC')}</div>
-				<div class="statistics__question-title">
-					<strong>${Loc.getMessage('UP_QUIZ_SHOW_QUESTION')} : </strong>
-					${Text.encode(this.question.QUESTION_TEXT)}
-					${updateButton}
-				</div>
-				<div>
-					<div id="chart" style="width: 900px; height: 600px;"></div>
+				<div id="statistics__content">
+					<div class="statistics__question-title">
+						<strong>${Loc.getMessage('UP_QUIZ_SHOW_QUESTION')} : </strong>
+						${Text.encode(this.question.QUESTION_TEXT)}
+					</div>
+					<div>
+						<div id="chart" style="width: 900px; height: 600px;"></div>
+					</div>
 				</div>
 			</div>
 		`;
@@ -250,6 +270,7 @@ export class QuizShow
 
 			chart.animated = true;
 			chart.legend = new am4charts.Legend();
+			if (this.chart) this.chart.dispose();
 			this.chart = chart;
 		}
 		else if (chartType === 'WordCloud')
@@ -280,6 +301,7 @@ export class QuizShow
 			//chart.background.cornerRadius = 10;
 			//chart.padding(40, 40, 40, 40);
 			chart.legend = null;
+			if (this.chart) this.chart.dispose();
 			this.chart = chart;
 		}
 		else if (chartType === 'BarChart' || 1)
@@ -339,30 +361,46 @@ export class QuizShow
 			//chart.background.stroke = am4core.color('#D3D3D3');
 			//chart.background.strokeWidth = 2;
 			//chart.background.cornerRadius = 10;
-
+			if (this.chart) this.chart.dispose();
 			this.chart = chart;
 		}
+		this.chart.animationDuration = 5000; // продолжительность анимации в миллисекундах
+		this.chart.animationEasing = am4core.ease.sinOut;
 
 	}
 
-	updateChart()
+	updateChart(answerValue, questionID)
 	{
-		this.loadAnswers().then(answers => {
-			this.answers = answers;
-			this.chart.data = this.getAnswersData();
-		})
+		if (questionID !== this.currentQuestionId)
+		{
+			return;
+		}
+
+		for (let i = 0; i < this.chart.data.length; i++)
+		{
+			if (answerValue === this.chart.data[i].answer)
+			{
+				this.chart.data[i].count++;
+				this.chart.invalidateRawData();
+				return;
+			}
+		}
+		this.chart.addData({ answer : answerValue, count : 1});
+		this.chart.invalidateData();
 	}
 
 
 	//update ResultNode
 	renderQuestionResult(questionId)
 	{
+		BX.showWait("statistics__content", "", "big", { useIcon: true, icon: "spinner" });
 		this.loadQuestion(questionId).then(question =>{
 			this.question = question;
 			this.loadAnswers().then(answers => {
 				this.answers = answers;
 				document.getElementById('questionResult').replaceWith(this.getQuestionResultNode());
 				this.renderChart();
+				BX.closeWait();
 			});
 		});
 	}
@@ -381,7 +419,7 @@ export class QuizShow
 
 	getShareNode(quiz)
 	{
-		let quizTakeLink = `${location.hostname}/quiz/${Text.encode(quiz.CODE)}/take`;
+		let quizTakeLink = `${location.origin}/quiz/${Text.encode(quiz.CODE)}/take`;
 
 		const shareButton = Tag.render`
 			<button class="button">
@@ -391,11 +429,11 @@ export class QuizShow
 		const shareModal = Tag.render`
 			<div class="modal">
 				<div class="modal-background to-close"></div>
-				<div class="modal-content box">
+				<div class="modal-content box qr-modal">
 					<div class="qr mb-4"></div>
 					<div>
-						<input type="text" class="input mb-2" value="${quizTakeLink}" readonly>
-						<button class="button is-success copy">${Loc.getMessage('UP_QUIZ_SHOW_COPY')}</button>
+						<input type="text" class="input mb-2" value="${Text.encode(quizTakeLink)}" readonly>
+						<button class="button is-dark copy">${Loc.getMessage('UP_QUIZ_SHOW_COPY')}</button>
 					</div>
 				</div>
 				<button class="modal-close is-large to-close" aria-label="close"></button>
@@ -414,9 +452,17 @@ export class QuizShow
 		});
 
 		let copyButton = shareModal.querySelector('.copy');
+		let CopyLinkIsSuccess = new BX.UI.Notification.Balloon({
+			stack : new BX.UI.Notification.Stack({position: 'bottom-center'}),
+			content : Loc.getMessage('UP_QUIZ_SHOW_LINK_COPY_SUCCESS'),
+			autoHide: true,
+			autoHideDelay: 1000,
+			blinkOnUpdate: true,
+		});
 		copyButton.onclick = () => {
 			shareModal.querySelector('.input').select();
 			document.execCommand("copy");
+			CopyLinkIsSuccess.show();
 		};
 
 		new QRCode(shareModal.querySelector(`.qr`), {
