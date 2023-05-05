@@ -4,10 +4,14 @@
 	-moz-border-radius: 8px;
 	border-radius: 8px;
 	height: 220px;
-	border: 2px solid #363636;
-	background: #363636;
+	border: 2px solid #17293F;
+	background: #17293F;
 	flex: 0 1 24.4%;
 	width: 24.4%;
+}
+
+.is-dark{
+	background: #17293F!important;
 }
 
 .quiz-container{
@@ -228,6 +232,35 @@
 .qr-modal div input{
 	font-size: 20px;
 	text-align: center;
+}
+
+.modal-card-head{
+	background: #17293F!important;
+}
+
+.modal-card-head p{
+	color: white;
+}
+
+.quiz-card__add-new:hover i{
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	transform: rotate(90deg);
+	-webkit-transition: .5s;
+	-moz-transition: .5s;
+	-ms-transition: .5s;
+	-o-transition: .5s;
+	transition: .5s;
+}
+
+.quiz-card__add-new i{
+	-webkit-transition: .5s;
+	-moz-transition: .5s;
+	-ms-transition: .5s;
+	-o-transition: .5s;
+	transition: .5s;
 }
 
 @media screen and (max-width: 1408px){

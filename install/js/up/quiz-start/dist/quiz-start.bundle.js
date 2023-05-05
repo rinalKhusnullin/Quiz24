@@ -26,15 +26,19 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var _this = this;
-	      var StartContainerNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box not-auth\">\n\t\t\t\t<h1 class=\"title is-4\">", "</h1>\n\t\t\t\t\t<div class=\"field has-addons has-addons-centered\">\n\t\t\t\t\t\t<div class=\"control\">\n\t\t\t\t\t\t\t<input class=\"input is-dark\" type=\"text\" id=\"quiz-code-input\" placeholder=\"", "\">\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"control\">\n\t\t\t\t\t\t\t<a class=\"button is-dark\" id=\"take-button\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</a>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t<strong>", "</strong>\n\t\t\t\t<div>\n\t\t\t\t\t", " <a class=\"is-underlined\" href=\"/login\">", "</a>, ", ".\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_START_MESSAGE'), main_core.Loc.getMessage('UP_QUIZ_START_ENTER_CODE'), main_core.Loc.getMessage('UP_QUIZ_START_TAKE_QUIZ'), main_core.Loc.getMessage('UP_QUIZ_START_OR'), main_core.Loc.getMessage('UP_QUIZ_START_COMPLETE'), main_core.Loc.getMessage('UP_QUIZ_START_LOGIN'), main_core.Loc.getMessage('UP_QUIZ_START_TO_BE_ABLE_TO_CREATE_QUIZZES'));
+	      var StartContainerNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box not-auth\">\n\t\t\t\t<h1 class=\"title is-4\">", "</h1>\n\t\t\t\t\t<div class=\"field has-addons has-addons-centered\">\n\t\t\t\t\t\t<div class=\"control\">\n\t\t\t\t\t\t\t<input class=\"input is-dark\" type=\"text\" id=\"quiz-code-input\" placeholder=\"", "\">\n\t\t\t\t\t\t\t<p class=\"help is-danger\" id=\"quiz-code-helper\"></p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"control\">\n\t\t\t\t\t\t\t<a class=\"button is-dark\" id=\"take-button\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</a>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t<strong>", "</strong>\n\t\t\t\t<div>\n\t\t\t\t\t", " <a class=\"is-underlined\" href=\"/login\">", "</a>, ", ".\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_START_MESSAGE'), main_core.Loc.getMessage('UP_QUIZ_START_ENTER_CODE'), main_core.Loc.getMessage('UP_QUIZ_START_TAKE_QUIZ'), main_core.Loc.getMessage('UP_QUIZ_START_OR'), main_core.Loc.getMessage('UP_QUIZ_START_COMPLETE'), main_core.Loc.getMessage('UP_QUIZ_START_LOGIN'), main_core.Loc.getMessage('UP_QUIZ_START_TO_BE_ABLE_TO_CREATE_QUIZZES'));
+	      var codeHelper = StartContainerNode.querySelector('#quiz-code-helper');
 	      var codeInput = StartContainerNode.querySelector('#quiz-code-input');
 	      var takeButton = StartContainerNode.querySelector('#take-button');
 	      codeInput.oninput = function () {
-	        _this.quizCode = codeInput.value;
+	        codeHelper.textContent = '';
 	      };
 	      takeButton.onclick = function () {
-	        location.href = "/quiz/".concat(_this.quizCode, "/take");
+	        if (codeInput.value.trim() === '') {
+	          codeHelper.textContent = main_core.Loc.getMessage('UP_QUIZ_START_EMPTY_CODE_ERROR');
+	          return;
+	        }
+	        location.href = "/quiz/".concat(codeInput.value, "/take");
 	      };
 	      this.rootNode.appendChild(StartContainerNode);
 	    }

@@ -69,7 +69,7 @@ export class QuizLogin
 		const LoginContainerNode = Tag.render`
 			<div class="login-container-node">
 				<h1 class="title">${Loc.getMessage('UP_QUIZ_LOGIN_COME_IN')}</h1>
-				<form action="##">
+				<div>
 					<div class="field">
 						<label class="label">${Loc.getMessage('UP_QUIZ_LOGIN_LOGIN')}</label>
 						<div class="control has-icons-left has-icons-right">
@@ -97,10 +97,10 @@ export class QuizLogin
 		
 					<div class="field is-grouped">
 						<div class="control login-button">
-							<button type="submit" id="submit-button" class="button is-link">${Loc.getMessage('UP_QUIZ_LOGIN_COME_IN')}</button>
+							<button type="submit" id="submit-button" class="button is-success">${Loc.getMessage('UP_QUIZ_LOGIN_COME_IN')}</button>
 						</div>
 					</div>
-				</form>
+				</div>
 			</div>
 		`;
 		const loginInput = LoginContainerNode.querySelector('#login-input');

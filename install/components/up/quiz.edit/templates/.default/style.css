@@ -101,7 +101,7 @@
 }
 
 .is-active-question-button{
-	border: 3px solid #48c78e;
+	outline: 3px solid #0D2C54;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -110,6 +110,32 @@
 .is-active-question-button .question-button
 {
 	cursor: default;
+}
+
+.question_list__add-btn{
+	background: #0D2C54!important;
+	color: white!important;
+}
+
+.question_list__add-btn.is-loading{
+	background: #0D2C54;
+}
+
+.question_list__add-btn{
+	color: black;
+	font-size: 18px;
+	-webkit-transition: .2s;
+	-moz-transition: .2s;
+	-ms-transition: .2s;
+	-o-transition: .2s;
+	transition: .2s;
+}
+
+.question-container:hover{
+	outline: 3px solid #5B7DAA;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .question-button,

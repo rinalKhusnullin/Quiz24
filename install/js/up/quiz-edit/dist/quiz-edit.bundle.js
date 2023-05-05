@@ -344,9 +344,7 @@ this.Up = this.Up || {};
 	          _this9.notify.show();
 	        }, function (error) {
 	          var errorCode = error.errors[0].code;
-	          if (errorCode === 'empty_quiz_title') {
-	            quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
-	          }
+	          quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
 	          quizTitleSaveButton.classList.remove('is-loading');
 	        });
 	      };

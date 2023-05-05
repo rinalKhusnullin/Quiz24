@@ -419,7 +419,7 @@ export class QuizShow
 
 	getShareNode(quiz)
 	{
-		let quizTakeLink = `${location.origin}/quiz/${Text.encode(quiz.CODE)}/take`;
+		let quizTakeLink = `${location.host}/quiz/${Text.encode(quiz.CODE)}/take`;
 
 		const shareButton = Tag.render`
 			<button class="button">
@@ -430,6 +430,9 @@ export class QuizShow
 			<div class="modal">
 				<div class="modal-background to-close"></div>
 				<div class="modal-content box qr-modal">
+					<h1 style=" font-size: 40px; text-align: center; margin-bottom: 10px; ">
+						${Text.encode(quiz.CODE)}
+    				</h1>
 					<div class="qr mb-4"></div>
 					<div>
 						<input type="text" class="input mb-2" value="${Text.encode(quizTakeLink)}" readonly>

@@ -35,6 +35,7 @@ export class QuizStart
 					<div class="field has-addons has-addons-centered">
 						<div class="control">
 							<input class="input is-dark" type="text" id="quiz-code-input" placeholder="${Loc.getMessage('UP_QUIZ_START_ENTER_CODE')}">
+							<p class="help is-danger" id="quiz-code-helper"></p>
 						</div>
 						<div class="control">
 							<a class="button is-dark" id="take-button">
@@ -49,13 +50,19 @@ export class QuizStart
 			</div>
 		`;
 
+		const codeHelper = StartContainerNode.querySelector('#quiz-code-helper');
 		const codeInput = StartContainerNode.querySelector('#quiz-code-input');
 		const takeButton = StartContainerNode.querySelector('#take-button');
 		codeInput.oninput = () => {
-			this.quizCode = codeInput.value;
+			codeHelper.textContent = '';
 		}
 		takeButton.onclick = () => {
-			location.href = `/quiz/${this.quizCode}/take`;
+			if (codeInput.value.trim() === '')
+			{
+				codeHelper.textContent = Loc.getMessage('UP_QUIZ_START_EMPTY_CODE_ERROR');
+				return;
+			}
+			location.href = `/quiz/${codeInput.value}/take`;
 		}
 		this.rootNode.appendChild(StartContainerNode);
 	}

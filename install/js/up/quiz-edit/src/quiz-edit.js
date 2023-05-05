@@ -395,10 +395,7 @@ export class QuizEdit
 				this.notify.show();
 			}, error => {
 				let errorCode = error.errors[0].code;
-				if (errorCode === 'empty_quiz_title')
-				{
-					quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
-				}
+				quizTitleHelper.textContent = Up.Quiz.QuizErrorManager.getMessage(errorCode);
 				quizTitleSaveButton.classList.remove('is-loading');
 			});
 		}

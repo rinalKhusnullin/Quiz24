@@ -71,6 +71,25 @@ body {
 	margin-top: -8px;
 }
 
+.is-success{
+	background: #0D2C54!important;
+	color: white;
+	-webkit-transition: .2s;
+	-moz-transition: .2s;
+	-ms-transition: .2s;
+	-o-transition: .2s;
+	transition: .2s;
+}
+
+.is-success:hover{
+	background: #07346E!important;
+	-webkit-transition: .2s;
+	-moz-transition: .2s;
+	-ms-transition: .2s;
+	-o-transition: .2s;
+	transition: .2s;
+}
+
 @media screen and (max-width: 1023px) {
 	.navbar > .container {
 		display: flex!important;

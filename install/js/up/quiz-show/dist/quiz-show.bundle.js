@@ -322,9 +322,9 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getShareNode",
 	    value: function getShareNode(quiz) {
-	      var quizTakeLink = "".concat(location.origin, "/quiz/").concat(main_core.Text.encode(quiz.CODE), "/take");
+	      var quizTakeLink = "".concat(location.host, "/quiz/").concat(main_core.Text.encode(quiz.CODE), "/take");
 	      var shareButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<button class=\"button\">\n\t\t\t\t<i class=\"fa-solid fa-qrcode\"></i>\n\t\t\t</button>\n\t\t"])));
-	      var shareModal = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box qr-modal\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-dark copy\">", "</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), main_core.Text.encode(quizTakeLink), main_core.Loc.getMessage('UP_QUIZ_SHOW_COPY'));
+	      var shareModal = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box qr-modal\">\n\t\t\t\t\t<h1 style=\" font-size: 40px; text-align: center; margin-bottom: 10px; \">\n\t\t\t\t\t\t", "\n    \t\t\t\t</h1>\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-dark copy\">", "</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), main_core.Text.encode(quiz.CODE), main_core.Text.encode(quizTakeLink), main_core.Loc.getMessage('UP_QUIZ_SHOW_COPY'));
 	      shareButton.onclick = function () {
 	        shareModal.classList.add('is-active');
 	      };

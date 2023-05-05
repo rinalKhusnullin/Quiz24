@@ -193,31 +193,31 @@ export class QuizList
 		const QuizContainerNode = Tag.render`
 			<div class="quiz-container">
 				<div class="quiz-card quiz-card__add-new">
-					<a class="is-success is-button quiz-card__new-quiz-btn" id="open_creating_modal_btn">
+					<a class="is-button quiz-card__new-quiz-btn" id="open_creating_modal_btn">
 						<i class="fa-solid fa-plus"></i>
 						<span class="quiz-card__add-new-title mobile">${Loc.getMessage('UP_QUIZ_LIST_CREATE_QUIZ')}</span>
 					</a>
-					<div class="modal" id="new_quiz_modal">
-						<div class="modal-background close-modal"></div>
-						<div class="modal-card">
-							<header class="modal-card-head">
-								<p class="modal-card-title">${Loc.getMessage('UP_QUIZ_LIST_CREATING_QUIZ')}</p>
-								<button class="delete close-modal" aria-label="close"></button>
-							</header>
-							<section class="modal-card-body is-dark">
-								<div class="field">
-									<label class="label">${Loc.getMessage('UP_QUIZ_LIST_QUIZ_NAME')}</label>
-									<div class="control">
-										<input id="quiz_title_input" class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_LIST_ENTER_QUIZ_NAME')}">
-									</div>
-									<p class="help is-danger" id="quiz_title_helper"></p>
+				</div>
+				<div class="modal" id="new_quiz_modal">
+					<div class="modal-background close-modal"></div>
+					<div class="modal-card">
+						<header class="modal-card-head">
+							<p class="modal-card-title">${Loc.getMessage('UP_QUIZ_LIST_CREATING_QUIZ')}</p>
+							<button class="delete close-modal" aria-label="close"></button>
+						</header>
+						<section class="modal-card-body">
+							<div class="field">
+								<label class="label">${Loc.getMessage('UP_QUIZ_LIST_QUIZ_NAME')}</label>
+								<div class="control">
+									<input id="quiz_title_input" class="input" type="text" placeholder="${Loc.getMessage('UP_QUIZ_LIST_ENTER_QUIZ_NAME')}">
 								</div>
-							</section>
-							<footer class="modal-card-foot">
-								<button class="button is-dark" id="creating_quiz_btn">${Loc.getMessage('UP_QUIZ_LIST_CREATE')}</button>
-								<button class="button close-modal">${Loc.getMessage('UP_QUIZ_LIST_BACK')}</button>
-							</footer>
-						</div>
+								<p class="help is-danger" id="quiz_title_helper"></p>
+							</div>
+						</section>
+						<footer class="modal-card-foot">
+							<button class="button is-dark" id="creating_quiz_btn">${Loc.getMessage('UP_QUIZ_LIST_CREATE')}</button>
+							<button class="button close-modal">${Loc.getMessage('UP_QUIZ_LIST_BACK')}</button>
+						</footer>
 					</div>
 				</div>
 			</div>
@@ -382,7 +382,7 @@ export class QuizList
 
 	getShareNode(quiz)
 	{
-		let quizTakeLink = `${location.origin}/quiz/${quiz.CODE}/take`;
+		let quizTakeLink = `${location.host}/quiz/${quiz.CODE}/take`;
 
 		const shareButton = Tag.render`
 			<a class="button hidden-action" >
@@ -395,6 +395,9 @@ export class QuizList
 			<div class="modal">
 				<div class="modal-background to-close"></div>
 				<div class="modal-content box qr-modal">
+					<h1 style=" font-size: 40px; text-align: center; margin-bottom: 10px; ">
+						${Text.encode(quiz.CODE)}
+    				</h1>
 					<div class="qr mb-4"></div>
 					<div>
 						<input type="text" class="input mb-2" value="${Text.encode(quizTakeLink)}" readonly>

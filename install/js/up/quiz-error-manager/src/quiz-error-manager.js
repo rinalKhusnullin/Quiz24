@@ -57,7 +57,7 @@ export class QuizErrorManager
 					<span class="error-icon"><i class="fa-solid fa-lock fa-2xl"></i></span>
 					<div class="error-info">
 						<h1 class="error-title">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_AVAILABLE_TITLE')}</h1>
-						<a href="/" class="is-ghost is-underlined">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_GO_TO_MAIN_PAGE')}</a>
+						<a href="/" class="is-ghost is-underlined">${Loc.getMessage('UP_QUIZ_ERROR_GO_TO_MAIN_PAGE')}</a>
 					</div>
 				</div>
 			</section>
@@ -72,7 +72,7 @@ export class QuizErrorManager
 					<span class="error-icon"><i class="fa-sharp fa-solid fa-person-circle-question fa-2xl"></i></span>
 					<div class="error-info">
 						<h1 class="error-title">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_NOT_HAS_QUESTIONS')}</h1>
-						<a href="/" class="is-ghost is-underlined">${Loc.getMessage('UP_QUIZ_ERROR_QUIZ_GO_TO_MAIN_PAGE')}</a>
+						<a href="/" class="is-ghost is-underlined">${Loc.getMessage('UP_QUIZ_ERROR_GO_TO_MAIN_PAGE')}</a>
 					</div>
 				</div>
 			</section>

@@ -102,7 +102,7 @@ export class QuizRegistration
 				<div class="mb-2"><a href="/login" class="is-underlined">${Loc.getMessage('UP_QUIZ_REGISTRATION_COME_IN')}</a>, ${Loc.getMessage('UP_QUIZ_REGISTRATION_IF_ACCOUNT_EXISTS')}</div>
 				<div class="field is-grouped">
 					<div class="control reg-button">
-						<button class="button is-link" id="registration-button">${Loc.getMessage('UP_QUIZ_REGISTRATION_CREATE_ACCOUNT')}</button>
+						<button class="button is-success" id="registration-button">${Loc.getMessage('UP_QUIZ_REGISTRATION_CREATE_ACCOUNT')}</button>
 					</div>
 				</div>
 			</div>
@@ -170,7 +170,7 @@ export class QuizRegistration
 			if (errors[i].includes('логин'))
 			{
 				this.login.classList.add('is-danger');
-				this.loginHelper.textContent = Text.encode(errors[i]);
+				this.loginHelper.innerHTML = Text.encode(errors[i]);
 			}
 			else if (errors[i].includes('пароль'))
 			{

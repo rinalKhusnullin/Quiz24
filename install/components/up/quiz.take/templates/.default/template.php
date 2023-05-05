@@ -13,7 +13,7 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 	BX.ready(function() {
 		window.QuizTake = new Up.Quiz.QuizTake({
 			rootNodeId: 'question-container-root',
-			quizCode : '<?= Application::getInstance()->getContext()->getRequest()->get('quizCode');?>',
+			quizCode : '<?=Application::getInstance()->getContext()->getRequest()->get('quizCode');?>',
 		});
 	});
 </script>
