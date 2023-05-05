@@ -44,17 +44,16 @@ export class QuizTake
 			this.loadQuestions().then(questions =>{
 				if (questions.length === 0)
 				{
-					this.renderCompletely();
+					this.rootNode.innerHTML = '';
+					this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getNotQuestionsError());
+					return;
 				}
-				else
-				{
-					this.questions = questions;
-					this.currentQuestionId = questions[0].ID;
-					this.loadQuestion(this.currentQuestionId).then(question =>{
-						this.question = question;
-						this.render()
-					});
-				}
+				this.questions = questions;
+				this.currentQuestionId = questions[0].ID;
+				this.loadQuestion(this.currentQuestionId).then(question =>{
+					this.question = question;
+					this.render()
+				});
 			});
 
 		});

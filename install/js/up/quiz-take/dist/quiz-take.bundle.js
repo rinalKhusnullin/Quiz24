@@ -38,15 +38,16 @@ this.Up = this.Up || {};
 	        _this.quiz = quiz;
 	        _this.loadQuestions().then(function (questions) {
 	          if (questions.length === 0) {
-	            _this.renderCompletely();
-	          } else {
-	            _this.questions = questions;
-	            _this.currentQuestionId = questions[0].ID;
-	            _this.loadQuestion(_this.currentQuestionId).then(function (question) {
-	              _this.question = question;
-	              _this.render();
-	            });
+	            _this.rootNode.innerHTML = '';
+	            _this.rootNode.appendChild(Up.Quiz.QuizErrorManager.getNotQuestionsError());
+	            return;
 	          }
+	          _this.questions = questions;
+	          _this.currentQuestionId = questions[0].ID;
+	          _this.loadQuestion(_this.currentQuestionId).then(function (question) {
+	            _this.question = question;
+	            _this.render();
+	          });
 	        });
 	      });
 	    }
