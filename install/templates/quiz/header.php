@@ -52,6 +52,6 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 			</div>
         </nav>
     <div class="wrapper">
-    <section class="section is-medium px-0 pt-0 pb-0 main-content">
-        <div class="container">
-        <!-- MAIN CONTENT -->
+		<section class="section is-medium px-0 pt-0 pb-0 main-content">
+			<div class="container">
+			<!-- MAIN CONTENT -->
