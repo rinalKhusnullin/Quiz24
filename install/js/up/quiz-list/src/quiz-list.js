@@ -382,7 +382,7 @@ export class QuizList
 
 	getShareNode(quiz)
 	{
-		let quizTakeLink = `${location.hostname}/quiz/${quiz.CODE}/take`;
+		let quizTakeLink = `${location.origin}/quiz/${quiz.CODE}/take`;
 
 		const shareButton = Tag.render`
 			<a class="button hidden-action" >

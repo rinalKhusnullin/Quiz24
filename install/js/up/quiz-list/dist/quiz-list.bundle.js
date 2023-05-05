@@ -255,7 +255,7 @@ this.Up = this.Up || {};
 	  }, {
 	    key: "getShareNode",
 	    value: function getShareNode(quiz) {
-	      var quizTakeLink = "".concat(location.hostname, "/quiz/").concat(quiz.CODE, "/take");
+	      var quizTakeLink = "".concat(location.origin, "/quiz/").concat(quiz.CODE, "/take");
 	      var shareButton = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<a class=\"button hidden-action\" >\n\t\t\t\t<i class=\"fa-solid fa-link\"></i>\n\t\t\t\t", "\n\t\t\t</a>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_LIST_SHARE'));
 	      var shareModal = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"modal\">\n\t\t\t\t<div class=\"modal-background to-close\"></div>\n\t\t\t\t<div class=\"modal-content box qr-modal\">\n\t\t\t\t\t<div class=\"qr mb-4\"></div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input type=\"text\" class=\"input mb-2\" value=\"", "\" readonly>\n\t\t\t\t\t\t<button class=\"button is-dark copy\">", "</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<button class=\"modal-close is-large to-close\" aria-label=\"close\"></button>\n\t\t\t</div>\n\t\t"])), main_core.Text.encode(quizTakeLink), main_core.Loc.getMessage('UP_QUIZ_LIST_COPY'));
 	      shareButton.onclick = function () {
