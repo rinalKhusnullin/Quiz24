@@ -51,3 +51,16 @@
 .statistics__question-title{
 	font-size: 1.5rem;
 }
+
+.copy{
+	width: 100%;
+}
+
+.qr-modal{
+	width: 400px!important;
+}
+
+.qr-modal div input{
+	font-size: 20px;
+	text-align: center;
+}
