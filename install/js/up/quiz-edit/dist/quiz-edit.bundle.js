@@ -399,7 +399,7 @@ this.Up = this.Up || {};
 	        }
 	        QuestionsContainer.appendChild(questionCard);
 	      });
-	      var AddNewQuestionButton = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["<a class=\"button question_list__add-btn\">+</a>"])));
+	      var AddNewQuestionButton = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["<a class=\"button question_list__add-btn is-success\"><i class=\"fa-solid fa-plus\"></i></a>"])));
 	      AddNewQuestionButton.onclick = function () {
 	        AddNewQuestionButton.classList.add('is-loading');
 	        _this10.createQuestion().then(function () {
@@ -428,13 +428,12 @@ this.Up = this.Up || {};
 	          }
 	        };
 	      });
-	      QuestionsContainer.appendChild(AddNewQuestionButton);
-	      return main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-one-quarter question-list\" id=\"questions-column\">\n\t\t\t\t<div class=\"question-list__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_QUESTIONS'), QuestionsContainer);
+	      return main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-one-quarter question-list\" id=\"questions-column\">\n\t\t\t\t<div class=\"question-list__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_QUESTIONS'), QuestionsContainer, AddNewQuestionButton);
 	    }
 	  }, {
 	    key: "getQuestionPreviewNode",
 	    value: function getQuestionPreviewNode() {
-	      var PreviewContainerNode = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-three-fifths is-two-fifths question-preview\" id=\"preview\">\n\t\t\t\t<div class=\"question-preview__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t<div class=\"box\">\n\t\t\t\t\t<div class=\"question-preview__question-text mb-2\" id=\"questionTextPreview\">", "</div>\n\t\t\t\t\t\t<div id=\"questionPreviewContainer\" class=\"mb-2\"></div>\n\t\t\t\t\t<a class=\"button is-success send-preview-button\">", "</a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"box\" id=\"displayTypePreview\">\n\t\t\t\t\t<h3 class=\"title\">", ":</h3>\n\t\t\t\t\t<div id=\"chartPreviewContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_PREVIEW'), main_core.Text.encode(this.question.QUESTION_TEXT), main_core.Loc.getMessage('UP_QUIZ_EDIT_SEND'), main_core.Loc.getMessage('UP_QUIZ_EDIT_QUIZ_RESULT'));
+	      var PreviewContainerNode = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"column is-three-fifths is-two-fifths question-preview\" id=\"preview\">\n\t\t\t\t<div class=\"question-preview__title has-text-weight-semibold has-text-centered is-uppercase\">", "</div>\n\t\t\t\t<div class=\"box\">\n\t\t\t\t\t<div class=\"question-preview__question-text mb-2\" id=\"questionTextPreview\">", "</div>\n\t\t\t\t\t\t<div id=\"questionPreviewContainer\" class=\"mb-4\"></div>\n\t\t\t\t\t<a class=\"button is-success send-preview-button\">", "</a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"box\" id=\"displayTypePreview\">\n\t\t\t\t\t<h3 class=\"title\">", ":</h3>\n\t\t\t\t\t<div id=\"chartPreviewContainer\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), main_core.Loc.getMessage('UP_QUIZ_EDIT_PREVIEW'), main_core.Text.encode(this.question.QUESTION_TEXT), main_core.Loc.getMessage('UP_QUIZ_EDIT_SEND'), main_core.Loc.getMessage('UP_QUIZ_EDIT_QUIZ_RESULT'));
 	      var AnswerPreviewContainer = PreviewContainerNode.querySelector('#questionPreviewContainer');
 	      if (this.question.OPTIONS != null && this.question.OPTIONS != 'undefinded' && this.question.OPTIONS != '') {
 	        var options = JSON.parse(this.question.OPTIONS);

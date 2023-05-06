@@ -45,7 +45,7 @@ export class QuizStart
 					</div>
 				<strong>${Loc.getMessage('UP_QUIZ_START_OR')}</strong>
 				<div>
-					${Loc.getMessage('UP_QUIZ_START_COMPLETE')} <a class="is-underlined" href="/login">${Loc.getMessage('UP_QUIZ_START_LOGIN')}</a>, ${Loc.getMessage('UP_QUIZ_START_TO_BE_ABLE_TO_CREATE_QUIZZES')}.
+					<a class="is-underlined" href="/login">${Loc.getMessage('UP_QUIZ_START_TO_LOGIN')}</a> ${Loc.getMessage('UP_QUIZ_START_TO_BE_ABLE_TO_CREATE_QUIZZES')}.
 				</div>
 			</div>
 		`;

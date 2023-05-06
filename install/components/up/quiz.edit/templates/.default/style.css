@@ -107,28 +107,21 @@
 	border-radius: 5px;
 }
 
+.is-active-question-button:hover{
+	outline: 3px solid #0D2C54!important;
+}
+
 .is-active-question-button .question-button
 {
 	cursor: default;
 }
 
-.question_list__add-btn{
-	background: #0D2C54!important;
-	color: white!important;
-}
-
-.question_list__add-btn.is-loading{
-	background: #0D2C54;
+.is-active-question-button:hover .question-button{
+	border-color: #dbdbdb;
 }
 
 .question_list__add-btn{
-	color: black;
-	font-size: 18px;
-	-webkit-transition: .2s;
-	-moz-transition: .2s;
-	-ms-transition: .2s;
-	-o-transition: .2s;
-	transition: .2s;
+	width: 100%;
 }
 
 .question-container:hover{
@@ -231,12 +224,12 @@
 }
 
 @keyframes donut-spin {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
+0% {
+	transform: rotate(0deg);
+}
+100% {
+	transform: rotate(360deg);
+}
 }
 .donut {
 	position: absolute;
@@ -289,7 +282,7 @@ label{
 	background: #9faab7;
 }
 .option-input:checked {
-	background: #40e0d0;
+	background: #53769F;
 }
 .option-input:checked::before {
 	width: 30px;
@@ -318,6 +311,10 @@ label{
 }
 .option-input.radio::after {
 	border-radius: 50%;
+}
+
+.radio + .radio {
+	 margin-left: 0!important;
 }
 
 @keyframes click-wave {

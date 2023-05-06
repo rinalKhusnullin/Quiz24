@@ -22,10 +22,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
             <div class="container">
             <div class="navbar-brand">
                 <a class="navbar-item is-size-3 is-link navbar-brand__logo" href="/">
-					<i class="fa-solid fa-q fa-lg"></i>
-					<i class="fa-solid fa-u fa-2xs"></i>
-					<i class="fa-solid fa-i fa-2xs"></i>
-					<i class="fa-solid fa-z fa-2xs"></i>
+					<img src="<?=SITE_TEMPLATE_PATH?>/images/main-logo.svg" alt="">
                 </a>
             </div>
 			<div class="navbar-end">
@@ -40,7 +37,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 				<?php else: ?>
 					<div class="navbar-item">
 						<div class="buttons">
-							<a class="button is-primary" href="/login">
+							<a class="button is-success" href="/login">
 								<strong>Войти</strong>
 							</a>
 							<a class="button is-light" href="/registration">

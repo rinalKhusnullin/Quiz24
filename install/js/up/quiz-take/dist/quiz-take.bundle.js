@@ -132,8 +132,8 @@ this.Up = this.Up || {};
 	        }
 	        QuestionFormNode.appendChild(main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<div class=\"field\">\n\t\t\t\t", "\n\t\t\t</div>"])), AnswerContainer));
 	      }
-	      QuestionFormNode.appendChild(main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<p class=\"help is-danger mb-2\" id=\"answer-helper\"></p>"]))));
-	      var SendButton = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button is-success\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
+	      QuestionFormNode.appendChild(main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<p class=\"help is-danger\" id=\"answer-helper\"></p>"]))));
+	      var SendButton = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["<button class=\"button question-form__button is-success mt-4\">", "</button>"])), main_core.Loc.getMessage('UP_QUIZ_TAKE_SEND'));
 	      SendButton.onclick = function () {
 	        var answer = '';
 	        if (+_this4.question.QUESTION_TYPE_ID === 0) {

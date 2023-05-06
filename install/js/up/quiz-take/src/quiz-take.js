@@ -175,9 +175,9 @@ export class QuizTake
 			</div>`);
 		}
 
-		QuestionFormNode.appendChild(Tag.render`<p class="help is-danger mb-2" id="answer-helper"></p>`);
+		QuestionFormNode.appendChild(Tag.render`<p class="help is-danger" id="answer-helper"></p>`);
 
-		const SendButton = Tag.render`<button class="button question-form__button is-success">${Loc.getMessage('UP_QUIZ_TAKE_SEND')}</button>`;
+		const SendButton = Tag.render`<button class="button question-form__button is-success mt-4">${Loc.getMessage('UP_QUIZ_TAKE_SEND')}</button>`;
 
 		SendButton.onclick = () => {
 			let answer = '';

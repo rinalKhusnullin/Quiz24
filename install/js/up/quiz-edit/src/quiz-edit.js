@@ -500,7 +500,7 @@ export class QuizEdit
 			QuestionsContainer.appendChild(questionCard);
 		});
 
-		const AddNewQuestionButton = Tag.render`<a class="button question_list__add-btn">+</a>`;
+		const AddNewQuestionButton = Tag.render`<a class="button question_list__add-btn is-success"><i class="fa-solid fa-plus"></i></a>`;
 		AddNewQuestionButton.onclick = () => {
 			AddNewQuestionButton.classList.add('is-loading');
 			this.createQuestion()
@@ -534,14 +534,11 @@ export class QuizEdit
 			}
 		});
 
-
-		QuestionsContainer.appendChild(AddNewQuestionButton);
-
-
 		return Tag.render`
 			<div class="column is-one-quarter question-list" id="questions-column">
 				<div class="question-list__title has-text-weight-semibold has-text-centered is-uppercase">${Loc.getMessage('UP_QUIZ_EDIT_QUESTIONS')}</div>
 				${QuestionsContainer}
+				${AddNewQuestionButton}
 			</div>
 		`;
 	}
@@ -553,7 +550,7 @@ export class QuizEdit
 				<div class="question-preview__title has-text-weight-semibold has-text-centered is-uppercase">${Loc.getMessage('UP_QUIZ_EDIT_PREVIEW')}</div>
 				<div class="box">
 					<div class="question-preview__question-text mb-2" id="questionTextPreview">${Text.encode(this.question.QUESTION_TEXT)}</div>
-						<div id="questionPreviewContainer" class="mb-2"></div>
+						<div id="questionPreviewContainer" class="mb-4"></div>
 					<a class="button is-success send-preview-button">${Loc.getMessage('UP_QUIZ_EDIT_SEND')}</a>
 				</div>
 				<div class="box" id="displayTypePreview">

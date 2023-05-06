@@ -31,16 +31,6 @@ body {
 
 .navbar {
     box-shadow: rgba(0, 0, 0, 0.04) 0 3px 5px;
-	padding: 15px;
-}
-
-.navbar-brand__logo{
-	display: flex;
-	gap: 2px;
-}
-
-.navbar-brand__logo i::before{
-	align-self: flex-end;
 }
 
 .user-info{
@@ -88,6 +78,14 @@ body {
 	transition: .2s;
 }
 
+.hero.is-primary {
+	background-color: #693691!important;
+}
+
+.navbar-item img {
+	max-height: 3rem!important;
+}
+
 @media screen and (max-width: 1023px) {
 	.navbar > .container {
 		display: flex!important;
@@ -99,12 +97,11 @@ body {
 	.user-info{
 		padding: 0 12px;
 	}
-
-	.navbar .button{
-		font-size: .6rem;
-	}
-
-	.navbar-brand__logo{
-		font-size: 1.4rem!important;
+}
+@media screen and (max-width: 392px) {
+	.buttons .button{
+		margin-right: 0!important;
+		width: 100%;
+		font-size: 0.75rem;
 	}
 }
