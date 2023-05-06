@@ -1,0 +1,16 @@
+.error-content{
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+}
+
+.error-icon{
+	font-size: 2rem;
+}
+
+.error-title{
+	font-size: 2rem;
+}
