@@ -183,6 +183,7 @@ this.Up = this.Up || {};
 	            answer: answer
 	          }
 	        }).then(function (response) {
+	          console.log(response);
 	          resolve(response);
 	        })["catch"](function (error) {
 	          console.error(error);

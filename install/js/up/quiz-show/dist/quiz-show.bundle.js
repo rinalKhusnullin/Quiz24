@@ -29,6 +29,7 @@ this.Up = this.Up || {};
 	    this.questions = []; // Все вопросы : title, id
 
 	    BX.addCustomEvent("onPullEvent-up.quiz", function (command, params) {
+	      console.log(params);
 	      if (command === "update_answers") {
 	        // Обработка Push-уведомления
 	        console.log(params.message);

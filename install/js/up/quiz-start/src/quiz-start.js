@@ -34,11 +34,11 @@ export class QuizStart
 				<h1 class="title is-4">${Loc.getMessage('UP_QUIZ_START_MESSAGE')}</h1>
 					<div class="field has-addons has-addons-centered">
 						<div class="control">
-							<input class="input is-dark" type="text" id="quiz-code-input" placeholder="${Loc.getMessage('UP_QUIZ_START_ENTER_CODE')}">
+							<input class="input" type="text" id="quiz-code-input" placeholder="${Loc.getMessage('UP_QUIZ_START_ENTER_CODE')}">
 							<p class="help is-danger" id="quiz-code-helper"></p>
 						</div>
 						<div class="control">
-							<a class="button is-dark" id="take-button">
+							<a class="button is-success" id="take-button">
 								${Loc.getMessage('UP_QUIZ_START_TAKE_QUIZ')}
 							</a>
 						</div>

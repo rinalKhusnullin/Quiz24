@@ -25,6 +25,6 @@ return function (RoutingConfigurator $routes)
 	$routes->get('/logout', new PublicPageController('/local/modules/up.quiz/views/quiz-logout.php')); //Выйти из аккаунта
 	$routes->get('/logout/', new PublicPageController('/local/modules/up.quiz/views/quiz-logout.php'));
 
-	$routes->any('/{any}', new PublicPageController('/local/modules/up.quiz/views/404.php'))
+	$routes->get('/{any}', new PublicPageController('/local/modules/up.quiz/views/404.php'))
 		->where('any', '.*');
 };

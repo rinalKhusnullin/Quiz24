@@ -12,3 +12,7 @@
 .auth{
 	display: flex;
 }
+
+#quiz-code-input{
+	border-color: #0D2C54!important;
+}
