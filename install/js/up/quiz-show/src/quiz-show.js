@@ -205,14 +205,19 @@ export class QuizShow
 	{
 		const QuestionListNode = Tag.render`<div class="question-list__questions"></div>`;
 		this.questions.forEach(question => {
-			const QuestionNode = Tag.render`<a class="question-list__question button">${Text.encode(question.QUESTION_TEXT)}</a>`;
+			let shortQuestionTitle = this.truncateText(question.QUESTION_TEXT, 16);
+			const QuestionNode = Tag.render`
+				<a class="question-list__question button"
+					${(question.QUESTION_TEXT.length > 16) ? `title="${Text.encode(question.QUESTION_TEXT)}"` : ''}>
+					${Text.encode(shortQuestionTitle)}
+				</a>`;
 			QuestionNode.onclick = () => {
 				this.renderQuestionResult(+Text.encode(question.ID));
 				this.currentQuestionId = +question.ID;
 			}
 			if (this.currentQuestionId === +question.ID)
 			{
-				QuestionNode.classList.add('is-link', 'is-selected');
+				QuestionNode.classList.add('is-active-question-button');
 			}
 			QuestionListNode.appendChild(QuestionNode);
 		});
@@ -225,12 +230,12 @@ export class QuizShow
 			questions.forEach(question => {
 				if (target === question)
 				{
-					if (!question.classList.contains('is-link'))
-						question.classList.add('is-link', 'is-selected');
+					if (!question.classList.contains('is-active-question-button'))
+						question.classList.add('is-active-question-button');
 				}
 				else
 				{
-					question.classList.remove('is-link', 'is-selected');
+					question.classList.remove('is-active-question-button');
 				}
 			})
 		};
@@ -482,5 +487,14 @@ export class QuizShow
 			${shareButton}
 			${shareModal}
 		`;
+	}
+
+	truncateText(text, length)
+	{
+		if (text.length < length)
+		{
+			return text;
+		}
+		return text.slice(0, length - 3) + '...';
 	}
 }

@@ -153,13 +153,14 @@ this.Up = this.Up || {};
 	      var _this6 = this;
 	      var QuestionListNode = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<div class=\"question-list__questions\"></div>"])));
 	      this.questions.forEach(function (question) {
-	        var QuestionNode = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["<a class=\"question-list__question button\">", "</a>"])), main_core.Text.encode(question.QUESTION_TEXT));
+	        var shortQuestionTitle = _this6.truncateText(question.QUESTION_TEXT, 16);
+	        var QuestionNode = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a class=\"question-list__question button\"\n\t\t\t\t\t", ">\n\t\t\t\t\t", "\n\t\t\t\t</a>"])), question.QUESTION_TEXT.length > 16 ? "title=\"".concat(main_core.Text.encode(question.QUESTION_TEXT), "\"") : '', main_core.Text.encode(shortQuestionTitle));
 	        QuestionNode.onclick = function () {
 	          _this6.renderQuestionResult(+main_core.Text.encode(question.ID));
 	          _this6.currentQuestionId = +question.ID;
 	        };
 	        if (_this6.currentQuestionId === +question.ID) {
-	          QuestionNode.classList.add('is-link', 'is-selected');
+	          QuestionNode.classList.add('is-active-question-button');
 	        }
 	        QuestionListNode.appendChild(QuestionNode);
 	      });
@@ -169,9 +170,9 @@ this.Up = this.Up || {};
 	        if (!target.closest('.question-list__question')) return;
 	        questions.forEach(function (question) {
 	          if (target === question) {
-	            if (!question.classList.contains('is-link')) question.classList.add('is-link', 'is-selected');
+	            if (!question.classList.contains('is-active-question-button')) question.classList.add('is-active-question-button');
 	          } else {
-	            question.classList.remove('is-link', 'is-selected');
+	            question.classList.remove('is-active-question-button');
 	          }
 	        });
 	      };
@@ -359,6 +360,14 @@ this.Up = this.Up || {};
 	        correctLevel: QRCode.CorrectLevel.H
 	      });
 	      return main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t", "\n\t\t\t", "\n\t\t"])), shareButton, shareModal);
+	    }
+	  }, {
+	    key: "truncateText",
+	    value: function truncateText(text, length) {
+	      if (text.length < length) {
+	        return text;
+	      }
+	      return text.slice(0, length - 3) + '...';
 	    }
 	  }]);
 	  return QuizShow;

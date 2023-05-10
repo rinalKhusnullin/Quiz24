@@ -8,6 +8,7 @@
 }
 
 .question-list__questions{
+	padding: 10px 5px;
 	overflow: auto;
 	height: 100%;
 	max-height: calc(100vh - 170px);
@@ -29,6 +30,13 @@
 	align-items: center;
 	justify-content: center;
 	font-size: 1.2rem;
+}
+
+.question-list__question:hover{
+	outline: 3px solid #5B7DAA;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .question-list__title,
@@ -68,4 +76,16 @@
 .qr-modal div input{
 	font-size: 20px;
 	text-align: center;
+}
+
+.is-active-question-button{
+	outline: 3px solid #0D2C54;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.is-active-question-button:hover{
+	outline: 3px solid #0D2C54!important;
+	cursor: default!important;
 }
